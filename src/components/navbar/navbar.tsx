@@ -25,7 +25,7 @@ function Navbar() {
             <p>History</p>
           </div>
 
-          <div className="filter-container">
+          {/* <div className="filter-container">
             <h3>Filter</h3>
             <p>Meistverkauft</p>
             <p>Beliebteste</p>
@@ -35,7 +35,7 @@ function Navbar() {
             <p>Ab 3 Sterne</p>
             <p>Preis: Aufsteigend</p>
             <p>Preis: Absteigend</p>
-          </div>
+          </div> */}
         </div>
       </div>
 

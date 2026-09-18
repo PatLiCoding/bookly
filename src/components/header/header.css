@@ -154,3 +154,55 @@
   border-radius: 50%;
   cursor: pointer;
 }
+
+@media (max-width: 1200px) {
+  .header {
+    width: 100%;
+  }
+
+  .content-max-width {
+    width: 100%;
+    padding: 12px 16px;
+    gap: 24px;
+  }
+
+  .search-filter-container {
+    min-width: 0;
+  }
+
+  .search-section {
+    max-width: none;
+  }
+
+  .search-section textarea {
+    font-size: 15px;
+    height: 32px;
+  }
+
+  .lens-area {
+    right: 10px;
+    gap: 8px;
+  }
+
+  .lens-area .lens-img {
+    height: 16px;
+  }
+
+  .actions {
+    gap: 10px;
+  }
+
+  .cart {
+    padding: 6px;
+    font-size: 14px;
+  }
+
+  .login-btn {
+    font-size: 15px;
+    padding: 6px 14px;
+  }
+
+  .user-image {
+    height: 38px;
+  }
+}
