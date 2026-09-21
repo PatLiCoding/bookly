@@ -11,9 +11,10 @@ function CategoryPage() {
 
   return (
     <section className="category-page">
-      <section className="filter-container">
-        <h3>Filter</h3>
-        <div className="filter-list">
+        <a className="view-all-link">Filter</a>
+      <h2>{name}</h2>
+      <BookPreviewList books={books} />
+      {/* <div className="filter-list">
           <p>Meistverkauft</p>
           <p>Beliebteste</p>
           <p>Neuerscheinungen</p>
@@ -22,10 +23,7 @@ function CategoryPage() {
           <p>Ab 3 Sterne</p>
           <p>Preis: Aufsteigend</p>
           <p>Preis: Absteigend</p>
-        </div>
-      </section>
-      <h2>{name}</h2>
-      <BookPreviewList books={books} />
+        </div> */}
     </section>
   );
 }

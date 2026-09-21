@@ -1,13 +1,10 @@
 .home {
-  max-width: 1190px;
-  max-height: calc(100vh - 80px);
-  overflow: hidden;
-  overflow-y: auto;
+  max-width: 1440px;
+  width: 100%;
   display: flex;
   flex-direction: column;
   gap: 24px;
   padding-bottom: 32px;
-  scrollbar-width: none;
   background-color: #f7faff;
   cursor: default;
 }
@@ -24,6 +21,7 @@
   padding: 3rem 8%;
   overflow: hidden;
   border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
 }
 
 .hero-overlay {
@@ -48,11 +46,13 @@
 }
 
 .hero-title {
-  font-size: clamp(2.5rem, 4vw, 3.8rem);
+  font-size: clamp(2rem, 6vw, 3.8rem);
   font-weight: 700;
   color: #ffe9c7;
   line-height: 1.15;
   margin-bottom: 1.25rem;
+  overflow-wrap: break-word;
+  hyphens: manual;
 }
 
 .hero-title-part-1 {
@@ -90,11 +90,9 @@
 
 .books-container {
   display: flex;
-  justify-content: center;
   flex-direction: column;
   gap: 24px;
   padding: 24px;
-  height: 100%;
 }
 
 .section-header {
@@ -156,5 +154,15 @@
 
   .hero-content {
     max-width: 100%;
+    min-width: 0;
+  }
+
+  .books-container {
+    padding: 16px;
+  }
+
+  .section-header {
+    flex-wrap: wrap;
+    gap: 8px;
   }
 }

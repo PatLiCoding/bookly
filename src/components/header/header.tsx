@@ -1,5 +1,6 @@
 import { useState } from "react";
 import "./header.css";
+import { Link } from "react-router-dom";
 
 function Header() {
   // const [cartItemCount, setCartItemCount] = useState(0);
@@ -10,7 +11,11 @@ function Header() {
 
   return (
     <header className="header">
-      <div className="content-max-width">
+      <div className="header-content-max-width">
+        <Link to="/" className="logo-container">
+          <img className="logo" src="/assets/icons/logo.png" alt="Logo" />
+          <span>Bookly</span>
+        </Link>
         <div className="search-filter-container">
           <div
             className="search-section"
