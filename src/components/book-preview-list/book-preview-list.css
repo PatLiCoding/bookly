@@ -1,0 +1,30 @@
+
+.book-preview {
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  border-top: 1px solid #22304430;
+}
+
+.book-preview-inner {
+  display: flex;
+  align-items: stretch;
+  gap: 20px;
+  min-width: 100%;
+  box-sizing: border-box;
+  padding: 20px;
+  justify-content: flex-start;
+}
+
+.book-preview::-webkit-scrollbar {
+  height: 6px;
+}
+
+.book-preview::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.book-preview::-webkit-scrollbar-thumb {
+  background: #cdeeff;
+  border-radius: 10px;
+}

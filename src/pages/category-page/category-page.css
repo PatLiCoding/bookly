@@ -1,0 +1,11 @@
+.filter-container {
+    display: flex;
+    flex-direction: column;
+    font-size: 20px;
+}
+
+.filter-list {
+    display: flex;
+    gap: 24px;
+    flex-wrap: wrap;
+}

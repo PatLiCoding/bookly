@@ -6,7 +6,7 @@ function Navbar() {
     <section className="navbar">
       <div className="logo-nav">
         <div className="logo-container">
-          <img className="logo" src="assets/icons/logo.png" alt="Logo" />
+          <img className="logo" src="/assets/icons/logo.png" alt="Logo" />
           <span>Bookly</span>
         </div>
 
@@ -24,18 +24,6 @@ function Navbar() {
             <p>Sachbuch</p>
             <p>History</p>
           </div>
-
-          {/* <div className="filter-container">
-            <h3>Filter</h3>
-            <p>Meistverkauft</p>
-            <p>Beliebteste</p>
-            <p>Neuerscheinungen</p>
-            <p>Am meisten geliked</p>
-            <p>Ab 4 Sterne</p>
-            <p>Ab 3 Sterne</p>
-            <p>Preis: Aufsteigend</p>
-            <p>Preis: Absteigend</p>
-          </div> */}
         </div>
       </div>
 

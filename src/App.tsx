@@ -2,7 +2,8 @@
 import './App.css'
 import Header from './components/header/header'
 import Navbar from './components/navbar/navbar'
-import Home from './components/main/home/home'
+import CategoryPage from './pages/category-page/category-page'
+// import Home from './pages/home/home'
 
 
 function App() {
@@ -12,7 +13,8 @@ function App() {
       <Navbar />
       <div className="header-main">
         <Header />
-        <Home />
+        <CategoryPage category="Krimi"/>
+        {/* <Home /> */}
       </div>
       
     </div>

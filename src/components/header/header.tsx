@@ -21,15 +21,15 @@ function Header() {
             <div className="lens-area">
               <img
                 className="lens-area-border"
-                src="assets/icons/search-borderline.png"
+                src="/assets/icons/search-borderline.png"
                 alt="Borderline"
               />
               <img
                 className="lens-img"
                 src={
                   isSearchHovered
-                    ? "assets/icons/search-hover.png"
-                    : "assets/icons/search-default.png"
+                    ? "/assets/icons/search-hover.png"
+                    : "/assets/icons/search-default.png"
                 }
                 alt="Search"
               />
@@ -47,8 +47,8 @@ function Header() {
               className="cart-image"
               src={
                 isCartHovered
-                  ? "assets/icons/cart_hover.png"
-                  : "assets/icons/cart_default.png"
+                  ? "/assets/icons/cart_hover.png"
+                  : "/assets/icons/cart_default.png"
               }
               alt="Cart"
             />
@@ -59,8 +59,8 @@ function Header() {
               <img className="user-image"
                 src={
                   isAccountHovered
-                    ? "assets/icons/account_hover.png"
-                    : "assets/icons/account_default.png"
+                    ? "/assets/icons/account_hover.png"
+                    : "/assets/icons/account_default.png"
                 }
                 onMouseEnter={() => setIsAccountHovered(true)}
                 onMouseLeave={() => setIsAccountHovered(false)}
