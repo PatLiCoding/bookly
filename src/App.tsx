@@ -11,11 +11,12 @@ function App() {
     <div className="appContainer">
       <Header />
       <Navbar />
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/kategorie/:name" element={<CategoryPage />} />
-      </Routes>
-
+      <main className="main-content">
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/kategorie/:name" element={<CategoryPage />} />
+        </Routes>
+      </main>
       <Footer />
     </div>
   );
