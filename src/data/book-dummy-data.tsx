@@ -7,7 +7,7 @@ export const highlightBooks: Book[] = [
     author: "Elena Vance",
     price: "14,99 €",
     rating: 5,
-    cover: "assets/img/bookcover_default.png",
+    cover: "/assets/img/bookcover_default.png",
     category: "Krimi",
   },
   {
@@ -16,7 +16,7 @@ export const highlightBooks: Book[] = [
     author: "Maximilian Schwarz",
     price: "16,00 €",
     rating: 4,
-    cover: "assets/img/bookcover_default.png",
+    cover: "/assets/img/bookcover_default.png",
     category: "Young Adult",
   },
   {
@@ -25,7 +25,7 @@ export const highlightBooks: Book[] = [
     author: "Laura Berger",
     price: "16,00 €",
     rating: 3,
-    cover: "assets/img/bookcover_default.png",
+    cover: "/assets/img/bookcover_default.png",
     category: "Liebesroman",
   },
   {
@@ -34,7 +34,7 @@ export const highlightBooks: Book[] = [
     author: "Jonas Brand",
     price: "16,00 €",
     rating: 0,
-    cover: "assets/img/bookcover_default.png",
+    cover: "/assets/img/bookcover_default.png",
     category: "Fantasy",
   },
 ];

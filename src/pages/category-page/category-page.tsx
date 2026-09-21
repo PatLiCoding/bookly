@@ -1,14 +1,14 @@
 import "./category-page.css";
+import { useParams } from "react-router-dom";
 import BookPreviewList from "../../components/book-preview-list/book-preview-list";
 import { highlightBooks } from "../../data/book-dummy-data";
 
-interface Props {
-  category: string;
-}
 
 /** Shows all books of the selected category. */
-function CategoryPage({ category }: Props) {
-  const books = highlightBooks.filter((book) => book.category === category);
+function CategoryPage() {
+  const { name } = useParams();
+  const books = highlightBooks.filter((book) => book.category === name);
+
   return (
     <section className="category-page">
       <section className="filter-container">
@@ -24,7 +24,7 @@ function CategoryPage({ category }: Props) {
           <p>Preis: Absteigend</p>
         </div>
       </section>
-      <h2>{category}</h2>
+      <h2>{name}</h2>
       <BookPreviewList books={books} />
     </section>
   );

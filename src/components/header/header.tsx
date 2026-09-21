@@ -2,7 +2,7 @@ import { useState } from "react";
 import "./header.css";
 
 function Header() {
-  const [cartItemCount, setCartItemCount] = useState(0);
+  // const [cartItemCount, setCartItemCount] = useState(0);
   const [isSearchHovered, setIsSearchHovered] = useState(false);
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [isAccountHovered, setIsAccountHovered] = useState(false);
@@ -52,7 +52,7 @@ function Header() {
               }
               alt="Cart"
             />
-            <span className="cart-count">{cartItemCount}</span>
+            <span className="cart-count">0</span>
           </div>
           <div className="user-section">
             {loggedUser ? (
