@@ -28,3 +28,16 @@
   background: #cdeeff;
   border-radius: 10px;
 }
+
+.book-preview--grid {
+  overflow-x: visible;
+  overflow-y: visible;
+}
+
+.book-preview--grid .book-preview-inner {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(208px, 1fr));
+  justify-items: center;
+  justify-content: stretch;
+  gap: 24px;
+}

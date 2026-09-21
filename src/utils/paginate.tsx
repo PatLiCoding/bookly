@@ -1,0 +1,10 @@
+/** Number of pages needed for the given item count (at least 1). */
+export function getPageCount(total: number, pageSize: number): number {
+  return Math.max(1, Math.ceil(total / pageSize));
+}
+
+/** Returns the items of one page. Pages start at 1. */
+export function paginate<T>(items: T[], page: number, pageSize: number): T[] {
+  const start = (page - 1) * pageSize;
+  return items.slice(start, start + pageSize);
+}

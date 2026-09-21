@@ -34,19 +34,22 @@
 }
 
 .navbar .navbar-content-max-width a.active p {
-  color: #A7D8FF;
+  color: #FFFFFF;
   font-weight: 700;
   text-shadow: 0 0 1px #223044;
+  background-color: #223044;
+  border-radius: 10px;
+  padding: 4px 8px;
 }
 
 @media (max-width: 1200px) {
-  .navbar a {
+  .navbar .navbar-content-max-width a {
     font-size: 16px;
   }
 }
 
 @media (max-width: 974px) {
-  .navbar {
+  .navbar .navbar-content-max-width {
     flex-wrap: nowrap;
     justify-content: flex-start;
     overflow-x: auto;

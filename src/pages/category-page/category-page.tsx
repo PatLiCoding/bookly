@@ -1,31 +1,71 @@
 import "./category-page.css";
+import { useState } from "react";
 import { useParams } from "react-router-dom";
 import BookPreviewList from "../../components/book-preview-list/book-preview-list";
-import { highlightBooks } from "../../data/book-dummy-data";
+import FilterSidebar from "../../components/filter-sidebar/filter-sidebar";
+import Pagination from "../../components/pagination/pagination";
+import { useCategoryBooks } from "./use-category-books";
+import { useScrollTarget } from "./use-scroll-target";
 
+type BookList = ReturnType<typeof useCategoryBooks>;
 
-/** Shows all books of the selected category. */
-function CategoryPage() {
-  const { name } = useParams();
-  const books = highlightBooks.filter((book) => book.category === name);
+interface HeaderProps {
+  title?: string;
+  showFilters: boolean;
+  onToggle: () => void;
+}
+
+/** Category title on the left, filter toggle on the right. */
+function CategoryHeader({ title, showFilters, onToggle }: HeaderProps) {
+  return (
+    <div className="category-header">
+      <h2 className="category-title">{title}</h2>
+      <button className="filter-btn" type="button" aria-expanded={showFilters} onClick={onToggle}>
+        {showFilters ? "Filter ausblenden" : "Filter"}
+      </button>
+    </div>
+  );
+}
+
+/** Book grid, or a hint if no book matches. */
+function CategoryBooks({ list }: { list: BookList }) {
+  return (
+    <div className="category-books">
+      {list.books.length === 0 ? <p>Keine Bücher gefunden.</p> : <BookPreviewList books={list.books} layout="grid" />}
+    </div>
+  );
+}
+
+/** Book list next to the (optional) filter sidebar. */
+function CategoryContent({ list, showFilters }: { list: BookList; showFilters: boolean }) {
+  return (
+    <div className="category-content">
+      <CategoryBooks list={list} />
+      {showFilters && <FilterSidebar filters={list.filters} onChange={list.changeFilters} />}
+    </div>
+  );
+}
+
+/** Category view; state (page, filters) lives here and resets via the key below. */
+function CategoryView({ name }: { name?: string }) {
+  const [showFilters, setShowFilters] = useState(true);
+  const { setTarget, scrollThen } = useScrollTarget();
+  const list = useCategoryBooks(name);
+  const changePage = (page: number) => scrollThen(() => list.setPage(page));
 
   return (
-    <section className="category-page">
-        <a className="view-all-link">Filter</a>
-      <h2>{name}</h2>
-      <BookPreviewList books={books} />
-      {/* <div className="filter-list">
-          <p>Meistverkauft</p>
-          <p>Beliebteste</p>
-          <p>Neuerscheinungen</p>
-          <p>Am meisten geliked</p>
-          <p>Ab 4 Sterne</p>
-          <p>Ab 3 Sterne</p>
-          <p>Preis: Aufsteigend</p>
-          <p>Preis: Absteigend</p>
-        </div> */}
+    <section className="category-page" ref={setTarget}>
+      <CategoryHeader title={name} showFilters={showFilters} onToggle={() => setShowFilters(!showFilters)} />
+      <CategoryContent list={list} showFilters={showFilters} />
+      <Pagination page={list.page} pageCount={list.pageCount} onChange={changePage} />
     </section>
   );
+}
+
+/** Shows the books of the selected category (10 per page) with filters and sorting. */
+function CategoryPage() {
+  const { name } = useParams();
+  return <CategoryView key={name} name={name} />;
 }
 
 export default CategoryPage;
