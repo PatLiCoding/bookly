@@ -13,6 +13,7 @@
   border: 1px solid rgba(34, 48, 68, 0.05);
   transition: all 0.25s ease-in-out;
   box-sizing: border-box;
+  text-decoration: none;
 }
 
 .book-card:hover {

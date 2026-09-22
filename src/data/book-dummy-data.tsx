@@ -39,12 +39,20 @@ export const highlightBooks: Book[] = [
   },
   {
     id: 5,
-    title: "Das Flüstern der Wälder",
+    title: "Der Wälder",
     author: "Elena Vance",
     price: "14,99 €",
     rating: 3,
     cover: "/assets/img/bookcover_default.png",
     category: "Krimi",
+    releaseDate: "12.04.2004",
+    description: "Tolle Beschreibung",
+    comments: [
+      { id: 1, userName: "Max Mustermann", rating: 3, text: "War ok." },
+      { id: 2, userName: "Max Musterfrau", rating: 5, text: "Fand ich super." },
+      { id: 3, userName: "Max Mustermann", rating: 3, text: "War ok." },
+      { id: 4, userName: "Max Musterfrau", rating: 5, text: "Fand ich super." },
+    ],
   },
   {
     id: 6,

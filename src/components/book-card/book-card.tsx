@@ -1,4 +1,5 @@
 import "./book-card.css";
+import { Link } from "react-router-dom";
 import type { Book } from "../../interface/book";
 import { renderStars } from "../../utils/render-stars";
 
@@ -9,7 +10,7 @@ interface Props {
 /** Displays one book with cover, rating, price and cart button. */
 function BookCard({ book }: Props) {
   return (
-    <div className="book-card">
+    <Link to={`/book/${book.id}`} className="book-card">
       <div className="cover-wrapper">
         <img className="bock-cover" src={book.cover} alt={book.title} />
       </div>
@@ -26,7 +27,7 @@ function BookCard({ book }: Props) {
           </button>
         </div>
       </div>
-    </div>
+    </Link>
   );
 }
 

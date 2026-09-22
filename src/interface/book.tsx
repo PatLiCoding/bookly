@@ -1,3 +1,10 @@
+export interface Comment {
+  id: string | number;
+  userName: string;
+  rating: number;
+  text: string;
+}
+
 export interface Book {
   id: number;
   title: string;
@@ -5,5 +12,8 @@ export interface Book {
   price: string;
   rating: number;
   cover: string;
-  category: string
+  category: string;
+  releaseDate?: string;
+  description?: string;
+  comments?: Comment[];
 }
