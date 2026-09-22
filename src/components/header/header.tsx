@@ -1,13 +1,38 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import "./header.css";
 import { Link } from "react-router-dom";
+import { Auth } from "./../auth/auth";
+import type { User } from "../../interface/user";
 
 function Header() {
   // const [cartItemCount, setCartItemCount] = useState(0);
   const [isSearchHovered, setIsSearchHovered] = useState(false);
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [isAccountHovered, setIsAccountHovered] = useState(false);
-  const loggedUser = false;
+  const [loggedUser, setLoggedUser] = useState<User | null>(null);
+  const [isAuthOpen, setIsAuthOpen] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    function handleClickOutside(e: MouseEvent) {
+      if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
+        setIsMenuOpen(false);
+      }
+    }
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  function handleLoginSuccess(user: User) {
+    setLoggedUser(user);
+    setIsAuthOpen(false);
+  }
+
+  function handleLogout() {
+    setLoggedUser(null);
+    setIsMenuOpen(false);
+  }
 
   return (
     <header className="header">
@@ -16,6 +41,7 @@ function Header() {
           <img className="logo" src="/assets/icons/logo.png" alt="Logo" />
           <span>Bookly</span>
         </Link>
+
         <div className="search-filter-container">
           <div
             className="search-section"
@@ -59,22 +85,55 @@ function Header() {
             />
             <span className="cart-count">0</span>
           </div>
-          <div className="user-section">
+
+          <div className="user-section" ref={menuRef}>
             {loggedUser ? (
-              <img className="user-image"
-                src={
-                  isAccountHovered
-                    ? "/assets/icons/account_hover.png"
-                    : "/assets/icons/account_default.png"
-                }
-                onMouseEnter={() => setIsAccountHovered(true)}
-                onMouseLeave={() => setIsAccountHovered(false)}
-                alt="Logged User"
-              />
+              <div className="account-container">
+                <img
+                  className="user-image"
+                  src={
+                    isAccountHovered
+                      ? "/assets/icons/account_hover.png"
+                      : "/assets/icons/account_default.png"
+                  }
+                  onMouseEnter={() => setIsAccountHovered(true)}
+                  onMouseLeave={() => setIsAccountHovered(false)}
+                  onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  alt="Logged User"
+                />
+                {isMenuOpen && (
+                  <div className="account-menu">
+                    <div className="account-menu-name">
+                      <span className="account-menu-firstname">
+                        {loggedUser.Firstname}
+                      </span>
+                      <span className="account-menu-lastname">
+                        {loggedUser.Lastname}
+                      </span>
+                    </div>
+                    <button className="account-menu-item">Profil</button>
+                    <button className="account-menu-item">Bestellungen</button>
+                    <button
+                      className="account-menu-item logout"
+                      onClick={handleLogout}
+                    >
+                      Ausloggen
+                    </button>
+                  </div>
+                )}
+              </div>
             ) : (
-              <button className="login-btn">Login</button>
+              <button className="login-btn" onClick={() => setIsAuthOpen(true)}>
+                Login
+              </button>
             )}
           </div>
+
+          <Auth
+            isOpen={isAuthOpen}
+            onClose={() => setIsAuthOpen(false)}
+            onLoginSuccess={handleLoginSuccess}
+          />
         </div>
       </div>
     </header>

@@ -173,12 +173,73 @@
 .user-image {
   height: 50px;
   object-fit: contain;
+  background-color: #ffe9c7;
+  border-radius: 50%;
 }
 
 .user-image:hover {
   background-color: #a7d8ff;
-  border-radius: 50%;
   cursor: pointer;
+}
+
+.account-container {
+  position: relative;
+}
+
+.account-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: #f7faff;
+  border: 1px solid #cdeeff;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+  min-width: 180px;
+  padding: 8px;
+  display: flex;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.account-menu-name {
+  display: flex;
+  flex-direction: column;
+  padding: 8px 12px;
+  color: #223044;
+  border-bottom: 1px solid #CDEEFF;
+  margin-bottom: 4px;
+}
+
+.account-menu-firstname,
+.account-menu-lastname {
+  font-weight: bold;
+  max-width: 200px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.account-menu-item {
+  background: none;
+  border: none;
+  text-align: left;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 15px;
+  color: #223044;
+  cursor: pointer;
+}
+
+.account-menu-item:hover {
+  background-color: #cdeeff;
+}
+
+.account-menu-item.logout {
+  color: #d64545;
+}
+
+.account-menu-item.logout:hover {
+  background-color: #fdecec;
 }
 
 @media (max-width: 1200px) {
@@ -251,5 +312,10 @@
 
   .search-section {
     max-width: none;
+  }
+
+  .account-menu {
+    right: -8px;
+    min-width: 160px;
   }
 }
