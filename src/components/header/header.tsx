@@ -1,18 +1,23 @@
 import { useState, useRef, useEffect } from "react";
 import "./header.css";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Auth } from "./../auth/auth";
 import type { User } from "../../interface/user";
 
-function Header() {
-  // const [cartItemCount, setCartItemCount] = useState(0);
+interface HeaderProps {
+  loggedUser: User | null;
+  onLoginSuccess: (user: User) => void;
+  onLogout: () => void;
+}
+
+function Header({ loggedUser, onLoginSuccess, onLogout }: HeaderProps) {
   const [isSearchHovered, setIsSearchHovered] = useState(false);
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [isAccountHovered, setIsAccountHovered] = useState(false);
-  const [loggedUser, setLoggedUser] = useState<User | null>(null);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     function handleClickOutside(e: MouseEvent) {
@@ -25,12 +30,17 @@ function Header() {
   }, []);
 
   function handleLoginSuccess(user: User) {
-    setLoggedUser(user);
+    onLoginSuccess(user);
     setIsAuthOpen(false);
   }
 
-  function handleLogout() {
-    setLoggedUser(null);
+  function handleProfileClick() {
+    setIsMenuOpen(false);
+    navigate("/profil");
+  }
+
+  function handleLogoutClick() {
+    onLogout();
     setIsMenuOpen(false);
   }
 
@@ -111,11 +121,13 @@ function Header() {
                         {loggedUser.Lastname}
                       </span>
                     </div>
-                    <button className="account-menu-item">Profil</button>
+                    <button className="account-menu-item" onClick={handleProfileClick}>
+                      Profil
+                    </button>
                     <button className="account-menu-item">Bestellungen</button>
                     <button
                       className="account-menu-item logout"
-                      onClick={handleLogout}
+                      onClick={handleLogoutClick}
                     >
                       Ausloggen
                     </button>
