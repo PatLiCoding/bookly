@@ -78,9 +78,9 @@ function BookDetails({ book, onAddToCart }: Props) {
             <div key={comment.id} className="comment-card">
               <div className="comment-header">
                 <span className="user-name">{comment.userName}</span>
-                <div className="comment-stars">
+                <div className="stars">
                   {renderStars(comment.rating)}
-                  <p>12.8.2022</p>
+                  <p className="comment-date">12.8.2022</p>
                 </div>
               </div>
               <div className="comment-text">

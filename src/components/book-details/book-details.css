@@ -223,6 +223,12 @@
   border: 1px solid #eaeaea;
 }
 
+.comment-date {
+  color: #223044;
+  text-shadow: none;
+  line-height: 1.5;
+}
+
 @media (max-width: 1000px) {
   .book-header {
     padding: 12px;
