@@ -1,11 +1,15 @@
 import { Component } from "react";
-import type { User, Delivery } from "../../interface/user";
+import type { User, Order, Review } from "../../interface/user";
 import type { ProfileTabKey } from "../../components/profile/profile-tabs";
 import { ProfileInfoCard } from "../../components/profile/profile-info-card";
 import { DeleteConfirmModal } from "../../components/profile/delete-confirm-modal";
 import { ProfileTabs } from "../../components/profile/profile-tabs";
 import { ReviewListItem } from "../../components/profile/review-list-item";
 import { OrderCard } from "../../components/profile/order-card";
+import { getOrders, splitOrdersByStatus } from "../../services/order-service";
+import { getReviews } from "../../services/review-service";
+import { mergedValue, mergedDelivery, buildUserUpdate } from "../../services/user-service";
+import { visibleItems, hasMoreItems } from "../../utils/load-more";
 import "./profile.css";
 
 const PAGE_SIZE = 4;
@@ -22,6 +26,9 @@ interface ProfileState {
   activeTab: ProfileTabKey;
   formData: Record<string, string>;
   visibleCount: Record<ProfileTabKey, number>;
+  orders: Order[];
+  reviews: Review[];
+  isLoading: boolean;
 }
 
 export class Profile extends Component<ProfileProps, ProfileState> {
@@ -35,7 +42,25 @@ export class Profile extends Component<ProfileProps, ProfileState> {
       orderHistory: PAGE_SIZE,
       activeOrders: PAGE_SIZE,
     },
+    orders: [],
+    reviews: [],
+    isLoading: true,
   };
+
+  componentDidMount() {
+    this.loadData();
+  }
+
+  componentDidUpdate(prevProps: ProfileProps) {
+    if (prevProps.user !== this.props.user) this.loadData();
+  }
+
+  private async loadData() {
+    this.setState({ isLoading: true });
+    const { user } = this.props;
+    const [orders, reviews] = await Promise.all([getOrders(user), getReviews(user)]);
+    this.setState({ orders, reviews, isLoading: false });
+  }
 
   private toggleEdit = () => {
     this.setState((prev) => ({ isEditing: !prev.isEditing, formData: {} }));
@@ -49,42 +74,9 @@ export class Profile extends Component<ProfileProps, ProfileState> {
 
   private handleSave = () => {
     const { user, onSave } = this.props;
-    onSave({
-      Firstname: this.mergedValue("firstname", user.Firstname),
-      Lastname: this.mergedValue("lastname", user.Lastname),
-      email: this.mergedValue("email", user.email),
-      street: this.mergedValue("billingStreet", user.street ?? ""),
-      zip: this.mergedValue("billingZip", user.zip ?? ""),
-      country: this.mergedValue("billingCountry", user.country ?? ""),
-      deliveryAddress: this.buildDeliveryList(user),
-    });
+    onSave(buildUserUpdate(user, this.state.formData));
     this.setState({ isEditing: false, formData: {} });
   };
-
-  private buildDeliveryList(user: User): Delivery[] | undefined {
-    const primary = user.deliveryAddress?.[0];
-    const rest = (user.deliveryAddress ?? []).slice(1);
-    const updated = this.mergedDelivery(primary);
-    return updated ? [updated, ...rest] : user.deliveryAddress;
-  }
-
-  private mergedDelivery(primary?: Delivery): Delivery | undefined {
-    const { deliveryStreet, deliveryZip, deliveryCountry } =
-      this.state.formData;
-    if (!primary && !deliveryStreet && !deliveryZip && !deliveryCountry)
-      return undefined;
-    return {
-      id: primary?.id ?? Date.now(),
-      Firstname: this.mergedValue(
-        "deliveryFirstname",
-        primary?.Firstname ?? "",
-      ),
-      Lastname: this.mergedValue("deliveryLastname", primary?.Lastname ?? ""),
-      street: this.mergedValue("deliveryStreet", primary?.street ?? ""),
-      zip: this.mergedValue("deliveryZip", primary?.zip ?? ""),
-      country: this.mergedValue("deliveryCountry", primary?.country ?? ""),
-    };
-  }
 
   private setActiveTab = (tab: ProfileTabKey) => {
     this.setState({ activeTab: tab });
@@ -99,23 +91,19 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     }));
   };
 
-  private mergedValue(field: string, fallback: string) {
-    return this.state.formData[field] ?? fallback;
-  }
-
   private renderInfoCard() {
     const { user } = this.props;
-    const primary = user.deliveryAddress?.[0];
+    const { formData, isEditing } = this.state;
     return (
       <ProfileInfoCard
-        firstname={this.mergedValue("firstname", user.Firstname)}
-        lastname={this.mergedValue("lastname", user.Lastname)}
-        email={this.mergedValue("email", user.email)}
-        street={this.mergedValue("billingStreet", user.street ?? "")}
-        zip={this.mergedValue("billingZip", user.zip ?? "")}
-        country={this.mergedValue("billingCountry", user.country ?? "")}
-        delivery={this.mergedDelivery(primary)}
-        isEditing={this.state.isEditing}
+        firstname={mergedValue(formData, "firstname", user.Firstname)}
+        lastname={mergedValue(formData, "lastname", user.Lastname)}
+        email={mergedValue(formData, "email", user.email)}
+        street={mergedValue(formData, "billingStreet", user.street ?? "")}
+        zip={mergedValue(formData, "billingZip", user.zip ?? "")}
+        country={mergedValue(formData, "billingCountry", user.country ?? "")}
+        delivery={mergedDelivery(user.deliveryAddress?.[0], formData)}
+        isEditing={isEditing}
         onEditToggle={this.toggleEdit}
         onFieldChange={this.handleFieldChange}
         onSave={this.handleSave}
@@ -124,39 +112,32 @@ export class Profile extends Component<ProfileProps, ProfileState> {
   }
 
   private renderReviews() {
-    const reviews = this.props.user.reviews ?? [];
-    const count = this.state.visibleCount.reviews;
-    const items = reviews.slice(0, count);
+    const { reviews, visibleCount } = this.state;
+    const items = visibleItems(reviews, visibleCount.reviews);
     return (
       <>
         {items.map((r) => (
           <ReviewListItem key={r.id} review={r} />
         ))}
-        {this.renderLoadMore("reviews", reviews.length, count)}
+        {this.renderLoadMore("reviews", reviews, visibleCount.reviews)}
       </>
     );
   }
 
   private renderOrders(variant: "history" | "active") {
-    const orders = this.props.user.order ?? [];
-    const tab: ProfileTabKey =
-      variant === "history" ? "orderHistory" : "activeOrders";
-    const filtered = orders.filter((o) =>
-      variant === "history"
-        ? o.status === "delivered"
-        : o.status !== "delivered",
-    );
-    const count = this.state.visibleCount[tab];
-    return this.renderOrderGrid(filtered, count, variant, tab);
+    const { history, active } = splitOrdersByStatus(this.state.orders);
+    const orders = variant === "history" ? history : active;
+    const tab: ProfileTabKey = variant === "history" ? "orderHistory" : "activeOrders";
+    return this.renderOrderGrid(orders, this.state.visibleCount[tab], variant, tab);
   }
 
   private renderOrderGrid(
-    orders: NonNullable<User["order"]>,
+    orders: Order[],
     count: number,
     variant: "history" | "active",
     tab: ProfileTabKey,
   ) {
-    const items = orders.slice(0, count);
+    const items = visibleItems(orders, count);
     return (
       <>
         <div className="order-grid">
@@ -164,14 +145,14 @@ export class Profile extends Component<ProfileProps, ProfileState> {
             <OrderCard key={o.id} order={o} variant={variant} />
           ))}
         </div>
-        {this.renderLoadMore(tab, orders.length, count)}
+        {this.renderLoadMore(tab, orders, count)}
       </>
     );
   }
 
-  private renderLoadMore(tab: ProfileTabKey, total: number, count: number) {
-    if (total == 0) return <span className="empty-content">Keine Vorhanden</span>;
-    if (count >= total) return null
+  private renderLoadMore<T>(tab: ProfileTabKey, items: T[], count: number) {
+    if (items.length === 0) return <span className="empty-content">Keine Vorhanden</span>;
+    if (!hasMoreItems(items, count)) return null;
     return (
       <button className="load-more-btn" onClick={() => this.loadMore(tab)}>
         Mehr laden
@@ -180,6 +161,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
   }
 
   private renderTabContent() {
+    if (this.state.isLoading) return <span className="empty-content">Lädt…</span>;
     const { activeTab } = this.state;
     if (activeTab === "reviews") return this.renderReviews();
     if (activeTab === "orderHistory") return this.renderOrders("history");
@@ -198,10 +180,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
         >
           Profil löschen
         </button>
-        <ProfileTabs
-          activeTab={this.state.activeTab}
-          onTabChange={this.setActiveTab}
-        />
+        <ProfileTabs activeTab={this.state.activeTab} onTabChange={this.setActiveTab} />
         <div className="profile-tab-content">{this.renderTabContent()}</div>
         {showDeleteConfirm && (
           <DeleteConfirmModal

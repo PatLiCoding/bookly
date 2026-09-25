@@ -1,16 +1,11 @@
 import { Component } from "react";
-import type { Order, OrderStatus } from "../../interface/user";
+import type { Order } from "../../interface/user";
+import { statusLabel } from "../../services/order-service";
 
 interface OrderCardProps {
   order: Order;
   variant: "history" | "active";
 }
-
-const STATUS_LABEL: Record<OrderStatus, string> = {
-  processing: "In Bearbeitung",
-  shipped: "Versendet",
-  delivered: "Zugestellt / angekommen",
-};
 
 export class OrderCard extends Component<OrderCardProps> {
   private renderHistoryFooter() {
@@ -28,7 +23,7 @@ export class OrderCard extends Component<OrderCardProps> {
     return (
       <>
         <p>Bestellt: {order.orderDate}</p>
-        <p className="order-status">{STATUS_LABEL[order.status]}</p>
+        <p className="order-status">{statusLabel(order.status)}</p>
       </>
     );
   }
@@ -41,9 +36,7 @@ export class OrderCard extends Component<OrderCardProps> {
         <p className="order-title">{order.title}</p>
         <p className="order-author">{order.author}</p>
         <p className="order-price">{order.price.toFixed(2)} €</p>
-        {variant === "history"
-          ? this.renderHistoryFooter()
-          : this.renderActiveFooter()}
+        {variant === "history" ? this.renderHistoryFooter() : this.renderActiveFooter()}
       </div>
     );
   }
