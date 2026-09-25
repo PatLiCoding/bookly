@@ -6,6 +6,7 @@ import FilterSidebar from "../../components/filter-sidebar/filter-sidebar";
 import Pagination from "../../components/pagination/pagination";
 import { useCategoryBooks } from "./use-category-books";
 import { useScrollTarget } from "./use-scroll-target";
+import type { CartItem } from "../../pages/cart-page/cart-page";
 
 type BookList = ReturnType<typeof useCategoryBooks>;
 
@@ -28,26 +29,26 @@ function CategoryHeader({ title, showFilters, onToggle }: HeaderProps) {
 }
 
 /** Book grid, or a hint if no book matches. */
-function CategoryBooks({ list }: { list: BookList }) {
+function CategoryBooks({ list, onAddToCart }: { list: BookList; onAddToCart: (item: CartItem) => void } ) {
   return (
     <div className="category-books">
-      {list.books.length === 0 ? <p>Keine Bücher gefunden.</p> : <BookPreviewList books={list.books} layout="grid" />}
+      {list.books.length === 0 ? <p>Keine Bücher gefunden.</p> : <BookPreviewList books={list.books} layout="grid" onAddToCart={onAddToCart}/>}
     </div>
   );
 }
 
 /** Book list next to the (optional) filter sidebar. */
-function CategoryContent({ list, showFilters }: { list: BookList; showFilters: boolean }) {
+function CategoryContent({ list, showFilters, onAddToCart }: { list: BookList; showFilters: boolean;onAddToCart: (item: CartItem) => void }) {
   return (
     <div className="category-content">
-      <CategoryBooks list={list} />
+      <CategoryBooks list={list} onAddToCart={onAddToCart}/>
       {showFilters && <FilterSidebar filters={list.filters} onChange={list.changeFilters} />}
     </div>
   );
 }
 
 /** Category view; state (page, filters) lives here and resets via the key below. */
-function CategoryView({ name }: { name?: string }) {
+function CategoryView({ name, onAddToCart }: { name?: string; onAddToCart: (item: CartItem) => void }) {
   const [showFilters, setShowFilters] = useState(true);
   const { setTarget, scrollThen } = useScrollTarget();
   const list = useCategoryBooks(name);
@@ -56,16 +57,16 @@ function CategoryView({ name }: { name?: string }) {
   return (
     <section className="category-page" ref={setTarget}>
       <CategoryHeader title={name} showFilters={showFilters} onToggle={() => setShowFilters(!showFilters)} />
-      <CategoryContent list={list} showFilters={showFilters} />
+      <CategoryContent list={list} showFilters={showFilters} onAddToCart={onAddToCart} />
       <Pagination page={list.page} pageCount={list.pageCount} onChange={changePage} />
     </section>
   );
 }
 
 /** Shows the books of the selected category (10 per page) with filters and sorting. */
-function CategoryPage() {
+function CategoryPage({ onAddToCart }: { onAddToCart: (item: CartItem) => void }) {
   const { name } = useParams();
-  return <CategoryView key={name} name={name} />;
+  return <CategoryView key={name} name={name} onAddToCart={onAddToCart} />;
 }
 
 export default CategoryPage;

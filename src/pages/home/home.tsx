@@ -2,8 +2,13 @@ import "./home.css";
 import { Link } from "react-router-dom";
 import BookPreviewList from "../../components/book-preview-list/book-preview-list";
 import { highlightBooks } from "../../data/book-dummy-data";
+import type { CartItem } from "../cart-page/cart-page";
 
-function Home() {
+interface HomeProps {
+  onAddToCart: (item: CartItem) => void;
+}
+
+function Home({ onAddToCart }: HomeProps) {
   return (
     <section className="home">
       <section className="hero-section">
@@ -30,7 +35,7 @@ function Home() {
             <h2 className="container-title">Unsere Highlights</h2>
             <Link to="/" className="view-all-link">Alle ansehen &rarr;</Link>
           </div>
-          <BookPreviewList books={highlightBooks} />
+          <BookPreviewList books={highlightBooks} onAddToCart={onAddToCart} />
         </section>
 
         <section className="releases">
@@ -38,7 +43,7 @@ function Home() {
             <h2 className="container-title">Neuheiten</h2>
             <Link to="/" className="view-all-link">Alle ansehen &rarr;</Link>
           </div>
-          <BookPreviewList books={highlightBooks} />
+          <BookPreviewList books={highlightBooks} onAddToCart={onAddToCart} />
         </section>
       </section>
     </section>

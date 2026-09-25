@@ -6,11 +6,12 @@ import type { User } from "../../interface/user";
 
 interface HeaderProps {
   loggedUser: User | null;
+  cartCount: number;
   onLoginSuccess: (user: User) => void;
   onLogout: () => void;
 }
 
-function Header({ loggedUser, onLoginSuccess, onLogout }: HeaderProps) {
+function Header({ loggedUser, cartCount, onLoginSuccess, onLogout }: HeaderProps) {
   const [isSearchHovered, setIsSearchHovered] = useState(false);
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [isAccountHovered, setIsAccountHovered] = useState(false);
@@ -83,6 +84,7 @@ function Header({ loggedUser, onLoginSuccess, onLogout }: HeaderProps) {
             className="cart"
             onMouseEnter={() => setIsCartHovered(true)}
             onMouseLeave={() => setIsCartHovered(false)}
+            onClick={() => navigate("/cart")}
           >
             <img
               className="cart-image"
@@ -93,7 +95,7 @@ function Header({ loggedUser, onLoginSuccess, onLogout }: HeaderProps) {
               }
               alt="Cart"
             />
-            <span className="cart-count">0</span>
+            <span className="cart-count">{cartCount}</span>
           </div>
 
           <div className="user-section" ref={menuRef}>

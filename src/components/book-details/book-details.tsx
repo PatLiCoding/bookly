@@ -1,11 +1,13 @@
 import { useRef } from "react";
 import "./book-details.css";
 import type { Book } from "../../interface/book";
+import type { CartItem } from "../../pages/cart-page/cart-page";
 import { renderStars } from "../../utils/render-stars";
+import { parsePrice } from "../../utils/parse-price";
 
 interface Props {
   book: Book;
-  onAddToCart?: (book: Book) => void;
+  onAddToCart: (item: CartItem) => void;
 }
 
 function BookDetails({ book, onAddToCart }: Props) {
@@ -13,6 +15,17 @@ function BookDetails({ book, onAddToCart }: Props) {
 
   const scrollToComments = () => {
     commentsRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleAddToCart = () => {
+    onAddToCart({
+      id: book.id,
+      title: book.title,
+      author: book.author,
+      price: parsePrice(book.price),
+      cover: book.cover,
+      quantity: 1,
+    });
   };
 
   const commentCount = book.comments ? book.comments.length : 0;
@@ -45,7 +58,7 @@ function BookDetails({ book, onAddToCart }: Props) {
             <span className="price-tag">{book.price}</span>
             <button
               className="order-btn"
-              onClick={() => onAddToCart && onAddToCart(book)}
+              onClick={handleAddToCart}
               aria-label="In den Warenkorb"
             >
               <span>In den Warenkorb</span>

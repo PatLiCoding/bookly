@@ -10,6 +10,7 @@ interface OrderCardProps {
 export class OrderCard extends Component<OrderCardProps> {
   private renderHistoryFooter() {
     const { order } = this.props;
+
     return (
       <>
         <p>Bestellt: {order.orderDate}</p>
@@ -20,6 +21,7 @@ export class OrderCard extends Component<OrderCardProps> {
 
   private renderActiveFooter() {
     const { order } = this.props;
+
     return (
       <>
         <p>Bestellt: {order.orderDate}</p>
@@ -28,15 +30,45 @@ export class OrderCard extends Component<OrderCardProps> {
     );
   }
 
+  private renderItems() {
+    const { items } = this.props.order;
+
+    return (
+      <div className="order-items">
+        {items.map((item) => (
+          <div className="order-item" key={item.id}>
+            <img
+              className="order-cover"
+              src={item.bookCover}
+              alt={item.title}
+            />
+
+            <div>
+              <p className="order-title">{item.title}</p>
+              <p className="order-author">{item.author}</p>
+              <p>Menge: {item.quantity}</p>
+              <p>{item.price.toFixed(2).replace(".", ",")} €</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    );
+  }
+
   render() {
     const { order, variant } = this.props;
+
     return (
       <div className="order-card">
-        <img className="order-cover" src={order.bookCover} alt={order.title} />
-        <p className="order-title">{order.title}</p>
-        <p className="order-author">{order.author}</p>
-        <p className="order-price">{order.price.toFixed(2)} €</p>
-        {variant === "history" ? this.renderHistoryFooter() : this.renderActiveFooter()}
+        {this.renderItems()}
+
+        <p className="order-total">
+          Gesamt: {order.totalPrice.toFixed(2).replace(".", ",")} €
+        </p>
+
+        {variant === "history"
+          ? this.renderHistoryFooter()
+          : this.renderActiveFooter()}
       </div>
     );
   }

@@ -4,6 +4,7 @@ export interface Delivery {
   Lastname: string;
   street: string;
   zip: string;
+  city: string;
   country: string;
 }
 
@@ -18,12 +19,19 @@ export interface Review {
 
 export type OrderStatus = "processing" | "shipped" | "delivered";
 
-export interface Order {
+export interface OrderItem {
   id: number;
-  bookCover: string;
+  bookCover?: string;
   title: string;
   author: string;
   price: number;
+  quantity: number;
+}
+
+export interface Order {
+  id: number;
+  items: OrderItem[];
+  totalPrice: number;
   orderDate: string;
   deliveredDate?: string;
   status: OrderStatus;
@@ -37,6 +45,7 @@ export interface User {
   passwort: string;
   street?: string;
   zip?: string;
+  city?: string;
   country?: string;
   deliveryAddress?: Delivery[];
   reviews?: Review[];
