@@ -1,6 +1,6 @@
 import { useState } from "react";
 import "./App.css";
-import "./styles/shared.css"
+import "./styles/shared.css";
 import {
   Routes,
   Route,
@@ -37,7 +37,14 @@ function OrderDetailRoute({ user, onBack }: OrderDetailRouteProps) {
 function App() {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
   const [errorMsg, setErrorMsg] = useState("");
-  const { cartItems, addItem, removeItem, clearCart } = useCart();
+  const {
+    cartItems,
+    addItem,
+    increaseItem,
+    decreaseItem,
+    removeItem,
+    clearCart,
+  } = useCart();
   const navigate = useNavigate();
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
 
@@ -90,10 +97,7 @@ function App() {
   function renderOrderDetailRoute() {
     if (!loggedUser) return <Navigate to="/" replace />;
     return (
-      <OrderDetailRoute
-        user={loggedUser}
-        onBack={() => navigate("order")}
-      />
+      <OrderDetailRoute user={loggedUser} onBack={() => navigate("/order")} />
     );
   }
 
@@ -119,10 +123,7 @@ function App() {
           />
           <Route path="/profil" element={renderProfileRoute()} />
           <Route path="/order" element={renderOrdersRoute()} />
-          <Route
-            path="order/:orderId"
-            element={renderOrderDetailRoute()}
-          />
+          <Route path="/order/:orderId" element={renderOrderDetailRoute()} />
           <Route
             path="/cart"
             element={
@@ -130,6 +131,8 @@ function App() {
                 cartItems={cartItems}
                 loggedUser={loggedUser}
                 errorMsg={errorMsg}
+                onIncreaseItem={increaseItem}
+                onDecreaseItem={decreaseItem}
                 onRemoveItem={removeItem}
                 onCheckout={handleCheckout}
                 setErrorMsg={setErrorMsg}

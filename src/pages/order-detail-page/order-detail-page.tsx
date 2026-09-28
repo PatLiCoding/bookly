@@ -1,6 +1,8 @@
 import { Component } from "react";
+import { Link } from "react-router-dom";
 import type { User, Order } from "../../interface/user";
 import { getOrders, statusLabel } from "../../services/order-service";
+import { formatPrice, calcSubtotal } from "../../utils/price";
 import "../order-page/order-page.css";
 import "./order-detail-page.css";
 
@@ -15,16 +17,6 @@ interface OrderDetailPageProps {
 interface OrderDetailPageState {
   order: Order | null;
   isLoading: boolean;
-}
-
-/** Formats a number as a German price, e.g. 12.9 -> "12,90 €". */
-function formatPrice(value: number): string {
-  return value.toFixed(2).replace(".", ",") + " €";
-}
-
-/** Sums up the prices of all items of an order. */
-function calcSubtotal(items: OrderItem[]): number {
-  return items.reduce((sum, item) => sum + Number(item.price || 0), 0);
 }
 
 /**
@@ -86,23 +78,28 @@ export class OrderDetailPage extends Component<
   }
 
   private renderItemDetails(item: OrderItem) {
-    const price =
-      typeof item.price === "number" ? formatPrice(item.price) : item.price;
     return (
       <div className="order-item-details">
         <span className="order-item-title">{item.title}</span>
         {item.author && <span className="order-item-author">von {item.author}</span>}
-        {price && <span className="order-item-price">{price}</span>}
+        <span className="order-item-price">
+          {item.quantity} × {formatPrice(item.price)}
+        </span>
       </div>
     );
   }
 
+  /** Renders one ordered item; clicking it opens the book details page. */
   private renderItem(item: OrderItem) {
     return (
-      <div key={item.id} className="order-item">
+      <Link
+        key={item.id}
+        to={`/book/${item.bookId}`}
+        className="order-item order-item-link"
+      >
         <img className="order-item-cover" src={item.bookCover} alt={item.title} />
         {this.renderItemDetails(item)}
-      </div>
+      </Link>
     );
   }
 

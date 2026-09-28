@@ -10,6 +10,7 @@ export interface Delivery {
 
 export interface Review {
   id: number;
+  bookId: number;
   bookTitle: string;
   author: string;
   rating: number;
@@ -21,6 +22,7 @@ export type OrderStatus = "processing" | "shipped" | "delivered";
 
 export interface OrderItem {
   id: number;
+  bookId: number;
   bookCover?: string;
   title: string;
   author: string;

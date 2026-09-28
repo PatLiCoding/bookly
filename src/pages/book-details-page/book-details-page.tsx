@@ -1,16 +1,15 @@
 import { useParams } from "react-router-dom";
-import { highlightBooks } from "../../data/book-dummy-data";
+import { getBookById } from "../../services/book-service";
 import BookDetails from "../../components/book-details/book-details";
-import type { Book } from "../../interface/book";
-import type { CartItem } from "../cart-page/cart-page";
+import type { NewCartItem } from "../../utils/use-cart";
 
 interface Props {
-  onAddToCart: (item: CartItem) => void;
+  onAddToCart: (item: NewCartItem) => void;
 }
 
 function BookDetailsPage({ onAddToCart }: Props) {
   const { id } = useParams<{ id: string }>();
-  const book: Book | undefined = highlightBooks.find((b) => b.id === Number(id));
+  const book = getBookById(Number(id));
 
   if (!book) return <p>Buch nicht gefunden.</p>;
 

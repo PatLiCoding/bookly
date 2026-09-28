@@ -1,6 +1,12 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
 import type { User } from "../../interface/user";
+import {
+  formatPrice,
+  calcSubtotal,
+  calcShippingCost,
+  calcTotal,
+} from "../../utils/price";
 import "./cart-page.css";
 
 export interface CartItem {
@@ -19,19 +25,21 @@ interface CartPageProps {
   onRemoveItem: (id: number) => void;
   onCheckout: () => void;
   setErrorMsg: (msg: string) => void;
+  onIncreaseItem: (id: number) => void;
+  onDecreaseItem: (id: number) => void;
 }
 
 export class CartPage extends Component<CartPageProps> {
   get subtotal(): number {
-    return this.props.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    return calcSubtotal(this.props.cartItems);
   }
 
   get shippingCost(): number {
-    return this.props.cartItems.length > 0 ? 3.95 : 0;
+    return calcShippingCost(this.props.cartItems);
   }
 
   get totalPrice(): number {
-    return this.subtotal + this.shippingCost;
+    return calcTotal(this.props.cartItems);
   }
 
   formatPrice(value: number): string {
@@ -76,9 +84,27 @@ export class CartPage extends Component<CartPageProps> {
       <div className="cart-item-info">
         <h3 className="cart-item-title">{item.title}</h3>
         <p className="cart-item-author">Autor: {item.author}</p>
-        <p className="cart-item-quantity">
-          {item.quantity} × {this.formatPrice(item.price)}
-        </p>
+      </div>
+    );
+  }
+
+  private renderQuantityControls(item: CartItem) {
+    const { onDecreaseItem, onIncreaseItem } = this.props;
+    return (
+      <div className="cart-item-qty">
+        <button
+          onClick={() => onDecreaseItem(item.id)}
+          aria-label="Menge verringern"
+        >
+          -
+        </button>
+        <span>{item.quantity}</span>
+        <button
+          onClick={() => onIncreaseItem(item.id)}
+          aria-label="Menge erhöhen"
+        >
+          +
+        </button>
       </div>
     );
   }
@@ -86,10 +112,14 @@ export class CartPage extends Component<CartPageProps> {
   private renderItemActions(item: CartItem) {
     return (
       <div className="cart-item-actions">
+        {this.renderQuantityControls(item)}
         <span className="cart-item-price">
-          {this.formatPrice(item.price * item.quantity)}
+          {formatPrice(item.price * item.quantity)}
         </span>
-        <button className="cart-item-remove" onClick={() => this.props.onRemoveItem(item.id)}>
+        <button
+          className="cart-item-remove"
+          onClick={() => this.props.onRemoveItem(item.id)}
+        >
           Entfernen
         </button>
       </div>
@@ -107,7 +137,9 @@ export class CartPage extends Component<CartPageProps> {
   }
 
   private renderSummaryRow(label: string, value: string, isTotal = false) {
-    const rowClass = isTotal ? "cart-summary-row cart-summary-row--total" : "cart-summary-row";
+    const rowClass = isTotal
+      ? "cart-summary-row cart-summary-row--total"
+      : "cart-summary-row";
     return (
       <div className={rowClass}>
         <span>{label}</span>
@@ -119,9 +151,19 @@ export class CartPage extends Component<CartPageProps> {
   private renderSummaryTotals() {
     return (
       <>
-        {this.renderSummaryRow("Zwischensumme:", this.formatPrice(this.subtotal))}
-        {this.renderSummaryRow("Versandkosten:", this.formatPrice(this.shippingCost))}
-        {this.renderSummaryRow("Gesamtsumme:", this.formatPrice(this.totalPrice), true)}
+        {this.renderSummaryRow(
+          "Zwischensumme:",
+          this.formatPrice(this.subtotal),
+        )}
+        {this.renderSummaryRow(
+          "Versandkosten:",
+          this.formatPrice(this.shippingCost),
+        )}
+        {this.renderSummaryRow(
+          "Gesamtsumme:",
+          this.formatPrice(this.totalPrice),
+          true,
+        )}
       </>
     );
   }
@@ -133,7 +175,8 @@ export class CartPage extends Component<CartPageProps> {
         {errorMsg && <p className="cart-summary-error">{errorMsg}</p>}
         {!loggedUser && (
           <p className="cart-summary-hint">
-            Bestellen ist nur mit einem Account möglich. Bitte im Header einloggen.
+            Bestellen ist nur mit einem Account möglich. Bitte im Header
+            einloggen.
           </p>
         )}
       </>

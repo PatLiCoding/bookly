@@ -3,6 +3,12 @@ import { Link, Navigate } from "react-router-dom";
 import type { Order, User, Delivery } from "../../interface/user";
 import type { CartItem } from "../cart-page/cart-page";
 import { buildUserUpdate } from "../../services/user-service";
+import {
+  formatPrice,
+  calcSubtotal,
+  calcShippingCost,
+  calcTotal,
+} from "../../utils/price";
 import "./checkout-page.css";
 
 interface CheckoutPageProps {
@@ -64,25 +70,21 @@ export class CheckoutPage extends Component<CheckoutPageProps, CheckoutState> {
   }
 
   get subtotal(): number {
-    return this.props.cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
+    return calcSubtotal(this.props.cartItems);
   }
 
   get shippingCost(): number {
-    return this.props.cartItems.length > 0 ? 3.95 : 0;
+    return calcShippingCost(this.props.cartItems);
   }
 
   get totalPrice(): number {
-    return this.subtotal + this.shippingCost;
+    return calcTotal(this.props.cartItems);
   }
 
   get deliveryDate(): string {
     const date = new Date();
     date.setDate(date.getDate() + 7);
     return date.toLocaleDateString("de-DE");
-  }
-
-  formatPrice(value: number): string {
-    return `${value.toFixed(2).replace(".", ",")} €`;
   }
 
   updateShipping(field: keyof Delivery, value: string): void {
@@ -109,13 +111,15 @@ export class CheckoutPage extends Component<CheckoutPageProps, CheckoutState> {
     return this.isShippingValid() && this.isBillingValid();
   }
 
+  /** Maps cart lines to order items. `price` is the price of ONE piece. */
   private mapOrderItems() {
     return this.props.cartItems.map((item) => ({
       id: item.id,
+      bookId: item.id,
       bookCover: item.cover ?? "/assets/img/bookcover_default.png",
       title: item.title,
       author: item.author,
-      price: item.price * item.quantity,
+      price: item.price,
       quantity: item.quantity,
     }));
   }
@@ -125,7 +129,7 @@ export class CheckoutPage extends Component<CheckoutPageProps, CheckoutState> {
       id: Date.now(),
       items: this.mapOrderItems(),
       totalPrice: this.totalPrice,
-      orderDate: new Date().toISOString().split("T")[0],
+      orderDate: new Date().toLocaleDateString("de-DE"),
       status: "processing",
     };
   }
@@ -278,7 +282,7 @@ export class CheckoutPage extends Component<CheckoutPageProps, CheckoutState> {
           <strong>{item.title}</strong> <span>{item.author}</span>
           <small>Menge: {item.quantity}</small>
         </div>
-        <strong>{this.formatPrice(item.price * item.quantity)}</strong>
+        <strong>{formatPrice(item.price * item.quantity)}</strong>
       </div>
     );
   }
@@ -292,7 +296,7 @@ export class CheckoutPage extends Component<CheckoutPageProps, CheckoutState> {
         </div>
         <div className="checkout-total">
           <span>Gesamtsumme inkl. Versand</span>
-          <strong>{this.formatPrice(this.totalPrice)}</strong>
+          <strong>{formatPrice(this.totalPrice)}</strong>
         </div>
       </div>
     );
@@ -310,9 +314,9 @@ export class CheckoutPage extends Component<CheckoutPageProps, CheckoutState> {
   private renderSummary() {
     return (
       <div className="checkout-card checkout-summary">
-        {this.renderSummaryRow("Zwischensumme", this.formatPrice(this.subtotal))}
-        {this.renderSummaryRow("Versand", this.formatPrice(this.shippingCost))}
-        {this.renderSummaryRow("Gesamtsumme", this.formatPrice(this.totalPrice), true)}
+        {this.renderSummaryRow("Zwischensumme", formatPrice(this.subtotal))}
+        {this.renderSummaryRow("Versand", formatPrice(this.shippingCost))}
+        {this.renderSummaryRow("Gesamtsumme", formatPrice(this.totalPrice), true)}
       </div>
     );
   }

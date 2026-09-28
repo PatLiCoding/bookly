@@ -201,6 +201,15 @@
   margin-bottom: 12px;
 }
 
+.review-book-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.review-book-link:hover .review-book-title {
+  text-decoration: underline;
+}
+
 .review-item-header {
   display: flex;
   justify-content: space-between;

@@ -1,13 +1,13 @@
 import { useRef } from "react";
 import "./book-details.css";
 import type { Book } from "../../interface/book";
-import type { CartItem } from "../../pages/cart-page/cart-page";
+import type { NewCartItem } from "../../utils/use-cart";
 import { renderStars } from "../../utils/render-stars";
 import { parsePrice } from "../../utils/parse-price";
 
 interface Props {
   book: Book;
-  onAddToCart: (item: CartItem) => void;
+  onAddToCart: (item: NewCartItem) => void;
 }
 
 function BookDetails({ book, onAddToCart }: Props) {
@@ -24,7 +24,6 @@ function BookDetails({ book, onAddToCart }: Props) {
       author: book.author,
       price: parsePrice(book.price),
       cover: book.cover,
-      quantity: 1,
     });
   };
 
