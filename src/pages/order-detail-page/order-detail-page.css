@@ -1,7 +1,7 @@
 .orders-page {
   max-width: 960px;
   width: 100%;
-  margin: 0 auto;
+  margin-top: 2px;
   padding: 32px 20px 64px;
   box-sizing: border-box;
   background-color: #f7faff;
@@ -12,6 +12,7 @@
 .orders-page .order-detail-btn {
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   background-color: #223044;
   color: #f7faff;
@@ -151,18 +152,34 @@
   align-self: center;
 }
 
-.order-detail-total {
+.order-detail-summary {
   margin-top: 24px;
   padding-top: 16px;
   border-top: 2px solid #cdeeff;
-  text-align: right;
-  font-size: 1.15rem;
   color: #223044;
+}
+
+.order-summary-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 320px;
+  margin: 6px 0 6px auto;
+  font-size: 0.95rem;
+}
+
+.order-summary-row strong {
+  font-weight: 600;
+}
+
+.order-detail-total {
+  margin-top: 12px;
+  font-size: 1.15rem;
 }
 
 .order-detail-total strong {
   font-size: 1.3rem;
-  color: #223044;
+  font-weight: 700;
 }
 
 @media (max-width: 640px) {
