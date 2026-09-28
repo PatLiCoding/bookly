@@ -19,7 +19,7 @@ function Navbar() {
     <section className="navbar">
       <div className="navbar-content-max-width">
             {CATEGORIES.map((category) => (
-              <NavLink key={category} to={`/kategorie/${category}`}>
+              <NavLink key={category} to={`/category/${category}`}>
                 <p>{category}</p>
               </NavLink>
             ))}

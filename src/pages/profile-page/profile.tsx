@@ -5,10 +5,14 @@ import { ProfileInfoCard } from "../../components/profile/profile-info-card";
 import { DeleteConfirmModal } from "../../components/profile/delete-confirm-modal";
 import { ProfileTabs } from "../../components/profile/profile-tabs";
 import { ReviewListItem } from "../../components/profile/review-list-item";
-import { OrderCard } from "../../components/profile/order-card";
+import { OrderCard } from "../../components/order/order-card";
 import { getOrders, splitOrdersByStatus } from "../../services/order-service";
 import { getReviews } from "../../services/review-service";
-import { mergedValue, mergedDelivery, buildUserUpdate } from "../../services/user-service";
+import {
+  mergedValue,
+  mergedDelivery,
+  buildUserUpdate,
+} from "../../services/user-service";
 import { visibleItems, hasMoreItems } from "../../utils/load-more";
 import "./profile.css";
 
@@ -18,6 +22,7 @@ interface ProfileProps {
   user: User;
   onSave: (updated: Partial<User>) => void;
   onDeleteAccount: () => void;
+  onNavigateToDetail: (orderId: string | number) => void;
 }
 
 interface ProfileState {
@@ -58,7 +63,10 @@ export class Profile extends Component<ProfileProps, ProfileState> {
   private async loadData() {
     this.setState({ isLoading: true });
     const { user } = this.props;
-    const [orders, reviews] = await Promise.all([getOrders(user), getReviews(user)]);
+    const [orders, reviews] = await Promise.all([
+      getOrders(user),
+      getReviews(user),
+    ]);
     this.setState({ orders, reviews, isLoading: false });
   }
 
@@ -127,8 +135,14 @@ export class Profile extends Component<ProfileProps, ProfileState> {
   private renderOrders(variant: "history" | "active") {
     const { history, active } = splitOrdersByStatus(this.state.orders);
     const orders = variant === "history" ? history : active;
-    const tab: ProfileTabKey = variant === "history" ? "orderHistory" : "activeOrders";
-    return this.renderOrderGrid(orders, this.state.visibleCount[tab], variant, tab);
+    const tab: ProfileTabKey =
+      variant === "history" ? "orderHistory" : "activeOrders";
+    return this.renderOrderGrid(
+      orders,
+      this.state.visibleCount[tab],
+      variant,
+      tab,
+    );
   }
 
   private renderOrderGrid(
@@ -142,7 +156,12 @@ export class Profile extends Component<ProfileProps, ProfileState> {
       <>
         <div className="order-grid">
           {items.map((o) => (
-            <OrderCard key={o.id} order={o} variant={variant} />
+            <OrderCard
+              key={o.id}
+              order={o}
+              variant={variant}
+              onDetailClick={this.props.onNavigateToDetail}
+            />
           ))}
         </div>
         {this.renderLoadMore(tab, orders, count)}
@@ -151,7 +170,8 @@ export class Profile extends Component<ProfileProps, ProfileState> {
   }
 
   private renderLoadMore<T>(tab: ProfileTabKey, items: T[], count: number) {
-    if (items.length === 0) return <span className="empty-content">Keine Vorhanden</span>;
+    if (items.length === 0)
+      return <span className="empty-content">Keine Vorhanden</span>;
     if (!hasMoreItems(items, count)) return null;
     return (
       <button className="load-more-btn" onClick={() => this.loadMore(tab)}>
@@ -161,7 +181,8 @@ export class Profile extends Component<ProfileProps, ProfileState> {
   }
 
   private renderTabContent() {
-    if (this.state.isLoading) return <span className="empty-content">Lädt…</span>;
+    if (this.state.isLoading)
+      return <span className="empty-content">Lädt…</span>;
     const { activeTab } = this.state;
     if (activeTab === "reviews") return this.renderReviews();
     if (activeTab === "orderHistory") return this.renderOrders("history");
@@ -180,7 +201,10 @@ export class Profile extends Component<ProfileProps, ProfileState> {
         >
           Profil löschen
         </button>
-        <ProfileTabs activeTab={this.state.activeTab} onTabChange={this.setActiveTab} />
+        <ProfileTabs
+          activeTab={this.state.activeTab}
+          onTabChange={this.setActiveTab}
+        />
         <div className="profile-tab-content">{this.renderTabContent()}</div>
         {showDeleteConfirm && (
           <DeleteConfirmModal

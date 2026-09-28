@@ -68,18 +68,6 @@
   margin-bottom: 12px;
 }
 
-.stars {
-  color: #f7faff;
-  font-size: 0.95rem;
-  letter-spacing: 1px;
-  text-shadow: 0 0 2px rgba(34, 48, 68, 1);
-}
-
-.star.filled {
-  color: #ffe9c7;
-  text-shadow: 0 0 2px rgba(34, 48, 68, 1);
-}
-
 .card-footer {
   display: flex;
   justify-content: space-between;

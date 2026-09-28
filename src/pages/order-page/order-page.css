@@ -1,0 +1,45 @@
+.orders-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 24px 16px;
+  box-sizing: border-box;
+  background-color: #f7faff;
+  color: #223044;
+  border-radius: 12px;
+}
+
+.orders-page h1 {
+  font-family: "Playfair Display", serif;
+  color: #223044;
+  margin-top: 0;
+  margin-bottom: 24px;
+}
+
+.orders-section {
+  margin-top: 32px;
+}
+
+.orders-section h2 {
+  font-size: 1.25rem;
+  color: #223044;
+  margin-bottom: 16px;
+  border-bottom: 2px solid #a7d8ff;
+  padding-bottom: 8px;
+}
+
+.orders-page .order-grid {
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+}
+
+.orders-page-loading {
+  padding: 40px;
+  text-align: center;
+  color: #223044;
+  font-weight: 500;
+}
+
+@media (max-width: 800px) {
+  .orders-page .order-grid {
+  grid-template-columns: 1fr;
+}
+}

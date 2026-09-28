@@ -234,67 +234,8 @@
   border: 1px solid #eaeaea;
 }
 
-.order-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-  gap: 16px;
-}
-
-.order-card {
-  background: #f7faff;
-  border: 1px solid #a7d8ff;
-  border-radius: 10px;
-  padding: 12px;
-  text-align: center;
-}
-
-.order-cover {
-  width: 100%;
-  height: 140px;
-  object-fit: contain;
-  border-radius: 6px;
-  margin-bottom: 8px;
-}
-
-.order-title {
-  font-weight: 700;
-}
-
-.order-author {
-  font-size: 0.85rem;
-  color: #223044aa;
-}
-
-.order-price {
-  margin-top: 4px;
-  font-weight: 600;
-}
-
-.order-status {
-  font-size: 0.85rem;
-  margin-top: 4px;
-}
-
-.empty-content {
-  display: flex;
-  justify-content: center;
-  padding-top: 15%;
-}
-
-.load-more-btn {
-  display: block;
-  margin: 16px auto 0;
-  background: #a7d8ff;
-  color: #223044;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 20px;
-  cursor: pointer;
-}
-
-.load-more-btn:hover {
-  background: #223044;
-  color: #f7faff;
+.profile-tab-content .order-grid {
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }
 
 .profile-tab-content::-webkit-scrollbar {
@@ -324,4 +265,9 @@
   .profile-tab-content {
     max-height: 360px;
   }
+
+  .profile-tab-content .order-grid {
+  grid-template-columns: 1fr;
+}
+
 }

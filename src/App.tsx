@@ -1,6 +1,13 @@
 import { useState } from "react";
 import "./App.css";
-import { Routes, Route, Navigate, useNavigate } from "react-router-dom";
+import "./styles/shared.css"
+import {
+  Routes,
+  Route,
+  Navigate,
+  useNavigate,
+  useParams,
+} from "react-router-dom";
 import type { User } from "./interface/user";
 import Header from "./components/header/header";
 import Navbar from "./components/navbar/navbar";
@@ -11,7 +18,21 @@ import BookDetailsPage from "./pages/book-details-page/book-details-page";
 import { Profile } from "./pages/profile-page/profile";
 import { CartPage } from "./pages/cart-page/cart-page";
 import { CheckoutPage } from "./pages/checkout-page/checkout-page";
+import { OrdersPage } from "./pages/order-page/order-page";
+import { OrderDetailPage } from "./pages/order-detail-page/order-detail-page";
 import { useCart } from "./utils/use-cart";
+
+interface OrderDetailRouteProps {
+  user: User;
+  onBack: () => void;
+}
+
+function OrderDetailRoute({ user, onBack }: OrderDetailRouteProps) {
+  const { orderId } = useParams<{ orderId: string }>();
+  return (
+    <OrderDetailPage user={user} orderId={orderId ?? ""} onBack={onBack} />
+  );
+}
 
 function App() {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
@@ -40,19 +61,42 @@ function App() {
     clearCart();
   }
 
+  function handleNavigateToOrderDetail(orderId: string | number) {
+    navigate(`/order/${orderId}`);
+  }
+
   function renderProfileRoute() {
-    if (!loggedUser) {
-      return <Navigate to="/" replace />;
-    }
+    if (!loggedUser) return <Navigate to="/" replace />;
     return (
       <Profile
         user={loggedUser}
         onSave={handleSaveProfile}
         onDeleteAccount={handleDeleteAccount}
+        onNavigateToDetail={handleNavigateToOrderDetail}
       />
     );
   }
-  
+
+  function renderOrdersRoute() {
+    if (!loggedUser) return <Navigate to="/" replace />;
+    return (
+      <OrdersPage
+        user={loggedUser}
+        onNavigateToDetail={handleNavigateToOrderDetail}
+      />
+    );
+  }
+
+  function renderOrderDetailRoute() {
+    if (!loggedUser) return <Navigate to="/" replace />;
+    return (
+      <OrderDetailRoute
+        user={loggedUser}
+        onBack={() => navigate("order")}
+      />
+    );
+  }
+
   return (
     <div className="appContainer">
       <Header
@@ -66,7 +110,7 @@ function App() {
         <Routes>
           <Route path="/" element={<Home onAddToCart={addItem} />} />
           <Route
-            path="/kategorie/:name"
+            path="/category/:name"
             element={<CategoryPage onAddToCart={addItem} />}
           />
           <Route
@@ -74,6 +118,11 @@ function App() {
             element={<BookDetailsPage onAddToCart={addItem} />}
           />
           <Route path="/profil" element={renderProfileRoute()} />
+          <Route path="/order" element={renderOrdersRoute()} />
+          <Route
+            path="order/:orderId"
+            element={renderOrderDetailRoute()}
+          />
           <Route
             path="/cart"
             element={

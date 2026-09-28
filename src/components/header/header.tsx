@@ -11,7 +11,12 @@ interface HeaderProps {
   onLogout: () => void;
 }
 
-function Header({ loggedUser, cartCount, onLoginSuccess, onLogout }: HeaderProps) {
+function Header({
+  loggedUser,
+  cartCount,
+  onLoginSuccess,
+  onLogout,
+}: HeaderProps) {
   const [isSearchHovered, setIsSearchHovered] = useState(false);
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [isAccountHovered, setIsAccountHovered] = useState(false);
@@ -38,6 +43,11 @@ function Header({ loggedUser, cartCount, onLoginSuccess, onLogout }: HeaderProps
   function handleProfileClick() {
     setIsMenuOpen(false);
     navigate("/profil");
+  }
+
+  function handleOrdersClick() {
+    setIsMenuOpen(false);
+    navigate("/order");
   }
 
   function handleLogoutClick() {
@@ -123,10 +133,18 @@ function Header({ loggedUser, cartCount, onLoginSuccess, onLogout }: HeaderProps
                         {loggedUser.Lastname}
                       </span>
                     </div>
-                    <button className="account-menu-item" onClick={handleProfileClick}>
+                    <button
+                      className="account-menu-item"
+                      onClick={handleProfileClick}
+                    >
                       Profil
                     </button>
-                    <button className="account-menu-item">Bestellungen</button>
+                    <button
+                      className="account-menu-item"
+                      onClick={handleOrdersClick}
+                    >
+                      Bestellungen
+                    </button>
                     <button
                       className="account-menu-item logout"
                       onClick={handleLogoutClick}

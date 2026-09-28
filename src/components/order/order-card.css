@@ -1,0 +1,142 @@
+.order-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.order-card {
+  border: 2px solid #a7d8ff;
+  border-radius: 12px;
+  background-color: #ffffff;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  box-shadow: 0 2px 6px rgba(34, 48, 68, 0.04);
+}
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.875rem;
+  color: #223044;
+  border-bottom: 1px solid #cdeeff;
+  padding-bottom: 10px;
+}
+
+.order-label {
+  font-weight: 700;
+  color: #223044;
+}
+
+.order-status-badge {
+  background-color: #ffe9c7;
+  color: #223044;
+  border: 1px solid #223044;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 0.8rem;
+}
+
+.order-card-preview {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.order-card-covers {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.order-cover-thumb {
+  width: 48px;
+  height: 68px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #a7d8ff;
+}
+
+.order-cover-more {
+  width: 48px;
+  height: 68px;
+  background-color: #f7faff;
+  border: 1.5px dashed #a7d8ff;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  color: #223044;
+  font-size: 0.85rem;
+}
+
+.order-card-summary {
+  text-align: right;
+}
+
+.order-item-count {
+  margin: 0;
+  font-size: 0.85rem;
+  color: #223044;
+  opacity: 0.85;
+}
+
+.order-total {
+  margin: 4px 0 0 0;
+  font-size: 0.95rem;
+  color: #223044;
+}
+
+.order-card-footer {
+  display: flex;
+  justify-content: flex-end;
+  border-top: 1px solid #cdeeff;
+  padding-top: 10px;
+}
+
+.order-detail-btn {
+  background-color: #223044;
+  color: #f7faff;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+.order-detail-btn:hover {
+  background-color: #a7d8ff;
+  color: #223044;
+}
+
+@media (max-width: 480px) {
+  .order-card-header,
+  .order-card-preview {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .order-card-summary {
+    text-align: left;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px dashed #cdeeff;
+    padding-top: 8px;
+  }
+
+  .order-card-footer,
+  .order-detail-btn {
+    width: 100%;
+  }
+}

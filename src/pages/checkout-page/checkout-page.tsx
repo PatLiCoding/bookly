@@ -320,7 +320,7 @@ export class CheckoutPage extends Component<CheckoutPageProps, CheckoutState> {
   private renderConfirmationActions() {
     return (
       <div className="checkout-confirmation-actions">
-        <Link to="/profil" className="checkout-confirmation-btn checkout-confirmation-btn--primary">
+        <Link to="/order" className="checkout-confirmation-btn checkout-confirmation-btn--primary">
           Zu meinen Bestellungen
         </Link>
         <Link to="/" className="checkout-confirmation-btn checkout-confirmation-btn--secondary">

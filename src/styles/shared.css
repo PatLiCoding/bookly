@@ -1,0 +1,33 @@
+.stars {
+  color: #f7faff;
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+  text-shadow: 0 0 2px rgba(34, 48, 68, 1);
+}
+
+.star.filled {
+  color: #ffe9c7;
+  text-shadow: 0 0 2px rgba(34, 48, 68, 1);
+}
+
+.empty-content {
+  display: flex;
+  justify-content: center;
+  padding-top: 15%;
+}
+
+.load-more-btn {
+  display: block;
+  margin: 16px auto 0;
+  background: #a7d8ff;
+  color: #223044;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 20px;
+  cursor: pointer;
+}
+
+.load-more-btn:hover {
+  background: #223044;
+  color: #f7faff;
+}
