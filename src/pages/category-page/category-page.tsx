@@ -14,9 +14,11 @@ import type { CartItem } from "../../pages/cart-page/cart-page";
 type BookList = ReturnType<typeof useCategoryBooks>;
 type AddToCart = (item: CartItem) => void;
 
-/** Title of the page: the "all books" key is shown with its label. */
-function categoryTitle(name?: string): string | undefined {
-  return name === ALL_CATEGORY ? ALL_LABEL : name;
+/** Title of the page: the "all books" key gets its label, a search adds the term. */
+function pageTitle(name?: string, query = ""): string | undefined {
+  if (query && name === ALL_CATEGORY) return `Suchergebnisse für „${query}“`;
+  const title = name === ALL_CATEGORY ? ALL_LABEL : name;
+  return query ? `${title}: „${query}“` : title;
 }
 
 /** Label of the filter button; while closed it shows how many filters are active. */
@@ -66,33 +68,35 @@ function CategoryContent({ list, showFilters, onAddToCart }: { list: BookList; s
 interface ViewProps {
   name?: string;
   initialFilters: Filters;
+  query: string;
   onAddToCart: AddToCart;
 }
 
 /** Category view; state (page, filters) lives here and resets via the key below. */
-function CategoryView({ name, initialFilters, onAddToCart }: ViewProps) {
+function CategoryView({ name, initialFilters, query, onAddToCart }: ViewProps) {
   const { setTarget, scrollThen } = useScrollTarget();
-  const list = useCategoryBooks(name, initialFilters);
+  const list = useCategoryBooks(name, initialFilters, query);
   const activeCount = countActiveFilters(list.filters);
   const [showFilters, setShowFilters] = useState(activeCount > 0);
   const changePage = (page: number) => scrollThen(() => list.setPage(page));
 
   return (
     <section className="category-page" ref={setTarget}>
-      <CategoryHeader title={categoryTitle(name)} showFilters={showFilters} activeCount={activeCount} onToggle={() => setShowFilters(!showFilters)} />
+      <CategoryHeader title={pageTitle(name, query)} showFilters={showFilters} activeCount={activeCount} onToggle={() => setShowFilters(!showFilters)} />
       <CategoryContent list={list} showFilters={showFilters} onAddToCart={onAddToCart} />
       <Pagination page={list.page} pageCount={list.pageCount} onChange={changePage} />
     </section>
   );
 }
 
-/** Shows the books of the selected category (10 per page); `?sort=` presets the sorting. */
+/** Shows the books of the selected category (10 per page); `?sort=` presets the sorting, `?q=` searches title and author. */
 function CategoryPage({ onAddToCart }: { onAddToCart: AddToCart }) {
   const { name } = useParams();
   const [params] = useSearchParams();
   const sort = parseSort(params.get("sort"));
+  const query = (params.get("q") ?? "").trim();
   const filters = { ...NO_FILTERS, sort };
-  return <CategoryView key={`${name}-${sort}`} name={name} initialFilters={filters} onAddToCart={onAddToCart} />;
+  return <CategoryView key={`${name}-${sort}-${query}`} name={name} initialFilters={filters} query={query} onAddToCart={onAddToCart} />;
 }
 
 export default CategoryPage;

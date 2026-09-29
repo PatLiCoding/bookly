@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import "./header.css";
 import { Link, useNavigate } from "react-router-dom";
 import { Auth } from "./../auth/auth";
+import SearchBar from "../search-bar/search-bar";
 import type { User } from "../../interface/user";
 
 interface HeaderProps {
@@ -17,7 +18,6 @@ function Header({
   onLoginSuccess,
   onLogout,
 }: HeaderProps) {
-  const [isSearchHovered, setIsSearchHovered] = useState(false);
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [isAccountHovered, setIsAccountHovered] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -64,29 +64,7 @@ function Header({
         </Link>
 
         <div className="search-filter-container">
-          <div
-            className="search-section"
-            onMouseEnter={() => setIsSearchHovered(true)}
-            onMouseLeave={() => setIsSearchHovered(false)}
-          >
-            <textarea name="search" placeholder="Suche"></textarea>
-            <div className="lens-area">
-              <img
-                className="lens-area-border"
-                src="/assets/icons/search-borderline.png"
-                alt="Borderline"
-              />
-              <img
-                className="lens-img"
-                src={
-                  isSearchHovered
-                    ? "/assets/icons/search-hover.png"
-                    : "/assets/icons/search-default.png"
-                }
-                alt="Search"
-              />
-            </div>
-          </div>
+          <SearchBar />
         </div>
 
         <div className="actions">
