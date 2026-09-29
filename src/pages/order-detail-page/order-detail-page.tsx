@@ -1,7 +1,8 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
 import type { User, Order } from "../../interface/user";
-import { getOrders, statusLabel } from "../../services/order-service";
+import { getOrders, statusLabel, cancelOrder } from "../../services/order-service";
+import { CancelOrderModal } from "../../components/order/cancel-order-modal";
 import { formatPrice, calcSubtotal } from "../../utils/price";
 import "../order-page/order-page.css";
 import "./order-detail-page.css";
@@ -17,6 +18,7 @@ interface OrderDetailPageProps {
 interface OrderDetailPageState {
   order: Order | null;
   isLoading: boolean;
+  showCancelModal: boolean;
 }
 
 /**
@@ -32,7 +34,11 @@ export class OrderDetailPage extends Component<
   OrderDetailPageProps,
   OrderDetailPageState
 > {
-  state: OrderDetailPageState = { order: null, isLoading: true };
+  state: OrderDetailPageState = {
+    order: null,
+    isLoading: true,
+    showCancelModal: false,
+  };
 
   componentDidMount() {
     this.loadOrder();
@@ -49,6 +55,22 @@ export class OrderDetailPage extends Component<
     this.setState({ order: order ?? null, isLoading: false });
   }
 
+  private handleOpenCancelModal = () => {
+    this.setState({ showCancelModal: true });
+  };
+
+  private handleCloseCancelModal = () => {
+    this.setState({ showCancelModal: false });
+  };
+
+  private handleConfirmCancel = async () => {
+    if (!this.state.order) return;
+
+    await cancelOrder(this.props.user, this.state.order.id);
+    this.setState({ showCancelModal: false });
+    await this.loadOrder();
+  };
+
   private renderNotFound() {
     return (
       <div className="orders-page">
@@ -63,6 +85,8 @@ export class OrderDetailPage extends Component<
   }
 
   private renderHeader(order: Order) {
+    const canCancel = order.status === "processing";
+
     return (
       <div className="order-detail-header">
         <div>
@@ -72,7 +96,18 @@ export class OrderDetailPage extends Component<
             <p className="order-detail-meta">Geliefert am: {order.deliveredDate}</p>
           )}
         </div>
-        <div className="order-detail-badge">{statusLabel(order.status)}</div>
+        <div className="order-detail-header-actions">
+          <div className="order-detail-badge">{statusLabel(order.status)}</div>
+          {canCancel && (
+            <button
+              type="button"
+              className="order-cancel-btn"
+              onClick={this.handleOpenCancelModal}
+            >
+              Bestellung stornieren
+            </button>
+          )}
+        </div>
       </div>
     );
   }
@@ -139,7 +174,7 @@ export class OrderDetailPage extends Component<
   }
 
   render() {
-    const { order, isLoading } = this.state;
+    const { order, isLoading, showCancelModal } = this.state;
     if (isLoading) return <div className="orders-page-loading">Lädt…</div>;
     if (!order) return this.renderNotFound();
 
@@ -148,12 +183,18 @@ export class OrderDetailPage extends Component<
         <button className="order-back-btn" onClick={this.props.onBack}>
           &larr; Zurück zur Übersicht
         </button>
-
         <div className="order-detail-card">
           {this.renderHeader(order)}
           {this.renderItems(order)}
           {this.renderSummary(order)}
         </div>
+        {showCancelModal && (
+          <CancelOrderModal
+            orderId={order.id}
+            onConfirm={this.handleConfirmCancel}
+            onCancel={this.handleCloseCancelModal}
+          />
+        )}
       </div>
     );
   }

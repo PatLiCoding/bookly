@@ -20,7 +20,7 @@ export interface Review {
   text: string;
 }
 
-export type OrderStatus = "processing" | "shipped" | "delivered";
+export type OrderStatus = "processing" | "shipped" | "delivered" | "cancelled";
 
 export interface OrderItem {
   id: number;

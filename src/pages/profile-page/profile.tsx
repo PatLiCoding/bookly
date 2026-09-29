@@ -3,9 +3,10 @@ import type { User, Order, Review } from "../../interface/user";
 import type { ProfileTabKey } from "../../components/profile/profile-tabs";
 import { ProfileInfoCard } from "../../components/profile/profile-info-card";
 import { DeleteConfirmModal } from "../../components/profile/delete-confirm-modal";
+import { CancelOrderModal } from "../../components/order/cancel-order-modal";
 import { ProfileTabs } from "../../components/profile/profile-tabs";
 import { OrderCard } from "../../components/order/order-card";
-import { getOrders, splitOrdersByStatus } from "../../services/order-service";
+import { getOrders, splitOrdersByStatus, cancelOrder } from "../../services/order-service";
 import { ProfileReviews } from "../../components/profile/profile-reviews";
 import { getReviewsByUser } from "../../services/review-service";
 import {
@@ -28,6 +29,7 @@ interface ProfileProps {
 interface ProfileState {
   isEditing: boolean;
   showDeleteConfirm: boolean;
+  cancellingOrderId: string | number | null;
   activeTab: ProfileTabKey;
   formData: Record<string, string>;
   visibleCount: Record<ProfileTabKey, number>;
@@ -40,6 +42,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
   state: ProfileState = {
     isEditing: false,
     showDeleteConfirm: false,
+    cancellingOrderId: null,
     activeTab: "reviews",
     formData: {},
     visibleCount: {
@@ -151,6 +154,27 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     );
   }
 
+  private handleOpenCancelModal = (orderId: string | number) => {
+    this.setState({ cancellingOrderId: orderId });
+  };
+
+  private handleConfirmCancel = async () => {
+    const { cancellingOrderId } = this.state;
+    if (!cancellingOrderId) return;
+
+    await cancelOrder(this.props.user, cancellingOrderId);
+    const orders = await getOrders(this.props.user);
+
+    this.setState({
+      orders,
+      cancellingOrderId: null,
+    });
+  };
+
+  private handleCloseCancelModal = () => {
+    this.setState({ cancellingOrderId: null });
+  };
+
   private renderOrderGrid(
     orders: Order[],
     count: number,
@@ -167,6 +191,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
               order={o}
               variant={variant}
               onDetailClick={this.props.onNavigateToDetail}
+              onCancelClick={variant === "active" ? this.handleOpenCancelModal : undefined}
             />
           ))}
         </div>
@@ -196,7 +221,8 @@ export class Profile extends Component<ProfileProps, ProfileState> {
   }
 
   render() {
-    const { showDeleteConfirm } = this.state;
+    const { showDeleteConfirm, cancellingOrderId } = this.state;
+
     return (
       <div className="profile-page">
         <h1 className="profile-heading">Profil</h1>
@@ -216,6 +242,13 @@ export class Profile extends Component<ProfileProps, ProfileState> {
           <DeleteConfirmModal
             onConfirm={this.props.onDeleteAccount}
             onCancel={() => this.setState({ showDeleteConfirm: false })}
+          />
+        )}
+        {cancellingOrderId !== null && (
+          <CancelOrderModal
+            orderId={cancellingOrderId}
+            onConfirm={this.handleConfirmCancel}
+            onCancel={this.handleCloseCancelModal}
           />
         )}
       </div>

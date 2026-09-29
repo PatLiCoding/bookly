@@ -26,6 +26,29 @@
   padding-bottom: 10px;
 }
 
+.order-detail-header-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+
+.order-cancel-btn {
+  background-color: #FFFFFF;
+  color: #8b0000;
+  border: 1px solid #8b0000;
+  border-radius: 8px;
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.order-cancel-btn:hover {
+  background-color: #ffd2cf;
+}
+
 .order-label {
   font-weight: 700;
   color: #223044;
@@ -96,6 +119,7 @@
 .order-card-footer {
   display: flex;
   justify-content: flex-end;
+  gap: 12px;
   border-top: 1px solid #cdeeff;
   padding-top: 10px;
 }
@@ -138,5 +162,6 @@
   .order-card-footer,
   .order-detail-btn {
     width: 100%;
+    flex-direction: column-reverse;
   }
 }

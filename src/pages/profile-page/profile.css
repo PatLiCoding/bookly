@@ -288,8 +288,18 @@
   .profile-tabs {
     gap: 12px;
     font-size: 0.9rem;
-    overflow-x: auto;
+    flex-direction: column;
+    border: 1px solid #a7d8ff;
+    border-radius: 10px;
+    overflow: hidden;
   }
+
+  .profile-tab-active {
+  border-bottom: none;
+  font-weight: 700;
+  background-color: #a7d8ff;
+  color: #223044;
+}
 
   .profile-tab-content {
     max-height: 360px;

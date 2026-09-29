@@ -6,6 +6,7 @@
   box-sizing: border-box;
   background-color: #f7faff;
   color: #223044;
+  cursor: default;
 }
 
 .order-back-btn,

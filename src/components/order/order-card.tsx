@@ -7,6 +7,7 @@ interface OrderCardProps {
   order: Order;
   variant: "history" | "active";
   onDetailClick?: (orderId: string | number) => void;
+  onCancelClick?: (orderId: string | number) => void;
 }
 
 export class OrderCard extends Component<OrderCardProps> {
@@ -30,9 +31,7 @@ export class OrderCard extends Component<OrderCardProps> {
           ))}
 
           {remainingCount > 0 && (
-            <div className="order-cover-more">
-              +{remainingCount}
-            </div>
+            <div className="order-cover-more">+{remainingCount}</div>
           )}
         </div>
 
@@ -41,7 +40,10 @@ export class OrderCard extends Component<OrderCardProps> {
             {items.length} {items.length === 1 ? "Artikel" : "Artikel"}
           </p>
           <p className="order-total">
-            Gesamt: <strong>{this.props.order.totalPrice.toFixed(2).replace(".", ",")} €</strong>
+            Gesamt:{" "}
+            <strong>
+              {this.props.order.totalPrice.toFixed(2).replace(".", ",")} €
+            </strong>
           </p>
         </div>
       </div>
@@ -49,7 +51,7 @@ export class OrderCard extends Component<OrderCardProps> {
   }
 
   render() {
-    const { order, variant, onDetailClick } = this.props;
+    const { order, variant, onDetailClick, onCancelClick } = this.props;
 
     return (
       <div className="order-card">
@@ -60,7 +62,8 @@ export class OrderCard extends Component<OrderCardProps> {
 
           {variant === "history" ? (
             <div className="order-delivered-info">
-              <span className="order-label">Geliefert am:</span> {order.deliveredDate ?? "-"}
+              <span className="order-label">Geliefert am:</span>{" "}
+              {order.deliveredDate ?? "-"}
             </div>
           ) : (
             <div className="order-status-badge">
@@ -69,12 +72,19 @@ export class OrderCard extends Component<OrderCardProps> {
           )}
         </div>
 
-        <div className="order-card-body">
-          {this.renderItemsPreview()}
-        </div>
+        <div className="order-card-body">{this.renderItemsPreview()}</div>
 
         {onDetailClick && (
           <div className="order-card-footer">
+            {order.status === "processing" && onCancelClick && (
+              <button
+                type="button"
+                className="order-cancel-btn"
+                onClick={() => onCancelClick(order.id)}
+              >
+                Stornieren
+              </button>
+            )}
             <button
               type="button"
               className="order-detail-btn"
