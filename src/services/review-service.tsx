@@ -41,8 +41,9 @@ export function averageRating(list: Review[]): number {
   return Math.round((sum / list.length) * 10) / 10;
 }
 
-export function getBookRating(bookId: number): number {
-  return averageRating(reviews.filter((r) => r.bookId === bookId));
+export function getBookStats(bookId: number) {
+  const list = reviews.filter((r) => r.bookId === bookId);
+  return { rating: averageRating(list), reviewCount: list.length };
 }
 
 function today(): string {

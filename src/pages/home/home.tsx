@@ -5,13 +5,13 @@ import {
   getNewestBooks,
   getTopRatedBooks,
 } from "../../services/book-service";
+import { ALL_CATEGORY } from "../../utils/category";
 import type { CartItem } from "../cart-page/cart-page";
 
 interface HomeProps {
   onAddToCart: (item: CartItem) => void;
 }
-
-const PREVIEW_COUNT = 4;
+const PREVIEW_COUNT = 6;
 
 function Home({ onAddToCart }: HomeProps) {
   const highlights = getTopRatedBooks(PREVIEW_COUNT);
@@ -31,7 +31,7 @@ function Home({ onAddToCart }: HomeProps) {
             Handverlesene Bücher, persönliche Empfehlungen und
             versandkostenfreie Lieferung direkt zu dir nach Hause.
           </p>
-          <Link to="/kategorie/Fantasy" className="hero-btn">
+          <Link to="/category/Fantasy" className="hero-btn">
             Bestseller entdecken
           </Link>
         </div>
@@ -41,7 +41,7 @@ function Home({ onAddToCart }: HomeProps) {
         <section className="highlights">
           <div className="section-header">
             <h2 className="container-title">Unsere Highlights</h2>
-            <Link to="/" className="view-all-link">Alle ansehen &rarr;</Link>
+            <Link to={`/category/${ALL_CATEGORY}?sort=rating`} className="view-all-link">Alle ansehen &rarr;</Link>
           </div>
           <BookPreviewList books={highlights} onAddToCart={onAddToCart} />
         </section>
@@ -49,7 +49,7 @@ function Home({ onAddToCart }: HomeProps) {
         <section className="releases">
           <div className="section-header">
             <h2 className="container-title">Neuheiten</h2>
-            <Link to="/" className="view-all-link">Alle ansehen &rarr;</Link>
+            <Link to={`/category/${ALL_CATEGORY}?sort=newest`} className="view-all-link">Alle ansehen &rarr;</Link>
           </div>
           <BookPreviewList books={releases} onAddToCart={onAddToCart} />
         </section>

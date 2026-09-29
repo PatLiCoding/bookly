@@ -11,10 +11,11 @@ export interface Book {
   author: string;
   price: string;
   rating: number;
+  reviewCount: number;
   cover: string;
   category: string;
   releaseDate?: string;
   description?: string;
 }
 
-export type BookBase = Omit<Book, "rating">;
+export type BookBase = Omit<Book, "rating" | "reviewCount">;

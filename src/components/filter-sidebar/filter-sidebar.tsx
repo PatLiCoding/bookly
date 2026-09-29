@@ -18,6 +18,9 @@ const RATING_OPTIONS: Option<number>[] = [
 ];
 
 const SORT_OPTIONS: Option<SortOption>[] = [
+  { label: "Beste Bewertung", value: "rating" },
+  { label: "Meiste Bewertungen", value: "reviews" },
+  { label: "Neueste zuerst", value: "newest" },
   { label: "Preis: Aufsteigend", value: "price-asc" },
   { label: "Preis: Absteigend", value: "price-desc" },
 ];
@@ -54,7 +57,7 @@ function FilterGroup<T>({ title, options, active, onSelect }: GroupProps<T>) {
   );
 }
 
-/** Sidebar with rating filter and price sorting. Every option can be toggled off. */
+/** Sidebar with rating filter and sorting (rating, reviews, release date, price). Every option can be toggled off. */
 function FilterSidebar({ filters, onChange }: Props) {
   return (
     <aside className="filter-sidebar">

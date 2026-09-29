@@ -42,13 +42,7 @@
   padding: 4px 8px;
 }
 
-@media (max-width: 1200px) {
-  .navbar .navbar-content-max-width a {
-    font-size: 16px;
-  }
-}
-
-@media (max-width: 974px) {
+@media (max-width: 1300px) {
   .navbar .navbar-content-max-width {
     flex-wrap: nowrap;
     justify-content: flex-start;
@@ -56,5 +50,11 @@
     padding: 12px 16px;
     gap: 20px;
     scrollbar-width: thin;
+  }
+}
+
+@media (max-width: 900px) {
+  .navbar .navbar-content-max-width a {
+    font-size: 18px;
   }
 }

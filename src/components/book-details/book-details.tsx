@@ -54,6 +54,7 @@ function BookInfo({ book, ...rating }: BookInfoProps) {
       {book.releaseDate && (
         <p className="release-date">Erschienen am: {book.releaseDate}</p>
       )}
+      <p className="book-category">Kategorie: {book.category}</p>
       <RatingRow {...rating} />
     </div>
   );

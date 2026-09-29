@@ -58,7 +58,7 @@
   margin: 0 0 12px 0;
 }
 
-.release-date {
+.release-date, .book-category {
   font-size: 0.9rem;
   color: #666;
   margin-bottom: 12px;

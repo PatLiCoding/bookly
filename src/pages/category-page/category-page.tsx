@@ -1,72 +1,98 @@
 import "./category-page.css";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useSearchParams } from "react-router-dom";
 import BookPreviewList from "../../components/book-preview-list/book-preview-list";
 import FilterSidebar from "../../components/filter-sidebar/filter-sidebar";
 import Pagination from "../../components/pagination/pagination";
 import { useCategoryBooks } from "./use-category-books";
 import { useScrollTarget } from "./use-scroll-target";
+import { countActiveFilters, NO_FILTERS, parseSort } from "../../utils/book-filter";
+import type { Filters } from "../../utils/book-filter";
+import { ALL_CATEGORY, ALL_LABEL } from "../../utils/category";
 import type { CartItem } from "../../pages/cart-page/cart-page";
 
 type BookList = ReturnType<typeof useCategoryBooks>;
+type AddToCart = (item: CartItem) => void;
+
+/** Title of the page: the "all books" key is shown with its label. */
+function categoryTitle(name?: string): string | undefined {
+  return name === ALL_CATEGORY ? ALL_LABEL : name;
+}
+
+/** Label of the filter button; while closed it shows how many filters are active. */
+function filterLabel(isOpen: boolean, activeCount: number): string {
+  if (isOpen) return "Filter ausblenden";
+  return activeCount > 0 ? `Filter (${activeCount})` : "Filter";
+}
 
 interface HeaderProps {
   title?: string;
   showFilters: boolean;
+  activeCount: number;
   onToggle: () => void;
 }
 
 /** Category title on the left, filter toggle on the right. */
-function CategoryHeader({ title, showFilters, onToggle }: HeaderProps) {
+function CategoryHeader({ title, showFilters, activeCount, onToggle }: HeaderProps) {
   return (
     <div className="category-header">
       <h2 className="category-title">{title}</h2>
       <button className="filter-btn" type="button" aria-expanded={showFilters} onClick={onToggle}>
-        {showFilters ? "Filter ausblenden" : "Filter"}
+        {filterLabel(showFilters, activeCount)}
       </button>
     </div>
   );
 }
 
 /** Book grid, or a hint if no book matches. */
-function CategoryBooks({ list, onAddToCart }: { list: BookList; onAddToCart: (item: CartItem) => void } ) {
+function CategoryBooks({ list, onAddToCart }: { list: BookList; onAddToCart: AddToCart }) {
   return (
     <div className="category-books">
-      {list.books.length === 0 ? <p>Keine Bücher gefunden.</p> : <BookPreviewList books={list.books} layout="grid" onAddToCart={onAddToCart}/>}
+      {list.books.length === 0 ? <p>Keine Bücher gefunden.</p> : <BookPreviewList books={list.books} layout="grid" onAddToCart={onAddToCart} />}
     </div>
   );
 }
 
 /** Book list next to the (optional) filter sidebar. */
-function CategoryContent({ list, showFilters, onAddToCart }: { list: BookList; showFilters: boolean;onAddToCart: (item: CartItem) => void }) {
+function CategoryContent({ list, showFilters, onAddToCart }: { list: BookList; showFilters: boolean; onAddToCart: AddToCart }) {
   return (
     <div className="category-content">
-      <CategoryBooks list={list} onAddToCart={onAddToCart}/>
+      <CategoryBooks list={list} onAddToCart={onAddToCart} />
       {showFilters && <FilterSidebar filters={list.filters} onChange={list.changeFilters} />}
     </div>
   );
 }
 
+interface ViewProps {
+  name?: string;
+  initialFilters: Filters;
+  onAddToCart: AddToCart;
+}
+
 /** Category view; state (page, filters) lives here and resets via the key below. */
-function CategoryView({ name, onAddToCart }: { name?: string; onAddToCart: (item: CartItem) => void }) {
-  const [showFilters, setShowFilters] = useState(true);
+function CategoryView({ name, initialFilters, onAddToCart }: ViewProps) {
   const { setTarget, scrollThen } = useScrollTarget();
-  const list = useCategoryBooks(name);
+  const list = useCategoryBooks(name, initialFilters);
+  const activeCount = countActiveFilters(list.filters);
+  const [showFilters, setShowFilters] = useState(activeCount > 0);
   const changePage = (page: number) => scrollThen(() => list.setPage(page));
 
   return (
     <section className="category-page" ref={setTarget}>
-      <CategoryHeader title={name} showFilters={showFilters} onToggle={() => setShowFilters(!showFilters)} />
+      <CategoryHeader title={categoryTitle(name)} showFilters={showFilters} activeCount={activeCount} onToggle={() => setShowFilters(!showFilters)} />
       <CategoryContent list={list} showFilters={showFilters} onAddToCart={onAddToCart} />
       <Pagination page={list.page} pageCount={list.pageCount} onChange={changePage} />
     </section>
   );
 }
 
-/** Shows the books of the selected category (10 per page) with filters and sorting. */
-function CategoryPage({ onAddToCart }: { onAddToCart: (item: CartItem) => void }) {
+/** Shows the books of the selected category (10 per page); `?sort=` presets the sorting. */
+function CategoryPage({ onAddToCart }: { onAddToCart: AddToCart }) {
   const { name } = useParams();
-  return <CategoryView key={name} name={name} onAddToCart={onAddToCart} />;
+  const [params] = useSearchParams();
+  const sort = parseSort(params.get("sort"));
+  const filters = { ...NO_FILTERS, sort };
+  return <CategoryView key={`${name}-${sort}`} name={name} initialFilters={filters} onAddToCart={onAddToCart} />;
 }
 
 export default CategoryPage;

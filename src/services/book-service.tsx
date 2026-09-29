@@ -1,33 +1,31 @@
 import { books } from "../data/book-dummy-data";
-import { getBookRating } from "./review-service";
-import { dateValue } from "../utils/date";
+import { getBookStats } from "./review-service";
+import { sortBooks } from "../utils/book-filter";
+import { ALL_CATEGORY } from "../utils/category";
 import type { Book, BookBase } from "../interface/book";
 
-function withRating(book: BookBase): Book {
-  return { ...book, rating: getBookRating(book.id) };
+function withStats(book: BookBase): Book {
+  return { ...book, ...getBookStats(book.id) };
 }
 
 export function getBooks(): Book[] {
-  return books.map(withRating);
+  return books.map(withStats);
 }
 
 export function getBookById(id: number): Book | undefined {
   const book = books.find((b) => b.id === id);
-  return book && withRating(book);
+  return book && withStats(book);
+}
+
+export function getBooksByCategory(category?: string): Book[] {
+  if (category === ALL_CATEGORY) return getBooks();
+  return getBooks().filter((book) => book.category === category);
 }
 
 export function getTopRatedBooks(limit: number): Book[] {
-  return getBooks()
-    .sort(
-      (a, b) =>
-        b.rating - a.rating ||
-        dateValue(b.releaseDate) - dateValue(a.releaseDate),
-    )
-    .slice(0, limit);
+  return sortBooks(getBooks(), "rating").slice(0, limit);
 }
 
 export function getNewestBooks(limit: number): Book[] {
-  return getBooks()
-    .sort((a, b) => dateValue(b.releaseDate) - dateValue(a.releaseDate))
-    .slice(0, limit);
+  return sortBooks(getBooks(), "newest").slice(0, limit);
 }
