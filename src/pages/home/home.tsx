@@ -9,11 +9,19 @@ import { ALL_CATEGORY } from "../../utils/category";
 import type { CartItem } from "../cart-page/cart-page";
 
 interface HomeProps {
+  cartItems?: CartItem[];
   onAddToCart: (item: CartItem) => void;
+  onIncreaseItem?: (id: number) => void;
+  onDecreaseItem?: (id: number) => void;
 }
 const PREVIEW_COUNT = 6;
 
-function Home({ onAddToCart }: HomeProps) {
+function Home({
+  cartItems = [],
+  onAddToCart,
+  onIncreaseItem,
+  onDecreaseItem,
+}: HomeProps) {
   const highlights = getTopRatedBooks(PREVIEW_COUNT);
   const releases = getNewestBooks(PREVIEW_COUNT);
 
@@ -43,7 +51,13 @@ function Home({ onAddToCart }: HomeProps) {
             <h2 className="container-title">Unsere Highlights</h2>
             <Link to={`/category/${ALL_CATEGORY}?sort=rating`} className="view-all-link">Alle ansehen &rarr;</Link>
           </div>
-          <BookPreviewList books={highlights} onAddToCart={onAddToCart} />
+          <BookPreviewList
+            books={highlights}
+            cartItems={cartItems}
+            onAddToCart={onAddToCart}
+            onIncreaseItem={onIncreaseItem}
+            onDecreaseItem={onDecreaseItem}
+          />
         </section>
 
         <section className="releases">
@@ -51,7 +65,13 @@ function Home({ onAddToCart }: HomeProps) {
             <h2 className="container-title">Neuheiten</h2>
             <Link to={`/category/${ALL_CATEGORY}?sort=newest`} className="view-all-link">Alle ansehen &rarr;</Link>
           </div>
-          <BookPreviewList books={releases} onAddToCart={onAddToCart} />
+          <BookPreviewList
+            books={releases}
+            cartItems={cartItems}
+            onAddToCart={onAddToCart}
+            onIncreaseItem={onIncreaseItem}
+            onDecreaseItem={onDecreaseItem}
+          />
         </section>
       </section>
     </section>

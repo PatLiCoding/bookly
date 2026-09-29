@@ -4,14 +4,23 @@ import type { Book } from "../../interface/book";
 import type { CartItem } from "../../pages/cart-page/cart-page";
 import { renderStars } from "../../utils/render-stars";
 import { parsePrice } from "../../utils/parse-price";
+import { QuantityControl } from "../quantity-control/quantity-control";
 
 interface Props {
   book: Book;
+  cartQuantity?: number;
   onAddToCart: (item: CartItem) => void;
+  onIncreaseItem?: (id: number) => void;
+  onDecreaseItem?: (id: number) => void;
 }
 
-/** Displays one book with cover, rating, price and cart button. */
-function BookCard({ book, onAddToCart }: Props) {
+function BookCard({
+  book,
+  cartQuantity = 0,
+  onAddToCart,
+  onIncreaseItem,
+  onDecreaseItem,
+}: Props) {
   function handleAddToCart(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
@@ -23,6 +32,22 @@ function BookCard({ book, onAddToCart }: Props) {
       cover: book.cover,
       quantity: 1,
     });
+  }
+
+  function handleIncrease(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (onIncreaseItem) {
+      onIncreaseItem(book.id);
+    }
+  }
+
+  function handleDecrease(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+    if (onDecreaseItem) {
+      onDecreaseItem(book.id);
+    }
   }
 
   return (
@@ -38,14 +63,24 @@ function BookCard({ book, onAddToCart }: Props) {
         </div>
         <div className="card-footer">
           <span className="price">{book.price}</span>
-          <button
-            className="cart-btn"
-            title="In den Warenkorb"
-            aria-label="In den Warenkorb"
-            onClick={handleAddToCart}
-          >
-            <img src="/assets/icons/cart.png" alt="cart" />
-          </button>
+
+          {cartQuantity > 0 ? (
+            <QuantityControl
+              quantity={cartQuantity}
+              onIncrease={handleIncrease}
+              onDecrease={handleDecrease}
+              size="small"
+            />
+          ) : (
+            <button
+              className="cart-btn"
+              title="In den Warenkorb"
+              aria-label="In den Warenkorb"
+              onClick={handleAddToCart}
+            >
+              <img src="/assets/icons/cart.png" alt="cart" />
+            </button>
+          )}
         </div>
       </div>
     </Link>

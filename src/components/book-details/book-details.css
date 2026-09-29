@@ -133,6 +133,22 @@
   height: 18px;
 }
 
+.cart-quantity-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 8px;
+  width: 100%;
+}
+
+.cart-quantity-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #223044;
+}
+
 .divider {
   border: 0;
   height: 2px;

@@ -112,15 +112,38 @@ function App() {
       <Navbar />
       <main className="main-content">
         <Routes>
-          <Route path="/" element={<Home onAddToCart={addItem} />} />
+          <Route
+            path="/"
+            element={
+              <Home
+                cartItems={cartItems}
+                onAddToCart={addItem}
+                onIncreaseItem={increaseItem}
+                onDecreaseItem={decreaseItem}
+              />
+            }
+          />
           <Route
             path="/category/:name"
-            element={<CategoryPage onAddToCart={addItem} />}
+            element={
+              <CategoryPage
+                cartItems={cartItems}
+                onAddToCart={addItem}
+                onIncreaseItem={increaseItem}
+                onDecreaseItem={decreaseItem}
+              />
+            }
           />
           <Route
             path="/book/:id"
             element={
-              <BookDetailsPage onAddToCart={addItem} loggedUser={loggedUser} />
+              <BookDetailsPage
+                loggedUser={loggedUser}
+                cartItems={cartItems}
+                onAddToCart={addItem}
+                onIncreaseItem={increaseItem}
+                onDecreaseItem={decreaseItem}
+              />
             }
           />
           <Route path="/profil" element={renderProfileRoute()} />

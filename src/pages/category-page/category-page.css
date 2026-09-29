@@ -9,6 +9,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
   margin-bottom: 12px;
   padding: 0 8px;
 }
@@ -46,6 +48,12 @@
   min-width: 0;
 }
 
+.book-empty {
+  width: 100%;
+  border-top: 1px solid #22304430;
+  padding: 24px;
+}
+
 @media (max-width: 768px) {
   .category-page {
     padding: 16px;
@@ -58,4 +66,8 @@
   .category-books {
     width: 100%;
   }
+
+  .book-empty {
+  padding: 8px;
+}
 }

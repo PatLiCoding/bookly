@@ -1,6 +1,7 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
 import type { User } from "../../interface/user";
+import { QuantityControl } from "../../components/quantity-control/quantity-control"
 import {
   formatPrice,
   calcSubtotal,
@@ -89,25 +90,15 @@ export class CartPage extends Component<CartPageProps> {
   }
 
   private renderQuantityControls(item: CartItem) {
-    const { onDecreaseItem, onIncreaseItem } = this.props;
-    return (
-      <div className="cart-item-qty">
-        <button
-          onClick={() => onDecreaseItem(item.id)}
-          aria-label="Menge verringern"
-        >
-          -
-        </button>
-        <span>{item.quantity}</span>
-        <button
-          onClick={() => onIncreaseItem(item.id)}
-          aria-label="Menge erhöhen"
-        >
-          +
-        </button>
-      </div>
-    );
-  }
+  const { onDecreaseItem, onIncreaseItem } = this.props;
+  return (
+    <QuantityControl
+      quantity={item.quantity}
+      onIncrease={() => onIncreaseItem(item.id)}
+      onDecrease={() => onDecreaseItem(item.id)}
+    />
+  );
+}
 
   private renderItemActions(item: CartItem) {
     return (

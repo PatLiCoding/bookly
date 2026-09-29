@@ -8,11 +8,15 @@ import { parsePrice } from "../../utils/parse-price";
 import { useBookReviews } from "../../utils/use-book-reviews";
 import { averageRating } from "../../services/review-service";
 import { ReviewSection } from "../review/review-section";
+import { QuantityControl } from "../quantity-control/quantity-control";
 
 interface Props {
   book: Book;
   loggedUser: User | null;
+  cartQuantity?: number;
   onAddToCart: (item: NewCartItem) => void;
+  onIncreaseItem?: (id: number) => void;
+  onDecreaseItem?: (id: number) => void;
 }
 
 function toCartItem(book: Book): NewCartItem {
@@ -60,23 +64,58 @@ function BookInfo({ book, ...rating }: BookInfoProps) {
   );
 }
 
-function PurchaseBox({ price, onAdd }: { price: string; onAdd: () => void }) {
+interface PurchaseBoxProps {
+  price: string;
+  cartQuantity: number;
+  onAdd: () => void;
+  onIncrease?: () => void;
+  onDecrease?: () => void;
+}
+
+function PurchaseBox({
+  price,
+  cartQuantity,
+  onAdd,
+  onIncrease,
+  onDecrease,
+}: PurchaseBoxProps) {
   return (
     <div className="purchase-box">
       <span className="price-tag">{price}</span>
-      <button className="order-btn" onClick={onAdd} aria-label="In den Warenkorb">
-        <span>In den Warenkorb</span>
-        <img src="/assets/icons/cart.png" alt="cart icon" />
-      </button>
+      {cartQuantity > 0 ? (
+        <div className="cart-quantity-wrapper">
+          <span className="cart-quantity-label">Im Warenkorb:</span>
+          <QuantityControl
+            quantity={cartQuantity}
+            onIncrease={() => onIncrease?.()}
+            onDecrease={() => onDecrease?.()}
+            size="medium"
+          />
+        </div>
+      ) : (
+        <button className="order-btn" onClick={onAdd} aria-label="In den Warenkorb">
+          <span>In den Warenkorb</span>
+          <img src="/assets/icons/cart.png" alt="cart icon" />
+        </button>
+      )}
     </div>
   );
 }
 
 interface BookHeaderProps extends BookInfoProps {
+  cartQuantity: number;
   onAdd: () => void;
+  onIncrease?: () => void;
+  onDecrease?: () => void;
 }
 
-function BookHeader({ onAdd, ...info }: BookHeaderProps) {
+function BookHeader({
+  cartQuantity,
+  onAdd,
+  onIncrease,
+  onDecrease,
+  ...info
+}: BookHeaderProps) {
   const { book } = info;
   return (
     <div className="book-header">
@@ -85,7 +124,13 @@ function BookHeader({ onAdd, ...info }: BookHeaderProps) {
       </div>
       <div className="book-info-col">
         <BookInfo {...info} />
-        <PurchaseBox price={book.price} onAdd={onAdd} />
+        <PurchaseBox
+          price={book.price}
+          cartQuantity={cartQuantity}
+          onAdd={onAdd}
+          onIncrease={onIncrease}
+          onDecrease={onDecrease}
+        />
       </div>
     </div>
   );
@@ -112,7 +157,14 @@ function RatingBadge({ rating }: { rating: number }) {
   );
 }
 
-function BookDetails({ book, loggedUser, onAddToCart }: Props) {
+function BookDetails({
+  book,
+  loggedUser,
+  cartQuantity = 0,
+  onAddToCart,
+  onIncreaseItem,
+  onDecreaseItem,
+}: Props) {
   const commentsRef = useRef<HTMLDivElement>(null);
   const { reviews, loaded, reload } = useBookReviews(book.id);
   const rating = loaded ? averageRating(reviews) : book.rating;
@@ -121,8 +173,16 @@ function BookDetails({ book, loggedUser, onAddToCart }: Props) {
 
   return (
     <div className="book-details-container">
-      <BookHeader book={book} rating={rating} count={reviews.length}
-        onCommentsClick={scrollToComments} onAdd={() => onAddToCart(toCartItem(book))} />
+      <BookHeader
+        book={book}
+        rating={rating}
+        count={reviews.length}
+        cartQuantity={cartQuantity}
+        onCommentsClick={scrollToComments}
+        onAdd={() => onAddToCart(toCartItem(book))}
+        onIncrease={() => onIncreaseItem?.(book.id)}
+        onDecrease={() => onDecreaseItem?.(book.id)}
+      />
       <hr className="divider" />
       <Description text={book.description} />
       <hr className="divider" />
