@@ -15,5 +15,6 @@ export interface Book {
   category: string;
   releaseDate?: string;
   description?: string;
-  comments?: Comment[];
 }
+
+export type BookBase = Omit<Book, "rating">;

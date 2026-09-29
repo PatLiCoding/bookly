@@ -1,12 +1,14 @@
 import "./home.css";
 import { Link } from "react-router-dom";
 import BookPreviewList from "../../components/book-preview-list/book-preview-list";
-import { highlightBooks } from "../../data/book-dummy-data";
+import { getBooks } from "../../services/book-service";
 import type { CartItem } from "../cart-page/cart-page";
 
 interface HomeProps {
   onAddToCart: (item: CartItem) => void;
 }
+
+const books = getBooks();
 
 function Home({ onAddToCart }: HomeProps) {
   return (
@@ -35,7 +37,7 @@ function Home({ onAddToCart }: HomeProps) {
             <h2 className="container-title">Unsere Highlights</h2>
             <Link to="/" className="view-all-link">Alle ansehen &rarr;</Link>
           </div>
-          <BookPreviewList books={highlightBooks} onAddToCart={onAddToCart} />
+          <BookPreviewList books={books} onAddToCart={onAddToCart} />
         </section>
 
         <section className="releases">
@@ -43,7 +45,7 @@ function Home({ onAddToCart }: HomeProps) {
             <h2 className="container-title">Neuheiten</h2>
             <Link to="/" className="view-all-link">Alle ansehen &rarr;</Link>
           </div>
-          <BookPreviewList books={highlightBooks} onAddToCart={onAddToCart} />
+          <BookPreviewList books={books} onAddToCart={onAddToCart} />
         </section>
       </section>
     </section>

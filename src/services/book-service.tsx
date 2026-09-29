@@ -1,7 +1,16 @@
-import { highlightBooks } from "../data/book-dummy-data";
-import type { Book } from "../interface/book";
+import { books } from "../data/book-dummy-data";
+import { getBookRating } from "./review-service";
+import type { Book, BookBase } from "../interface/book";
 
-/** Finds a book by its id. Replace with a backend request later. */
+function withRating(book: BookBase): Book {
+  return { ...book, rating: getBookRating(book.id) };
+}
+
+export function getBooks(): Book[] {
+  return books.map(withRating);
+}
+
 export function getBookById(id: number): Book | undefined {
-  return highlightBooks.find((book) => book.id === id);
+  const book = books.find((b) => b.id === id);
+  return book && withRating(book);
 }

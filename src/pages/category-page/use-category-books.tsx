@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { highlightBooks } from "../../data/book-dummy-data";
+import { getBooks } from "../../services/book-service";
 import { applyFilters, NO_FILTERS } from "../../utils/book-filter";
 import type { Filters } from "../../utils/book-filter";
 import { getPageCount, paginate } from "../../utils/paginate";
@@ -10,7 +10,7 @@ const PAGE_SIZE = 10;
 export function useCategoryBooks(category: string | undefined) {
   const [filters, setFilters] = useState(NO_FILTERS);
   const [page, setPage] = useState(1);
-  const inCategory = highlightBooks.filter((book) => book.category === category);
+  const inCategory = getBooks().filter((book) => book.category === category);
   const filtered = applyFilters(inCategory, filters);
   const pageCount = getPageCount(filtered.length, PAGE_SIZE);
   const books = paginate(filtered, page, PAGE_SIZE);

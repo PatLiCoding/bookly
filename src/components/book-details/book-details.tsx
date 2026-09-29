@@ -5,7 +5,7 @@ import type { User } from "../../interface/user";
 import type { NewCartItem } from "../../utils/use-cart";
 import { renderStars } from "../../utils/render-stars";
 import { parsePrice } from "../../utils/parse-price";
-import { useBookReviews } from "./../../utils/use-book-reviews";
+import { useBookReviews } from "../../utils/use-book-reviews";
 import { averageRating } from "../../services/review-service";
 import { ReviewSection } from "../review/review-section";
 
@@ -113,8 +113,8 @@ function RatingBadge({ rating }: { rating: number }) {
 
 function BookDetails({ book, loggedUser, onAddToCart }: Props) {
   const commentsRef = useRef<HTMLDivElement>(null);
-  const { reviews, reload } = useBookReviews(book.id);
-  const rating = reviews.length ? averageRating(reviews) : book.rating;
+  const { reviews, loaded, reload } = useBookReviews(book.id);
+  const rating = loaded ? averageRating(reviews) : book.rating;
   const scrollToComments = () =>
     commentsRef.current?.scrollIntoView({ behavior: "smooth" });
 
