@@ -4,10 +4,10 @@ import type { ProfileTabKey } from "../../components/profile/profile-tabs";
 import { ProfileInfoCard } from "../../components/profile/profile-info-card";
 import { DeleteConfirmModal } from "../../components/profile/delete-confirm-modal";
 import { ProfileTabs } from "../../components/profile/profile-tabs";
-import { ReviewListItem } from "../../components/profile/review-list-item";
 import { OrderCard } from "../../components/order/order-card";
 import { getOrders, splitOrdersByStatus } from "../../services/order-service";
-import { getReviews } from "../../services/review-service";
+import { ProfileReviews } from "../../components/profile/profile-reviews";
+import { getReviewsByUser } from "../../services/review-service";
 import {
   mergedValue,
   mergedDelivery,
@@ -65,9 +65,28 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     const { user } = this.props;
     const [orders, reviews] = await Promise.all([
       getOrders(user),
-      getReviews(user),
+      getReviewsByUser(user.id),
     ]);
     this.setState({ orders, reviews, isLoading: false });
+  }
+
+  private reloadReviews = async () => {
+    const reviews = await getReviewsByUser(this.props.user.id);
+    this.setState({ reviews });
+  };
+
+  private renderReviews() {
+    const { reviews, visibleCount } = this.state;
+    return (
+      <>
+        <ProfileReviews
+          reviews={visibleItems(reviews, visibleCount.reviews)}
+          userId={this.props.user.id}
+          onChanged={this.reloadReviews}
+        />
+        {this.renderLoadMore("reviews", reviews, visibleCount.reviews)}
+      </>
+    );
   }
 
   private toggleEdit = () => {
@@ -116,19 +135,6 @@ export class Profile extends Component<ProfileProps, ProfileState> {
         onFieldChange={this.handleFieldChange}
         onSave={this.handleSave}
       />
-    );
-  }
-
-  private renderReviews() {
-    const { reviews, visibleCount } = this.state;
-    const items = visibleItems(reviews, visibleCount.reviews);
-    return (
-      <>
-        {items.map((r) => (
-          <ReviewListItem key={r.id} review={r} />
-        ))}
-        {this.renderLoadMore("reviews", reviews, visibleCount.reviews)}
-      </>
     );
   }
 

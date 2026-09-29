@@ -119,7 +119,9 @@ function App() {
           />
           <Route
             path="/book/:id"
-            element={<BookDetailsPage onAddToCart={addItem} />}
+            element={
+              <BookDetailsPage onAddToCart={addItem} loggedUser={loggedUser} />
+            }
           />
           <Route path="/profil" element={renderProfileRoute()} />
           <Route path="/order" element={renderOrdersRoute()} />

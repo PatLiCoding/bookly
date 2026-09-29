@@ -243,6 +243,26 @@
   border: 1px solid #eaeaea;
 }
 
+.review-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.review-action-btn {
+  background: #cdeeff;
+  color: #223044;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.review-action-btn:hover {
+  background: #a7d8ff;
+}
+
 .profile-tab-content .order-grid {
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
 }

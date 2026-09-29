@@ -5,9 +5,30 @@ import { renderStars } from "../../utils/render-stars";
 
 interface ReviewListItemProps {
   review: Review;
+  onEdit?: () => void;
+  onDelete?: () => void;
 }
 
 export class ReviewListItem extends Component<ReviewListItemProps> {
+  private renderActions() {
+    const { onEdit, onDelete } = this.props;
+    if (!onEdit && !onDelete) return null;
+    return (
+      <div className="review-actions">
+        {onEdit && (
+          <button className="review-action-btn" onClick={onEdit}>
+            Bearbeiten
+          </button>
+        )}
+        {onDelete && (
+          <button className="review-action-btn" onClick={onDelete}>
+            Löschen
+          </button>
+        )}
+      </div>
+    );
+  }
+
   render() {
     const { review } = this.props;
     return (
@@ -23,6 +44,7 @@ export class ReviewListItem extends Component<ReviewListItemProps> {
           </div>
         </div>
         <p className="review-text">{review.text}</p>
+        {this.renderActions()}
       </div>
     );
   }

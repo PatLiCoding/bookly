@@ -1,0 +1,85 @@
+.review-section {
+  color: #223044;
+}
+
+.review-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.review-section-header h3 {
+  margin: 0;
+}
+
+.review-hint {
+  margin: 0;
+  font-size: 0.95rem;
+  color: #223044aa;
+}
+
+.review-add-btn {
+  background: #223044;
+  color: #f7faff;
+  border: none;
+  border-radius: 8px;
+  padding: 8px 18px;
+  cursor: pointer;
+}
+
+.review-add-btn:hover {
+  background: #a7d8ff;
+  color: #223044;
+}
+
+.comment-text p {
+  overflow-wrap: anywhere;
+}
+
+.star-input {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 12px 0;
+}
+
+.star-input-btn {
+  background: none;
+  border: none;
+  font-size: 2rem;
+  line-height: 1;
+  color: #f7faff;
+  cursor: pointer;
+  text-shadow: 0 0 2px rgba(34, 48, 68, 1);
+}
+
+.star-input-btn-active {
+  color: #ffe9c7;
+  text-shadow: 0 0 2px rgba(34, 48, 68, 1);
+}
+
+.review-textarea {
+  width: 100%;
+  box-sizing: border-box;
+  border: 1px solid #a7d8ff;
+  border-radius: 8px;
+  padding: 8px 10px;
+  font: inherit;
+  color: #223044;
+  background: #ffffff;
+  resize: vertical;
+}
+
+.review-textarea:focus-visible {
+  outline: 2px solid #a7d8ff;
+}
+
+
+.review-error {
+  margin: 8px 0 0;
+  color: #b3261e;
+  font-size: 0.9rem;
+}

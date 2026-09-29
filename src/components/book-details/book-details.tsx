@@ -1,109 +1,134 @@
 import { useRef } from "react";
 import "./book-details.css";
 import type { Book } from "../../interface/book";
+import type { User } from "../../interface/user";
 import type { NewCartItem } from "../../utils/use-cart";
 import { renderStars } from "../../utils/render-stars";
 import { parsePrice } from "../../utils/parse-price";
+import { useBookReviews } from "./../../utils/use-book-reviews";
+import { averageRating } from "../../services/review-service";
+import { ReviewSection } from "../review/review-section";
 
 interface Props {
   book: Book;
+  loggedUser: User | null;
   onAddToCart: (item: NewCartItem) => void;
 }
 
-function BookDetails({ book, onAddToCart }: Props) {
+function toCartItem(book: Book): NewCartItem {
+  return {
+    id: book.id,
+    title: book.title,
+    author: book.author,
+    price: parsePrice(book.price),
+    cover: book.cover,
+  };
+}
+
+interface RatingRowProps {
+  rating: number;
+  count: number;
+  onCommentsClick: () => void;
+}
+
+function RatingRow({ rating, count, onCommentsClick }: RatingRowProps) {
+  return (
+    <div className="rating-summary-row">
+      <div className="stars">{renderStars(rating)}</div>
+      <button className="comments-link" onClick={onCommentsClick}>
+        ( {count} {count === 1 ? "Kommentar" : "Kommentare"} )
+      </button>
+    </div>
+  );
+}
+
+interface BookInfoProps extends RatingRowProps {
+  book: Book;
+}
+
+function BookInfo({ book, ...rating }: BookInfoProps) {
+  return (
+    <div className="main-info">
+      <h1 className="book-title">{book.title}</h1>
+      <p className="book-author">von {book.author}</p>
+      {book.releaseDate && (
+        <p className="release-date">Erschienen am: {book.releaseDate}</p>
+      )}
+      <RatingRow {...rating} />
+    </div>
+  );
+}
+
+function PurchaseBox({ price, onAdd }: { price: string; onAdd: () => void }) {
+  return (
+    <div className="purchase-box">
+      <span className="price-tag">{price}</span>
+      <button className="order-btn" onClick={onAdd} aria-label="In den Warenkorb">
+        <span>In den Warenkorb</span>
+        <img src="/assets/icons/cart.png" alt="cart icon" />
+      </button>
+    </div>
+  );
+}
+
+interface BookHeaderProps extends BookInfoProps {
+  onAdd: () => void;
+}
+
+function BookHeader({ onAdd, ...info }: BookHeaderProps) {
+  const { book } = info;
+  return (
+    <div className="book-header">
+      <div className="cover-container">
+        <img className="cover-image" src={book.cover} alt={book.title} />
+      </div>
+      <div className="book-info-col">
+        <BookInfo {...info} />
+        <PurchaseBox price={book.price} onAdd={onAdd} />
+      </div>
+    </div>
+  );
+}
+
+function Description({ text }: { text?: string }) {
+  return (
+    <section className="description-section">
+      <h3>Beschreibung</h3>
+      <p>{text || "Keine Beschreibung verfügbar."}</p>
+    </section>
+  );
+}
+
+function RatingBadge({ rating }: { rating: number }) {
+  return (
+    <div className="overall-rating-badge">
+      <div><span>Gesamtbewertung:</span></div>
+      <div>
+        <span>{renderStars(rating)}</span>
+        <span>({rating.toFixed(1)} / 5)</span>
+      </div>
+    </div>
+  );
+}
+
+function BookDetails({ book, loggedUser, onAddToCart }: Props) {
   const commentsRef = useRef<HTMLDivElement>(null);
-
-  const scrollToComments = () => {
+  const { reviews, reload } = useBookReviews(book.id);
+  const rating = reviews.length ? averageRating(reviews) : book.rating;
+  const scrollToComments = () =>
     commentsRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const handleAddToCart = () => {
-    onAddToCart({
-      id: book.id,
-      title: book.title,
-      author: book.author,
-      price: parsePrice(book.price),
-      cover: book.cover,
-    });
-  };
-
-  const commentCount = book.comments ? book.comments.length : 0;
 
   return (
     <div className="book-details-container">
-      <div className="book-header">
-        <div className="cover-container">
-          <img className="cover-image" src={book.cover} alt={book.title} />
-        </div>
-
-        <div className="book-info-col">
-          <div className="main-info">
-            <h1 className="book-title">{book.title}</h1>
-            <p className="book-author">von {book.author}</p>
-            {book.releaseDate && (
-              <p className="release-date">Erschienen am: {book.releaseDate}</p>
-            )}
-
-            <div className="rating-summary-row">
-              <div className="stars">{renderStars(book.rating)}</div>
-              <button className="comments-link" onClick={scrollToComments}>
-                ( {commentCount}{" "}
-                {commentCount === 1 ? "Kommentar" : "Kommentare"} )
-              </button>
-            </div>
-          </div>
-
-          <div className="purchase-box">
-            <span className="price-tag">{book.price}</span>
-            <button
-              className="order-btn"
-              onClick={handleAddToCart}
-              aria-label="In den Warenkorb"
-            >
-              <span>In den Warenkorb</span>
-              <img src="/assets/icons/cart.png" alt="cart icon" />
-            </button>
-          </div>
-        </div>
-      </div>
-
+      <BookHeader book={book} rating={rating} count={reviews.length}
+        onCommentsClick={scrollToComments} onAdd={() => onAddToCart(toCartItem(book))} />
       <hr className="divider" />
-
-      <section className="description-section">
-        <h3>Beschreibung</h3>
-        <p>{book.description || "Keine Beschreibung verfügbar."}</p>
-      </section>
-
+      <Description text={book.description} />
       <hr className="divider" />
-
-      <div className="overall-rating-badge">
-        <div><span>Gesamtbewertung:</span></div>
-        <div><span>{renderStars(book.rating)}</span>
-        <span>({book.rating.toFixed(1)} / 5)</span></div>
+      <RatingBadge rating={rating} />
+      <div ref={commentsRef}>
+        <ReviewSection book={book} user={loggedUser} reviews={reviews} onChanged={reload} />
       </div>
-
-      <section className="comments-section" ref={commentsRef}>
-        <h3>Kommentare &amp; Bewertungen</h3>
-
-        {book.comments && book.comments.length > 0 ? (
-          book.comments.map((comment) => (
-            <div key={comment.id} className="comment-card">
-              <div className="comment-header">
-                <span className="user-name">{comment.userName}</span>
-                <div className="stars">
-                  {renderStars(comment.rating)}
-                  <p className="comment-date">12.8.2022</p>
-                </div>
-              </div>
-              <div className="comment-text">
-                <p>{comment.text}</p>
-              </div>
-            </div>
-          ))
-        ) : (
-          <p>Noch keine Kommentare vorhanden.</p>
-        )}
-      </section>
     </div>
   );
 }
