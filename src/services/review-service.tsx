@@ -1,6 +1,7 @@
 import { initialReviews } from "../data/review-dummy-data";
 import type { Book } from "../interface/book";
 import type { Review, User } from "../interface/user";
+import { dateValue } from "../utils/date";
 
 export interface ReviewInput {
   rating: number;
@@ -11,11 +12,6 @@ let reviews: Review[] = [...initialReviews];
 
 export function isValidReview({ rating, text }: ReviewInput): boolean {
   return rating >= 1 && rating <= 5 && text.trim().length > 0;
-}
-
-function dateValue(date: string): number {
-  const [day, month, year] = date.split(".").map(Number);
-  return new Date(year, month - 1, day).getTime();
 }
 
 function sortNewestFirst(list: Review[]): Review[] {
