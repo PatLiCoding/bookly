@@ -307,9 +307,16 @@
     gap: 12px;
     font-size: 0.9rem;
     flex-direction: column;
-    border: 1px solid #a7d8ff;
-    border-radius: 10px;
+    border: 3px solid #a7d8ff;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    border-bottom-right-radius: none;
+    border-bottom-left-radius: none;
     overflow: hidden;
+    margin-bottom: -4px;
+    position: relative;
+    z-index: 10;
+    background-color: #FFFFFF;
   }
 
   .profile-tab-active {
@@ -320,7 +327,9 @@
   }
 
   .profile-tab-content {
-    max-height: 360px;
+    max-height: 550px;
+    margin-top: -12px;
+    padding-top: 28px;
   }
 
   .profile-tab-content .order-grid {
