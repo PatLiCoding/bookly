@@ -1,27 +1,27 @@
 import { Component } from "react";
 import type { Review } from "../../interface/user";
 import { ReviewListItem } from "./review-list-item";
-import { DeleteConfirmModal } from "./delete-confirm-modal";
-import { ReviewFormModal } from "../review/review-form-modal";
+import { DeleteConfirmModal } from "../profile/delete-confirm-modal";
+import { ReviewFormModal } from "./review-form-modal";
 import { deleteReview, updateReview } from "../../services/review-service";
 import type { ReviewInput } from "../../services/review-service";
 
-interface ProfileReviewsProps {
+interface UserReviewsProps {
   reviews: Review[];
   userId: number;
   onChanged: () => void;
 }
 
-interface ProfileReviewsState {
+interface UserReviewsState {
   editing: Review | null;
   deleting: Review | null;
 }
 
-export class ProfileReviews extends Component<
-  ProfileReviewsProps,
-  ProfileReviewsState
+export class UserReviews extends Component<
+  UserReviewsProps,
+  UserReviewsState
 > {
-  state: ProfileReviewsState = { editing: null, deleting: null };
+  state: UserReviewsState = { editing: null, deleting: null };
 
   private handleEditSubmit = async (input: ReviewInput) => {
     const { editing } = this.state;

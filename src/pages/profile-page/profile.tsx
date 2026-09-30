@@ -7,7 +7,7 @@ import { CancelOrderModal } from "../../components/order/cancel-order-modal";
 import { ProfileTabs } from "../../components/profile/profile-tabs";
 import { OrderCard } from "../../components/order/order-card";
 import { getOrders, splitOrdersByStatus, cancelOrder } from "../../services/order-service";
-import { ProfileReviews } from "../../components/profile/profile-reviews";
+import { UserReviews } from "../../components/review/user-reviews";
 import { getReviewsByUser } from "../../services/review-service";
 import {
   mergedValue,
@@ -82,7 +82,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     const { reviews, visibleCount } = this.state;
     return (
       <>
-        <ProfileReviews
+        <UserReviews
           reviews={visibleItems(reviews, visibleCount.reviews)}
           userId={this.props.user.id}
           onChanged={this.reloadReviews}

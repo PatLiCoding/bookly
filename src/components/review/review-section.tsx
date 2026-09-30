@@ -18,7 +18,6 @@ interface ReviewSectionState {
   showModal: boolean;
 }
 
-/** Kommentarbereich der Buchdetailseite inkl. „Buch kommentieren“-Dialog. */
 export class ReviewSection extends Component<
   ReviewSectionProps,
   ReviewSectionState
@@ -28,11 +27,7 @@ export class ReviewSection extends Component<
   private handleSubmit = async (input: ReviewInput) => {
     const { book, user, onChanged } = this.props;
     if (!user) return;
-    try {
-      await addReview(book, user, input);
-    } catch {
-      // Bereits bewertet: die neu geladene Liste zeigt das an.
-    }
+    await addReview(book, user, input);
     this.setState({ showModal: false });
     onChanged();
   };
@@ -41,7 +36,7 @@ export class ReviewSection extends Component<
     const { user, reviews } = this.props;
     if (!user) return <p className="review-hint">Bitte anmelden, um dieses Buch zu bewerten.</p>;
     if (findUserReview(reviews, user.id))
-      return <p className="review-hint">Du hast dieses Buch bereits bewertet – bearbeiten kannst du es in deinem Profil.</p>;
+      return <p className="review-hint">Du hast dieses Buch bereits bewertet - bearbeiten kannst du es in deinem Profil.</p>;
     return (
       <button
         className="review-add-btn"

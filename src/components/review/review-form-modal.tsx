@@ -20,7 +20,6 @@ interface ReviewFormModalState {
 
 const ERROR_TEXT = "Bitte Sterne wählen und einen Kommentar schreiben.";
 
-/** Dialog zum Erstellen und Bearbeiten einer Bewertung (Sterne + Kommentar). */
 export class ReviewFormModal extends Component<
   ReviewFormModalProps,
   ReviewFormModalState

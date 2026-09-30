@@ -83,3 +83,74 @@
   color: #b3261e;
   font-size: 0.9rem;
 }
+
+.review-item {
+  background: #F7FAFF;
+  border: 1px solid #a7d8ff;
+  border-radius: 10px;
+  padding: 12px 16px;
+  margin-bottom: 12px;
+}
+
+.review-book-link {
+  text-decoration: none;
+  color: inherit;
+}
+
+.review-book-link:hover .review-book-title {
+  text-decoration: underline;
+}
+
+.review-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.review-book-title {
+  font-weight: 700;
+}
+
+.review-book-author {
+  color: #223044aa;
+  font-size: 0.9rem;
+}
+
+.review-meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  font-size: 0.85rem;
+}
+
+.review-text {
+  margin: 0;
+  line-height: 1.5;
+  background-color: #ffffff;
+  padding: 12px;
+  border-radius: 6px;
+  border: 1px solid #eaeaea;
+}
+
+.review-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 8px;
+}
+
+.review-action-btn {
+  background: #cdeeff;
+  color: #223044;
+  border: none;
+  border-radius: 8px;
+  padding: 6px 12px;
+  cursor: pointer;
+}
+
+.review-action-btn:hover {
+  background: #a7d8ff;
+}
