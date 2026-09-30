@@ -1,7 +1,10 @@
 import { Component } from "react";
 import type { User, Review } from "../../interface/user";
 import { UserReviews } from "../../components/review/user-reviews";
+import { ListToolbar } from "../../components/list-toolbar/list-toolbar";
 import { getReviewsByUser } from "../../services/review-service";
+import { filterReviews, sortByDate } from "../../utils/list-view";
+import type { SortDirection } from "../../utils/list-view";
 import { visibleItems, hasMoreItems } from "../../utils/load-more";
 import "./review-page.css";
  
@@ -15,6 +18,8 @@ interface MyReviewsPageState {
   reviews: Review[];
   visibleCount: number;
   isLoading: boolean;
+  query: string;
+  direction: SortDirection;
 }
  
 export class MyReviewsPage extends Component<
@@ -25,6 +30,8 @@ export class MyReviewsPage extends Component<
     reviews: [],
     visibleCount: PAGE_SIZE,
     isLoading: true,
+    query: "",
+    direction: "desc",
   };
  
   componentDidMount() {
@@ -42,13 +49,38 @@ export class MyReviewsPage extends Component<
     this.setState({ reviews, isLoading: false });
   };
  
+  private shownReviews(): Review[] {
+    const { reviews, query, direction } = this.state;
+    return sortByDate(filterReviews(reviews, query), (r) => r.date, direction);
+  }
+ 
+  private handleQueryChange = (query: string) => {
+    this.setState({ query, visibleCount: PAGE_SIZE });
+  };
+ 
+  private handleDirectionChange = (direction: SortDirection) => {
+    this.setState({ direction });
+  };
+ 
   private loadMore = () => {
     this.setState((prev) => ({ visibleCount: prev.visibleCount + PAGE_SIZE }));
   };
  
-  private renderLoadMore() {
-    const { reviews, visibleCount } = this.state;
-    if (!hasMoreItems(reviews, visibleCount)) return null;
+  private renderToolbar() {
+    const { reviews, query, direction } = this.state;
+    if (!this.props.user || reviews.length === 0) return null;
+    return (
+      <ListToolbar
+        query={query}
+        direction={direction}
+        onQueryChange={this.handleQueryChange}
+        onDirectionChange={this.handleDirectionChange}
+      />
+    );
+  }
+ 
+  private renderLoadMore(shown: Review[]) {
+    if (!hasMoreItems(shown, this.state.visibleCount)) return null;
     return (
       <button className="load-more-btn" onClick={this.loadMore}>
         Mehr laden
@@ -57,19 +89,23 @@ export class MyReviewsPage extends Component<
   }
  
   private renderList(user: User) {
-    const { reviews, visibleCount } = this.state;
-    if (reviews.length === 0)
-      return <span className="empty-content">Noch keine Bewertungen.</span>;
+    const shown = this.shownReviews();
+    if (shown.length === 0) return this.renderEmpty();
     return (
       <>
         <UserReviews
-          reviews={visibleItems(reviews, visibleCount)}
+          reviews={visibleItems(shown, this.state.visibleCount)}
           userId={user.id}
           onChanged={this.loadReviews}
         />
-        {this.renderLoadMore()}
+        {this.renderLoadMore(shown)}
       </>
     );
+  }
+ 
+  private renderEmpty() {
+    const text = this.state.query ? "Keine Treffer." : "Noch keine Bewertungen.";
+    return <span className="empty-content">{text}</span>;
   }
  
   private renderContent() {
@@ -83,6 +119,7 @@ export class MyReviewsPage extends Component<
     return (
       <div className="review-page">
         <h1 className="review-heading">Meine Bewertungen</h1>
+        <div className="review-toolbar"> {this.renderToolbar()} </div>
         <div className="review-content">{this.renderContent()}</div>
       </div>
     );

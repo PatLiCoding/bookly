@@ -11,6 +11,11 @@ function toTerms(query: string): string[] {
   return normalize(query).split(/\s+/).filter(Boolean);
 }
 
+export function matchesQuery(text: string, query: string): boolean {
+  const haystack = normalize(text);
+  return toTerms(query).every((term) => haystack.includes(term));
+}
+
 export function searchBooks(books: Book[], query: string): Book[] {
   const terms = toTerms(query);
   if (terms.length === 0) return books;

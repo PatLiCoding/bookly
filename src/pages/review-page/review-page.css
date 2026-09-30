@@ -8,13 +8,15 @@ max-width: 960px;
   cursor: default;
   display: flex;
   flex-direction: column;
+  gap: 24px;
 }
 
 .review-heading {
     font-size: 2rem;
-  margin-bottom: 20px;
-  padding-bottom: 20px;
-   border-bottom: 2px solid #a7d8ff; 
+}
+
+.review-toolbar {
+   border-bottom: 2px solid #a7d8ff;
 }
 
 .review-content {
@@ -25,6 +27,7 @@ max-width: 960px;
   min-height: 350px;
   max-height: 640px;
   overflow-y: auto;
+  width: 100%;
 }
 
 .review-content::-webkit-scrollbar {
@@ -38,5 +41,9 @@ max-width: 960px;
 .review-content::-webkit-scrollbar-thumb {
   background: #cdeeff;
   border-radius: 10px;
+}
+
+.empty-content {
+  width: 100%;
 }
 
