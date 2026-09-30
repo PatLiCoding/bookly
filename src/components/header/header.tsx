@@ -55,6 +55,11 @@ function Header({
     setIsMenuOpen(false);
   }
 
+  function handleReviewsClick() {
+  setIsMenuOpen(false);
+  navigate("/reviews");
+}
+
   return (
     <header className="header">
       <div className="header-content-max-width">
@@ -122,6 +127,12 @@ function Header({
                       onClick={handleOrdersClick}
                     >
                       Bestellungen
+                    </button>
+                    <button
+                      className="account-menu-item"
+                      onClick={handleReviewsClick}
+                    >
+                      Bewertungen
                     </button>
                     <button
                       className="account-menu-item logout"

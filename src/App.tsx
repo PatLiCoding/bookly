@@ -21,6 +21,7 @@ import { CheckoutPage } from "./pages/checkout-page/checkout-page";
 import { OrdersPage } from "./pages/order-page/order-page";
 import { OrderDetailPage } from "./pages/order-detail-page/order-detail-page";
 import { useCart } from "./utils/use-cart";
+import { MyReviewsPage } from "./pages/review-page/reviews-page";
 
 interface OrderDetailRouteProps {
   user: User;
@@ -101,6 +102,11 @@ function App() {
     );
   }
 
+  function renderReviewsRoute() {
+  if (!loggedUser) return <Navigate to="/" replace />;
+  return <MyReviewsPage user={loggedUser} />;
+}
+
   return (
     <div className="appContainer">
       <Header
@@ -175,6 +181,7 @@ function App() {
               />
             }
           />
+          <Route path="/reviews" element={renderReviewsRoute()} />
         </Routes>
       </main>
       <Footer />
