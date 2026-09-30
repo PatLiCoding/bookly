@@ -131,6 +131,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
         email={mergedValue(formData, "email", user.email)}
         street={mergedValue(formData, "billingStreet", user.street ?? "")}
         zip={mergedValue(formData, "billingZip", user.zip ?? "")}
+        city={mergedValue(formData, "billingCity", user.city ?? "")}
         country={mergedValue(formData, "billingCountry", user.country ?? "")}
         delivery={mergedDelivery(user.deliveryAddress?.[0], formData)}
         isEditing={isEditing}
