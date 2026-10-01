@@ -43,7 +43,7 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
       <div className="profile-info-name">
         <img
           className="account-icon"
-          src="/assets/icons/profil.png"
+          src="./assets/icons/profil.png"
           alt="Account Icon"
         />
         <div className="profile-name-row">
@@ -154,7 +154,7 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
         aria-label="Profil bearbeiten"
         onClick={this.props.onEditToggle}
       >
-        <img src="/assets/icons/edit.png" alt="Edit" />
+        <img src="./assets/icons/edit.png" alt="Edit" />
       </button>
     );
   }

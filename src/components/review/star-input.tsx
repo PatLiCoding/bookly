@@ -7,7 +7,6 @@ interface StarInputProps {
 
 const STARS = [1, 2, 3, 4, 5];
 
-/** Klickbare Sterneauswahl (1–5). */
 export class StarInput extends Component<StarInputProps> {
   private renderStar = (n: number) => {
     const active = n <= this.props.value;

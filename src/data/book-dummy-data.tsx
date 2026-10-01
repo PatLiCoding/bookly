@@ -1,6 +1,6 @@
 import type { BookBase } from "../interface/book";
 
-const DEFAULT_COVER = "/assets/img/bookcover_default.png";
+const DEFAULT_COVER = "./assets/img/bookcover_default.png";
 
 export const books: BookBase[] = [
   {

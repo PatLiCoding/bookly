@@ -27,8 +27,8 @@ function LensButton({ isHovered }: { isHovered: boolean }) {
   const state = isHovered ? "hover" : "default";
   return (
     <button className="lens-area" type="submit" aria-label="Suchen">
-      <img className="lens-area-border" src="/assets/icons/search-borderline.png" alt="" />
-      <img className="lens-img" src={`/assets/icons/search-${state}.png`} alt="" />
+      <img className="lens-area-border" src="./assets/icons/search-borderline.png" alt="" />
+      <img className="lens-img" src={`./assets/icons/search-${state}.png`} alt="" />
     </button>
   );
 }

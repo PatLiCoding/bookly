@@ -78,7 +78,7 @@ function BookCard({
               aria-label="In den Warenkorb"
               onClick={handleAddToCart}
             >
-              <img src="/assets/icons/cart.png" alt="cart" />
+              <img src="./assets/icons/cart.png" alt="cart" />
             </button>
           )}
         </div>

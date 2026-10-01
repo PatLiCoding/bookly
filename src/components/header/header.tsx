@@ -64,7 +64,7 @@ function Header({
     <header className="header">
       <div className="header-content-max-width">
         <Link to="/" className="logo-container">
-          <img className="logo" src="/assets/icons/logo.png" alt="Logo" />
+          <img className="logo" src="./assets/icons/logo.png" alt="Logo" />
           <span>Bookly</span>
         </Link>
 
@@ -83,8 +83,8 @@ function Header({
               className="cart-image"
               src={
                 isCartHovered
-                  ? "/assets/icons/cart_hover.png"
-                  : "/assets/icons/cart_default.png"
+                  ? "./assets/icons/cart_hover.png"
+                  : "./assets/icons/cart_default.png"
               }
               alt="Cart"
             />
@@ -98,8 +98,8 @@ function Header({
                   className="user-image"
                   src={
                     isAccountHovered
-                      ? "/assets/icons/account_hover.png"
-                      : "/assets/icons/account_default.png"
+                      ? "./assets/icons/account_hover.png"
+                      : "./assets/icons/account_default.png"
                   }
                   onMouseEnter={() => setIsAccountHovered(true)}
                   onMouseLeave={() => setIsAccountHovered(false)}

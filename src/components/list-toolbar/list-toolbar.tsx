@@ -37,12 +37,12 @@ export class ListToolbar extends Component<ListToolbarProps> {
       <span className="lens-area" aria-hidden="true">
         <img
           className="lens-area-border"
-          src="/assets/icons/search-borderline.png"
+          src="./assets/icons/search-borderline.png"
           alt=""
         />
         <img
           className="lens-img"
-          src="/assets/icons/search-default.png"
+          src="./assets/icons/search-default.png"
           alt=""
         />
       </span>

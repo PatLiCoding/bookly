@@ -95,7 +95,7 @@ function PurchaseBox({
       ) : (
         <button className="order-btn" onClick={onAdd} aria-label="In den Warenkorb">
           <span>In den Warenkorb</span>
-          <img src="/assets/icons/cart.png" alt="cart icon" />
+          <img src="./assets/icons/cart.png" alt="cart icon" />
         </button>
       )}
     </div>

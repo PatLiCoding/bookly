@@ -69,7 +69,7 @@ export class CartPage extends Component<CartPageProps> {
       {this.props.cartItems.length > 0 && (
         <button className="cart-clear-btn" onClick={this.props.onClearCart}>
           Warenkorb leeren
-          <img src="/assets/icons/delete_red.png" alt="Warenkorb leeren" />
+          <img src="./assets/icons/delete_red.png" alt="Warenkorb leeren" />
         </button>
       )}
     </div>

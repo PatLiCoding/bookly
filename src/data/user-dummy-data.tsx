@@ -48,7 +48,7 @@ export const user: User[] = [
           {
             id: 1,
             bookId: 23,
-            bookCover: "/assets/img/bookcover_default.png",
+            bookCover: "./assets/img/bookcover_default.png",
             title: "Milo und der Zauberwald",
             author: "Clara Sommer",
             price: 8.99,
@@ -66,7 +66,7 @@ export const user: User[] = [
           {
             id: 1,
             bookId: 1,
-            bookCover: "/assets/img/bookcover_default.png",
+            bookCover: "./assets/img/bookcover_default.png",
             title: "Das Flüstern der Wälder",
             author: "Elena Vance",
             price: 14.99,
@@ -75,7 +75,7 @@ export const user: User[] = [
           {
             id: 2,
             bookId: 4,
-            bookCover: "/assets/img/bookcover_default.png",
+            bookCover: "./assets/img/bookcover_default.png",
             title: "Am Ende des Meeres",
             author: "Jonas Brand",
             price: 18.99,
@@ -93,7 +93,7 @@ export const user: User[] = [
           {
             id: 1,
             bookId: 7,
-            bookCover: "/assets/img/bookcover_default.png",
+            bookCover: "./assets/img/bookcover_default.png",
             title: "Das leere Zimmer",
             author: "Thomas Keller",
             price: 15.99,
@@ -110,7 +110,7 @@ export const user: User[] = [
           {
             id: 1,
             bookId: 33,
-            bookCover: "/assets/img/bookcover_default.png",
+            bookCover: "./assets/img/bookcover_default.png",
             title: "Das Königreich der Schatten",
             author: "Nora Falk",
             price: 18.99,
@@ -119,7 +119,7 @@ export const user: User[] = [
           {
             id: 2,
             bookId: 17,
-            bookCover: "/assets/img/bookcover_default.png",
+            bookCover: "./assets/img/bookcover_default.png",
             title: "Sterne über Berlin",
             author: "Emma Richter",
             price: 13.99,
@@ -136,7 +136,7 @@ export const user: User[] = [
           {
             id: 1,
             bookId: 16,
-            bookCover: "/assets/img/bookcover_default.png",
+            bookCover: "./assets/img/bookcover_default.png",
             title: "Zwischen zwei Welten",
             author: "Julia Sommer",
             price: 17.99,
@@ -153,7 +153,7 @@ export const user: User[] = [
           {
             id: 1,
             bookId: 12,
-            bookCover: "/assets/img/bookcover_default.png",
+            bookCover: "./assets/img/bookcover_default.png",
             title: "Das Haus ohne Fenster",
             author: "Felix Hartmann",
             price: 16.99,
@@ -162,7 +162,7 @@ export const user: User[] = [
           {
             id: 2,
             bookId: 29,
-            bookCover: "/assets/img/bookcover_default.png",
+            bookCover: "./assets/img/bookcover_default.png",
             title: "Chaos im Alltag",
             author: "Tina Berger",
             price: 11.99,

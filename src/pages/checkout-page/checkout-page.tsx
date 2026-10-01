@@ -117,7 +117,7 @@ export class CheckoutPage extends Component<CheckoutPageProps, CheckoutState> {
     return this.props.cartItems.map((item) => ({
       id: item.id,
       bookId: item.id,
-      bookCover: item.cover ?? "/assets/img/bookcover_default.png",
+      bookCover: item.cover ?? "./assets/img/bookcover_default.png",
       title: item.title,
       author: item.author,
       price: item.price,
@@ -339,7 +339,7 @@ export class CheckoutPage extends Component<CheckoutPageProps, CheckoutState> {
     return (
       <section className="checkout-confirmation">
         <div className="checkout-confirmation-icon">
-          <img src="/assets/icons/check.png" alt="check" />
+          <img src="./assets/icons/check.png" alt="check" />
         </div>
         <h2>Bestellung erfolgreich!</h2>
         <p>
