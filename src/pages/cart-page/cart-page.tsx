@@ -1,7 +1,9 @@
-import { Component } from "react";
-import { Link } from "react-router-dom";
-import type { User } from "../../interface/user";
-import { QuantityControl } from "../../components/quantity-control/quantity-control"
+import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { QuantityControl } from "../../components/quantity-control/quantity-control";
+import { useCartContext } from "../../context/use-cart-context";
+import { useAuth } from "../../context/use-auth";
+
 import {
   formatPrice,
   calcSubtotal,
@@ -10,46 +12,18 @@ import {
 } from "../../utils/price";
 import "./cart-page.css";
 
-export interface CartItem {
-  id: number;
-  title: string;
-  author: string;
-  price: number;
-  cover?: string;
-  quantity: number;
-}
+function CartPage() {
+  const { cartItems, removeItem, increaseItem, decreaseItem, clearCart } =
+    useCartContext();
+  const { loggedUser } = useAuth();
+  const navigate = useNavigate();
+  const [errorMsg, setErrorMsg] = useState("");
 
-interface CartPageProps {
-  cartItems: CartItem[];
-  loggedUser: User | null;
-  errorMsg: string;
-  onRemoveItem: (id: number) => void;
-  onCheckout: () => void;
-  setErrorMsg: (msg: string) => void;
-  onIncreaseItem: (id: number) => void;
-  onDecreaseItem: (id: number) => void;
-  onClearCart: () => void;
-}
+  const subtotal = calcSubtotal(cartItems);
+  const shippingCost = calcShippingCost(cartItems);
+  const totalPrice = calcTotal(cartItems);
 
-export class CartPage extends Component<CartPageProps> {
-  get subtotal(): number {
-    return calcSubtotal(this.props.cartItems);
-  }
-
-  get shippingCost(): number {
-    return calcShippingCost(this.props.cartItems);
-  }
-
-  get totalPrice(): number {
-    return calcTotal(this.props.cartItems);
-  }
-
-  formatPrice(value: number): string {
-    return `${value.toFixed(2).replace(".", ",")} €`;
-  }
-
-  handleCheckout = (): void => {
-    const { loggedUser, cartItems, setErrorMsg, onCheckout } = this.props;
+  function handleCheckout(): void {
     if (!loggedUser) {
       setErrorMsg("Bestellen ist nur mit einem Account möglich.");
       return;
@@ -59,171 +33,100 @@ export class CartPage extends Component<CartPageProps> {
       return;
     }
     setErrorMsg("");
-    onCheckout();
-  };
+    navigate("/checkout");
+  }
 
-  private renderHeader() {
+  if (cartItems.length === 0) {
+    return (
+      <section className="cart-page">
+        <div className="cart-page-header">
+          <h2 className="cart-page-title">Warenkorb</h2>
+        </div>
+        <div className="cart-empty">
+          <p>Ihr Warenkorb ist leer.</p>
+          <Link to="/" className="cart-empty-link">
+            Weiter stöbern
+          </Link>
+        </div>
+      </section>
+    );
+  }
+
   return (
-    <div className="cart-page-header">
-      <h2 className="cart-page-title">Warenkorb</h2>
-      {this.props.cartItems.length > 0 && (
-        <button className="cart-clear-btn" onClick={this.props.onClearCart}>
+    <section className="cart-page">
+      <div className="cart-page-header">
+        <h2 className="cart-page-title">Warenkorb</h2>
+        <button className="cart-clear-btn" onClick={clearCart}>
           Warenkorb leeren
           <img src="./assets/icons/delete_red.png" alt="Warenkorb leeren" />
         </button>
-      )}
-    </div>
-  );
-}
-
-private renderContent() {
-  return (
-    <div className="cart-page-content">
-      <div className="cart-page-items">
-        {this.props.cartItems.map((item) => this.renderItem(item))}
       </div>
-      {this.renderSummary()}
-    </div>
-  );
-}
 
-  private renderEmptyState() {
-    return (
-      <div className="cart-empty">
-        <p>Ihr Warenkorb ist leer.</p>
-        <Link to="/" className="cart-empty-link">
-          Weiter stöbern
-        </Link>
+      <div className="cart-page-content">
+        <div className="cart-page-items">
+          {cartItems.map((item) => (
+            <div key={item.id} className="cart-item">
+              <div className="cart-item-cover">
+                <img src={item.cover} alt={item.title} />
+              </div>
+              <div className="cart-item-info">
+                <h3 className="cart-item-title">{item.title}</h3>
+                <p className="cart-item-author">Autor: {item.author}</p>
+              </div>
+              <div className="cart-item-actions">
+                <QuantityControl
+                  quantity={item.quantity}
+                  onIncrease={() => increaseItem(item.id)}
+                  onDecrease={() => decreaseItem(item.id)}
+                />
+                <span className="cart-item-price">
+                  {formatPrice(item.price * item.quantity)}
+                </span>
+                <button
+                  className="cart-item-remove"
+                  onClick={() => removeItem(item.id)}
+                >
+                  Entfernen
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <aside className="cart-summary">
+          <h3 className="cart-summary-title">Übersicht</h3>
+          <div className="cart-summary-row">
+            <span>Zwischensumme:</span>
+            <span>{formatPrice(subtotal)}</span>
+          </div>
+          <div className="cart-summary-row">
+            <span>Versandkosten:</span>
+            <span>{formatPrice(shippingCost)}</span>
+          </div>
+          <div className="cart-summary-row cart-summary-row--total">
+            <span>Gesamtsumme:</span>
+            <span>{formatPrice(totalPrice)}</span>
+          </div>
+
+          <button
+            className="cart-summary-checkout-btn"
+            onClick={handleCheckout}
+            disabled={!loggedUser}
+          >
+            Zur Kasse gehen
+          </button>
+
+          {errorMsg && <p className="cart-summary-error">{errorMsg}</p>}
+          {!loggedUser && (
+            <p className="cart-summary-hint">
+              Bestellen ist nur mit einem Account möglich. Bitte im Header
+              einloggen.
+            </p>
+          )}
+        </aside>
       </div>
-    );
-  }
-
-  private renderItemCover(item: CartItem) {
-    return (
-      <div className="cart-item-cover">
-        <img src={item.cover} alt={item.title} />
-      </div>
-    );
-  }
-
-  private renderItemInfo(item: CartItem) {
-    return (
-      <div className="cart-item-info">
-        <h3 className="cart-item-title">{item.title}</h3>
-        <p className="cart-item-author">Autor: {item.author}</p>
-      </div>
-    );
-  }
-
-  private renderQuantityControls(item: CartItem) {
-  const { onDecreaseItem, onIncreaseItem } = this.props;
-  return (
-    <QuantityControl
-      quantity={item.quantity}
-      onIncrease={() => onIncreaseItem(item.id)}
-      onDecrease={() => onDecreaseItem(item.id)}
-    />
-  );
-}
-
-  private renderItemActions(item: CartItem) {
-    return (
-      <div className="cart-item-actions">
-        {this.renderQuantityControls(item)}
-        <span className="cart-item-price">
-          {formatPrice(item.price * item.quantity)}
-        </span>
-        <button
-          className="cart-item-remove"
-          onClick={() => this.props.onRemoveItem(item.id)}
-        >
-          Entfernen
-        </button>
-      </div>
-    );
-  }
-
-  private renderItem(item: CartItem) {
-    return (
-      <div key={item.id} className="cart-item">
-        {this.renderItemCover(item)}
-        {this.renderItemInfo(item)}
-        {this.renderItemActions(item)}
-      </div>
-    );
-  }
-
-  private renderSummaryRow(label: string, value: string, isTotal = false) {
-    const rowClass = isTotal
-      ? "cart-summary-row cart-summary-row--total"
-      : "cart-summary-row";
-    return (
-      <div className={rowClass}>
-        <span>{label}</span>
-        <span>{value}</span>
-      </div>
-    );
-  }
-
-  private renderSummaryTotals() {
-    return (
-      <>
-        {this.renderSummaryRow(
-          "Zwischensumme:",
-          this.formatPrice(this.subtotal),
-        )}
-        {this.renderSummaryRow(
-          "Versandkosten:",
-          this.formatPrice(this.shippingCost),
-        )}
-        {this.renderSummaryRow(
-          "Gesamtsumme:",
-          this.formatPrice(this.totalPrice),
-          true,
-        )}
-      </>
-    );
-  }
-
-  private renderSummaryMessages() {
-    const { loggedUser, errorMsg } = this.props;
-    return (
-      <>
-        {errorMsg && <p className="cart-summary-error">{errorMsg}</p>}
-        {!loggedUser && (
-          <p className="cart-summary-hint">
-            Bestellen ist nur mit einem Account möglich. Bitte im Header
-            einloggen.
-          </p>
-        )}
-      </>
-    );
-  }
-
-  private renderSummary() {
-    return (
-      <aside className="cart-summary">
-        <h3 className="cart-summary-title">Übersicht</h3>
-        {this.renderSummaryTotals()}
-        <button
-          className="cart-summary-checkout-btn"
-          onClick={this.handleCheckout}
-          disabled={!this.props.loggedUser}
-        >
-          Zur Kasse gehen
-        </button>
-        {this.renderSummaryMessages()}
-      </aside>
-    );
-  }
-
-  render() {
-  const isEmpty = this.props.cartItems.length === 0;
-  return (
-    <section className="cart-page">
-      {this.renderHeader()}
-      {isEmpty ? this.renderEmptyState() : this.renderContent()}
     </section>
   );
 }
-}
+
+export default CartPage;

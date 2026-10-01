@@ -1,53 +1,43 @@
 import "./book-card.css";
 import { Link } from "react-router-dom";
 import type { Book } from "../../interface/book";
-import type { CartItem } from "../../pages/cart-page/cart-page";
 import { renderStars } from "../../utils/render-stars";
 import { parsePrice } from "../../utils/parse-price";
 import { QuantityControl } from "../quantity-control/quantity-control";
+import { useCartContext } from "../../context/use-cart-context";
 
 interface Props {
   book: Book;
-  cartQuantity?: number;
-  onAddToCart: (item: CartItem) => void;
-  onIncreaseItem?: (id: number) => void;
-  onDecreaseItem?: (id: number) => void;
 }
 
-function BookCard({
-  book,
-  cartQuantity = 0,
-  onAddToCart,
-  onIncreaseItem,
-  onDecreaseItem,
-}: Props) {
+function BookCard({ book }: Props) {
+  const { cartItems, addItem, increaseItem, decreaseItem } = useCartContext();
+
+  const itemInCart = cartItems.find((item) => item.id === book.id);
+  const cartQuantity = itemInCart ? itemInCart.quantity : 0;
+
   function handleAddToCart(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
-    onAddToCart({
+    addItem({
       id: book.id,
       title: book.title,
       author: book.author,
       price: parsePrice(book.price),
       cover: book.cover,
-      quantity: 1,
     });
   }
 
   function handleIncrease(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
-    if (onIncreaseItem) {
-      onIncreaseItem(book.id);
-    }
+    increaseItem(book.id);
   }
 
   function handleDecrease(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
-    if (onDecreaseItem) {
-      onDecreaseItem(book.id);
-    }
+    decreaseItem(book.id);
   }
 
   return (

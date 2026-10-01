@@ -190,3 +190,5 @@ export class OrdersPage extends Component<OrdersPageProps, OrdersPageState> {
     );
   }
 }
+
+export default OrdersPage;

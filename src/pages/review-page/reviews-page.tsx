@@ -11,11 +11,11 @@ import "./review-page.css";
  
 const PAGE_SIZE = 6;
  
-interface MyReviewsPageProps {
+interface ReviewsPageProps {
   user: User | null;
 }
  
-interface MyReviewsPageState {
+interface ReviewsPageState {
   reviews: Review[];
   visibleCount: number;
   isLoading: boolean;
@@ -23,11 +23,11 @@ interface MyReviewsPageState {
   direction: SortDirection;
 }
  
-export class MyReviewsPage extends Component<
-  MyReviewsPageProps,
-  MyReviewsPageState
+export class ReviewsPage extends Component<
+  ReviewsPageProps,
+  ReviewsPageState
 > {
-  state: MyReviewsPageState = {
+  state: ReviewsPageState = {
     reviews: [],
     visibleCount: PAGE_SIZE,
     isLoading: true,
@@ -39,7 +39,7 @@ export class MyReviewsPage extends Component<
     this.loadReviews();
   }
  
-  componentDidUpdate(prevProps: MyReviewsPageProps) {
+  componentDidUpdate(prevProps: ReviewsPageProps) {
     if (prevProps.user?.id !== this.props.user?.id) this.loadReviews();
   }
  
@@ -126,3 +126,5 @@ export class MyReviewsPage extends Component<
     );
   }
 }
+
+export default ReviewsPage;

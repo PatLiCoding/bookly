@@ -3,21 +3,14 @@ import "./header.css";
 import { Link, useNavigate } from "react-router-dom";
 import { Auth } from "./../auth/auth";
 import SearchBar from "../search-bar/search-bar";
+import { useAuth } from "../../context/use-auth";
 import type { User } from "../../interface/user";
+import { useCartContext } from "../../context/use-cart-context";
 
-interface HeaderProps {
-  loggedUser: User | null;
-  cartCount: number;
-  onLoginSuccess: (user: User) => void;
-  onLogout: () => void;
-}
 
-function Header({
-  loggedUser,
-  cartCount,
-  onLoginSuccess,
-  onLogout,
-}: HeaderProps) {
+function Header() {
+  const { loggedUser, login, logout } = useAuth();
+  const { cartCount } = useCartContext();
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [isAccountHovered, setIsAccountHovered] = useState(false);
   const [isAuthOpen, setIsAuthOpen] = useState(false);
@@ -36,7 +29,7 @@ function Header({
   }, []);
 
   function handleLoginSuccess(user: User) {
-    onLoginSuccess(user);
+    login(user);
     setIsAuthOpen(false);
   }
 
@@ -51,14 +44,14 @@ function Header({
   }
 
   function handleLogoutClick() {
-    onLogout();
+    logout();
     setIsMenuOpen(false);
   }
 
   function handleReviewsClick() {
-  setIsMenuOpen(false);
-  navigate("/reviews");
-}
+    setIsMenuOpen(false);
+    navigate("/reviews");
+  }
 
   return (
     <header className="header">

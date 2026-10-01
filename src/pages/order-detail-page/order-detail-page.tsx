@@ -201,3 +201,5 @@ export class OrderDetailPage extends Component<
     );
   }
 }
+
+export default OrderDetailPage;

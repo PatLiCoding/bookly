@@ -258,3 +258,5 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     );
   }
 }
+
+export default Profile;

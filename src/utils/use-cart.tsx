@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import type { CartItem } from "../pages/cart-page/cart-page";
+import type { CartItem } from "../interface/cart-item";
 
 export type NewCartItem = Omit<CartItem, "quantity">;
 
