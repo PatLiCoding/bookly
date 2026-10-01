@@ -1,5 +1,5 @@
 import { Component } from "react";
-import type { Review } from "../../interface/user";
+import type { Review } from "../../interface/review";
 import { renderStars } from "../../utils/render-stars";
 
 interface ReviewCommentProps {

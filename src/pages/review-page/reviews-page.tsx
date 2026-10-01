@@ -1,5 +1,6 @@
 import { Component } from "react";
-import type { User, Review } from "../../interface/user";
+import type { User } from "../../interface/user";
+import type { Review } from "../../interface/review";
 import { UserReviews } from "../../components/review/user-reviews";
 import { ListToolbar } from "../../components/list-toolbar/list-toolbar";
 import { getReviewsByUser } from "../../services/review-service";

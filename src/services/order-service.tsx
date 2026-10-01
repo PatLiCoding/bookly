@@ -1,4 +1,6 @@
-import type { User, Order, OrderStatus } from "../interface/user";
+import type { User } from "../interface/user";
+import type { Order, OrderStatus } from "../interface/order";
+
 
 export const STATUS_LABEL: Record<OrderStatus, string> = {
   processing: "In Bearbeitung",

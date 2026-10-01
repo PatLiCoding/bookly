@@ -1,6 +1,6 @@
 import "./order-card.css";
 import { Component } from "react";
-import type { Order } from "../../interface/user";
+import type { Order } from "../../interface/order";
 import { statusLabel } from "../../services/order-service";
 
 interface OrderCardProps {

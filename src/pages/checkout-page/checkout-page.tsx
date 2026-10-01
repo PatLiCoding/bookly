@@ -1,6 +1,7 @@
 import { Component, type ChangeEvent } from "react";
 import { Link, Navigate } from "react-router-dom";
-import type { Order, User, Delivery } from "../../interface/user";
+import type { User, Delivery } from "../../interface/user";
+import type { Order } from "../../interface/order";
 import type { CartItem } from "../cart-page/cart-page";
 import { buildUserUpdate } from "../../services/user-service";
 import {

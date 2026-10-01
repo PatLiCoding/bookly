@@ -1,6 +1,7 @@
 import "./order-page.css";
 import { Component } from "react";
-import type { User, Order } from "../../interface/user";
+import type { User } from "../../interface/user";
+import type { Order } from "../../interface/order";
 import { OrderCard } from "../../components/order/order-card";
 import { ListToolbar } from "../../components/list-toolbar/list-toolbar";
 import { getOrders, splitOrdersByStatus } from "../../services/order-service";

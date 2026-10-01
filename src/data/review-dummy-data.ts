@@ -1,4 +1,4 @@
-import type { Review } from "../interface/user";
+import type { Review } from "../interface/review";
 
 export const initialReviews: Review[] = [
   {

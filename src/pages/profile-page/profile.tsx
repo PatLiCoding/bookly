@@ -1,5 +1,7 @@
 import { Component } from "react";
-import type { User, Order, Review } from "../../interface/user";
+import type { User } from "../../interface/user";
+import type { Order } from "../../interface/order";
+import type { Review } from "../../interface/review";
 import type { ProfileTabKey } from "../../components/profile/profile-tabs";
 import { ProfileInfoCard } from "../../components/profile/profile-info-card";
 import { DeleteConfirmModal } from "../../components/profile/delete-confirm-modal";

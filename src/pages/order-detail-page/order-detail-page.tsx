@@ -1,6 +1,8 @@
 import { Component } from "react";
 import { Link } from "react-router-dom";
-import type { User, Order } from "../../interface/user";
+import type { User } from "../../interface/user";
+import type { Order } from "../../interface/order";
+
 import { getOrders, statusLabel, cancelOrder } from "../../services/order-service";
 import { CancelOrderModal } from "../../components/order/cancel-order-modal";
 import { formatPrice, calcSubtotal } from "../../utils/price";

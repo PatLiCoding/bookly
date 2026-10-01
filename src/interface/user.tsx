@@ -1,3 +1,6 @@
+import type { Review } from "./review";
+import type { Order } from "./order";
+
 export interface Delivery {
   id: number;
   Firstname: string;
@@ -6,39 +9,6 @@ export interface Delivery {
   zip: string;
   city: string;
   country: string;
-}
-
-export interface Review {
-  id: number;
-  bookId: number;
-  bookTitle: string;
-  author: string;
-  userId: number;
-  userName: string;
-  rating: number;
-  date: string;
-  text: string;
-}
-
-export type OrderStatus = "processing" | "shipped" | "delivered" | "cancelled";
-
-export interface OrderItem {
-  id: number;
-  bookId: number;
-  bookCover?: string;
-  title: string;
-  author: string;
-  price: number;
-  quantity: number;
-}
-
-export interface Order {
-  id: number;
-  items: OrderItem[];
-  totalPrice: number;
-  orderDate: string;
-  deliveredDate?: string;
-  status: OrderStatus;
 }
 
 export interface User {

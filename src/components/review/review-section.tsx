@@ -1,6 +1,7 @@
 import { Component } from "react";
 import type { Book } from "../../interface/book";
-import type { Review, User } from "../../interface/user";
+import type { Review } from "../../interface/review";
+import type { User } from "../../interface/user";
 import { ReviewComment } from "./review-comment";
 import { ReviewFormModal } from "./review-form-modal";
 import { addReview, findUserReview } from "../../services/review-service";

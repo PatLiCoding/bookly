@@ -1,4 +1,5 @@
-import type { Order, Review } from "../interface/user";
+import type { Order } from "../interface/order";
+import type { Review } from "../interface/review";
 import { matchesQuery } from "./book-search";
 import { dateValue } from "./date";
 

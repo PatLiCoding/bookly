@@ -1,5 +1,5 @@
 import { Component } from "react";
-import type { Review } from "../../interface/user";
+import type { Review } from "../../interface/review";
 import { ReviewListItem } from "./review-list-item";
 import { DeleteConfirmModal } from "../profile/delete-confirm-modal";
 import { ReviewFormModal } from "./review-form-modal";

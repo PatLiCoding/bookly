@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import type { Review } from "../interface/user";
+import type { Review } from "../interface/review";
 import { getReviewsByBook } from "../services/review-service";
 
 export function useBookReviews(bookId: number) {

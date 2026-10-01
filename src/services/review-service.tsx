@@ -1,6 +1,7 @@
 import { initialReviews } from "../data/review-dummy-data";
 import type { Book } from "../interface/book";
-import type { Review, User } from "../interface/user";
+import type { User } from "../interface/user";
+import type { Review } from "../interface/review";
 import { dateValue } from "../utils/date";
 
 export interface ReviewInput {
