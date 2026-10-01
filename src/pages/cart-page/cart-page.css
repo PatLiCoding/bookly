@@ -13,6 +13,8 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
   border-bottom: 1px solid #e2e8f0;
   padding-bottom: 0.75rem;
 }
@@ -262,6 +264,31 @@
   color: #223044;
   font-weight: 600;
   text-decoration: underline;
+}
+
+.cart-clear-btn {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: #ef4444;
+  background: #FFFFFF;
+  border: 1px solid #fecaca;
+  border-radius: 0.5rem;
+  padding: 0.4rem 0.8rem;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+  max-width: 250px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.cart-clear-btn img {
+  height: 20px;
+  object-fit: contain;
+}
+
+.cart-clear-btn:hover {
+  background: #fef2f2;
 }
 
 @media (max-width: 850px) {

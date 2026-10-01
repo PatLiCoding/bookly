@@ -28,6 +28,7 @@ interface CartPageProps {
   setErrorMsg: (msg: string) => void;
   onIncreaseItem: (id: number) => void;
   onDecreaseItem: (id: number) => void;
+  onClearCart: () => void;
 }
 
 export class CartPage extends Component<CartPageProps> {
@@ -60,6 +61,31 @@ export class CartPage extends Component<CartPageProps> {
     setErrorMsg("");
     onCheckout();
   };
+
+  private renderHeader() {
+  return (
+    <div className="cart-page-header">
+      <h2 className="cart-page-title">Warenkorb</h2>
+      {this.props.cartItems.length > 0 && (
+        <button className="cart-clear-btn" onClick={this.props.onClearCart}>
+          Warenkorb leeren
+          <img src="/assets/icons/delete_red.png" alt="Warenkorb leeren" />
+        </button>
+      )}
+    </div>
+  );
+}
+
+private renderContent() {
+  return (
+    <div className="cart-page-content">
+      <div className="cart-page-items">
+        {this.props.cartItems.map((item) => this.renderItem(item))}
+      </div>
+      {this.renderSummary()}
+    </div>
+  );
+}
 
   private renderEmptyState() {
     return (
@@ -192,25 +218,12 @@ export class CartPage extends Component<CartPageProps> {
   }
 
   render() {
-    const { cartItems } = this.props;
-    if (cartItems.length === 0) {
-      return (
-        <section className="cart-page">
-          <h2 className="cart-page-title">Warenkorb</h2>
-          {this.renderEmptyState()}
-        </section>
-      );
-    }
-    return (
-      <section className="cart-page">
-        <h2 className="cart-page-title">Warenkorb</h2>
-        <div className="cart-page-content">
-          <div className="cart-page-items">
-            {cartItems.map((item) => this.renderItem(item))}
-          </div>
-          {this.renderSummary()}
-        </div>
-      </section>
-    );
-  }
+  const isEmpty = this.props.cartItems.length === 0;
+  return (
+    <section className="cart-page">
+      {this.renderHeader()}
+      {isEmpty ? this.renderEmptyState() : this.renderContent()}
+    </section>
+  );
+}
 }

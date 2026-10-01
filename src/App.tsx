@@ -69,6 +69,11 @@ function App() {
     clearCart();
   }
 
+  function handleClearCart() {
+  clearCart();
+  setErrorMsg("");
+}
+
   function handleNavigateToOrderDetail(orderId: string | number) {
     navigate(`/order/${orderId}`);
   }
@@ -165,6 +170,7 @@ function App() {
                 onIncreaseItem={increaseItem}
                 onDecreaseItem={decreaseItem}
                 onRemoveItem={removeItem}
+                onClearCart={handleClearCart}
                 onCheckout={handleCheckout}
                 setErrorMsg={setErrorMsg}
               />

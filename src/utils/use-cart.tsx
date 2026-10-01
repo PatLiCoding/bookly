@@ -9,7 +9,8 @@ const STORAGE_KEY = "bookly-cart";
 function loadCart(): CartItem[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as CartItem[]) : [];
+    const parsed: unknown = raw ? JSON.parse(raw) : [];
+    return Array.isArray(parsed) ? (parsed as CartItem[]) : [];
   } catch {
     return [];
   }
