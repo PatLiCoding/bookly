@@ -1,4 +1,3 @@
-import type { Review } from "./review";
 import type { Order } from "./order";
 
 export interface Delivery {
@@ -12,16 +11,14 @@ export interface Delivery {
 }
 
 export interface User {
-  id: number;
+  id: string;
   Firstname: string;
   Lastname: string;
   email: string;
-  passwort: string;
   street?: string;
   zip?: string;
   city?: string;
   country?: string;
   deliveryAddress?: Delivery[];
-  reviews?: Review[];
   order?: Order[];
 }

@@ -1,10 +1,11 @@
 import { supabase } from "../lib/supabase";
-import { getBookStats } from "./review-service";
+import { getAllBookStats, getBookStats, NO_STATS } from "./review-service";
 import { sortBooks } from "../utils/book-filter";
 import { ALL_CATEGORY } from "../utils/category";
 import { formatPrice } from "../utils/price";
 import { getCover } from "../utils/book-cover";
 import type { Book, BookBase } from "../interface/book";
+import type { BookStats } from "./review-service";
 
 /** One row of the table "books". */
 interface BookRow {
@@ -37,18 +38,19 @@ function mapBook(row: BookRow): BookBase {
   };
 }
 
-function withStats(book: BookBase): Book {
-  return { ...book, ...getBookStats(book.id) };
+function withStats(book: BookBase, stats: Map<number, BookStats>): Book {
+  return { ...book, ...(stats.get(book.id) ?? NO_STATS) };
 }
 
-function toBooks(rows: BookRow[] | null): Book[] {
-  return (rows ?? []).map(mapBook).map(withStats);
+async function fetchRows(): Promise<BookRow[]> {
+  const { data, error } = await supabase.from("books").select("*");
+  if (error) throw error;
+  return data ?? [];
 }
 
 export async function getBooks(): Promise<Book[]> {
-  const { data, error } = await supabase.from("books").select("*");
-  if (error) throw error;
-  return toBooks(data);
+  const [rows, stats] = await Promise.all([fetchRows(), getAllBookStats()]);
+  return rows.map(mapBook).map((book) => withStats(book, stats));
 }
 
 export async function getBookById(id: number): Promise<Book | undefined> {
@@ -59,7 +61,8 @@ export async function getBookById(id: number): Promise<Book | undefined> {
     .eq("id", id)
     .maybeSingle();
   if (error) throw error;
-  return data ? withStats(mapBook(data)) : undefined;
+  if (!data) return undefined;
+  return { ...mapBook(data), ...(await getBookStats(id)) };
 }
 
 export async function getBooksByCategory(category?: string): Promise<Book[]> {

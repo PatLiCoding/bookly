@@ -1,91 +1,174 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import "./auth.css";
-import type { User } from "../../interface/user";
-import { user as dummyUsers } from "../../data/user-dummy-data";
+import { useAuth } from "../../context/use-auth";
 
 interface Props {
   isOpen: boolean;
   onClose: () => void;
-  onLoginSuccess: (user: User) => void;
 }
 
-export function Auth({ isOpen, onClose, onLoginSuccess }: Props) {
-  const [isLogin, setIsLogin] = useState(true);
-  const [users, setUsers] = useState<User[]>(dummyUsers);
-  const [firstname, setFirstname] = useState("");
-  const [lastname, setLastname] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+interface FormValues {
+  firstname: string;
+  lastname: string;
+  email: string;
+  password: string;
+}
 
+const EMPTY: FormValues = { firstname: "", lastname: "", email: "", password: "" };
+
+/** Locks scrolling of the page while the modal is open. */
+function useScrollLock(isOpen: boolean) {
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = "hidden";
-    }
+    if (isOpen) document.body.style.overflow = "hidden";
     return () => {
       document.body.style.overflow = "";
     };
   }, [isOpen]);
+}
 
-  if (!isOpen) return null;
-
-  function resetForm() {
-    setFirstname("");
-    setLastname("");
-    setEmail("");
-    setPassword("");
+/** Field values and error text of the form. */
+function useFormState() {
+  const [values, setValues] = useState(EMPTY);
+  const [error, setError] = useState("");
+  const change = (field: keyof FormValues, value: string) =>
+    setValues((prev) => ({ ...prev, [field]: value }));
+  const reset = () => {
+    setValues(EMPTY);
     setError("");
-  }
+  };
+  return { values, error, setError, change, reset };
+}
 
-  function switchTab(loginMode: boolean) {
-    setIsLogin(loginMode);
-    resetForm();
-  }
+type FormState = ReturnType<typeof useFormState>;
 
-  function handleLogin() {
-    const found = users.find(
-      (u) => u.email === email && u.passwort === password,
-    );
-    if (!found) {
-      setError("E-Mail oder Passwort falsch");
-      return;
-    }
-      onLoginSuccess(found);
-      resetForm(); 
-    onClose();
-  }
+function errorText(err: unknown): string {
+  return err instanceof Error ? err.message : "Unbekannter Fehler";
+}
 
-  function handleRegister() {
-    const exists = users.some((u) => u.email === email);
-    if (exists) {
-      setError("E-Mail wird bereits verwendet");
-      return;
-    }
+/** Logs in or registers, depending on the active tab. */
+function useSubmit(isLogin: boolean, form: FormState, onDone: () => void) {
+  const { signIn, signUp } = useAuth();
+  const [busy, setBusy] = useState(false);
 
-    const newUser: User = {
-      id: users.length + 1,
-      Firstname: firstname,
-      Lastname: lastname,
-      email,
-      passwort: password,
-      deliveryAddress: [],
-      reviews: [],
-      order: [],
-    };
-    setUsers([...users, newUser]);
-      onLoginSuccess(newUser);
-      resetForm(); 
-    onClose();
-  }
-
-  function handleSubmit(e: React.FormEvent) {
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
-    if (isLogin) {
-      handleLogin();
-    } else {
-      handleRegister();
+    setBusy(true);
+    try {
+      const { values } = form;
+      await (isLogin ? signIn(values.email, values.password) : signUp(values));
+      form.reset();
+      onDone();
+    } catch (err) {
+      form.setError(errorText(err));
+    } finally {
+      setBusy(false);
     }
   }
+
+  return { busy, submit };
+}
+
+function useAuthForm(onDone: () => void) {
+  const [isLogin, setIsLogin] = useState(true);
+  const form = useFormState();
+  const { busy, submit } = useSubmit(isLogin, form, onDone);
+  const switchTab = (login: boolean) => {
+    setIsLogin(login);
+    form.reset();
+  };
+  return { isLogin, switchTab, form, busy, submit };
+}
+
+interface FieldProps {
+  label: string;
+  type: string;
+  placeholder: string;
+  value: string;
+  onChange: (value: string) => void;
+  minLength?: number;
+}
+
+/** Label and input of one form field. */
+function Field({ label, onChange, ...input }: FieldProps) {
+  return (
+    <>
+      <label>{label}</label>
+      <input {...input} onChange={(e) => onChange(e.target.value)} required />
+    </>
+  );
+}
+
+function NameFields({ form }: { form: FormState }) {
+  const { values, change } = form;
+  return (
+    <div className="input-group">
+      <Field label="Vorname" type="text" placeholder="Dein Vorname"
+        value={values.firstname} onChange={(v) => change("firstname", v)} />
+      <Field label="Nachname" type="text" placeholder="Dein Nachname"
+        value={values.lastname} onChange={(v) => change("lastname", v)} />
+    </div>
+  );
+}
+
+function CredentialFields({ form }: { form: FormState }) {
+  const { values, change } = form;
+  return (
+    <>
+      <div className="input-group">
+        <Field label="E-Mail Adresse" type="email" placeholder="name@beispiel.de"
+          value={values.email} onChange={(v) => change("email", v)} />
+      </div>
+      <div className="input-group">
+        <Field label="Passwort" type="password" placeholder="********" minLength={6}
+          value={values.password} onChange={(v) => change("password", v)} />
+      </div>
+    </>
+  );
+}
+
+interface TabsProps {
+  isLogin: boolean;
+  onSwitch: (login: boolean) => void;
+}
+
+function AuthTabs({ isLogin, onSwitch }: TabsProps) {
+  return (
+    <div className="auth-tabs">
+      <button className={`tab ${isLogin ? "active" : ""}`} onClick={() => onSwitch(true)}>
+        Anmelden
+      </button>
+      <button className={`tab ${!isLogin ? "active" : ""}`} onClick={() => onSwitch(false)}>
+        Registrieren
+      </button>
+    </div>
+  );
+}
+
+interface FormProps {
+  isLogin: boolean;
+  form: FormState;
+  busy: boolean;
+  onSubmit: (e: React.FormEvent) => void;
+}
+
+function AuthForm({ isLogin, form, busy, onSubmit }: FormProps) {
+  return (
+    <form className="auth-form" onSubmit={onSubmit}>
+      <h2>{isLogin ? "Willkommen zurück!" : "Konto erstellen"}</h2>
+      {!isLogin && <NameFields form={form} />}
+      <CredentialFields form={form} />
+      {form.error && <p className="auth-error">{form.error}</p>}
+      <button type="submit" className="submit-btn" disabled={busy}>
+        {isLogin ? "Einloggen" : "Konto anlegen"}
+      </button>
+    </form>
+  );
+}
+
+export function Auth({ isOpen, onClose }: Props) {
+  useScrollLock(isOpen);
+  const { isLogin, switchTab, form, busy, submit } = useAuthForm(onClose);
+  if (!isOpen) return null;
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
@@ -93,74 +176,8 @@ export function Auth({ isOpen, onClose, onLoginSuccess }: Props) {
         <button className="close-btn" onClick={onClose}>
           &times;
         </button>
-
-        <div className="auth-tabs">
-          <button
-            className={`tab ${isLogin ? "active" : ""}`}
-            onClick={() => switchTab(true)}
-          >
-            Anmelden
-          </button>
-          <button
-            className={`tab ${!isLogin ? "active" : ""}`}
-            onClick={() => switchTab(false)}
-          >
-            Registrieren
-          </button>
-        </div>
-
-        <form className="auth-form" onSubmit={handleSubmit}>
-          <h2>{isLogin ? "Willkommen zurück!" : "Konto erstellen"}</h2>
-
-          {!isLogin && (
-            <div className="input-group">
-              <label>Vorname</label>
-              <input
-                type="text"
-                placeholder="Dein Vorname"
-                value={firstname}
-                onChange={(e) => setFirstname(e.target.value)}
-                required
-              />
-              <label>Nachname</label>
-              <input
-                type="text"
-                placeholder="Dein Nachname"
-                value={lastname}
-                onChange={(e) => setLastname(e.target.value)}
-                required
-              />
-            </div>
-          )}
-
-          <div className="input-group">
-            <label>E-Mail Adresse</label>
-            <input
-              type="email"
-              placeholder="name@beispiel.de"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-          </div>
-
-          <div className="input-group">
-            <label>Passwort</label>
-            <input
-              type="password"
-              placeholder="********"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-          </div>
-
-          {error && <p className="auth-error">{error}</p>}
-
-          <button type="submit" className="submit-btn">
-            {isLogin ? "Einloggen" : "Konto anlegen"}
-          </button>
-        </form>
+        <AuthTabs isLogin={isLogin} onSwitch={switchTab} />
+        <AuthForm isLogin={isLogin} form={form} busy={busy} onSubmit={submit} />
       </div>
     </div>
   );
