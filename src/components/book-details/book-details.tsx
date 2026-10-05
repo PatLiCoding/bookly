@@ -9,6 +9,7 @@ import { useBookReviews } from "../../utils/use-book-reviews";
 import { averageRating } from "../../services/review-service";
 import { ReviewSection } from "../review/review-section";
 import { QuantityControl } from "../quantity-control/quantity-control";
+import { getCover } from "../../utils/book-cover";
 
 interface Props {
   book: Book;
@@ -25,7 +26,7 @@ function toCartItem(book: Book): NewCartItem {
     title: book.title,
     author: book.author,
     price: parsePrice(book.price),
-    cover: book.cover,
+    cover: getCover(book.cover),
   };
 }
 
@@ -120,7 +121,7 @@ function BookHeader({
   return (
     <div className="book-header">
       <div className="cover-container">
-        <img className="cover-image" src={book.cover} alt={book.title} />
+        <img className="cover-image" src={getCover(book.cover)} alt={book.title} />
       </div>
       <div className="book-info-col">
         <BookInfo {...info} />

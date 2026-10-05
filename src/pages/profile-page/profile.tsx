@@ -82,7 +82,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
       <>
         <UserReviews
           reviews={visibleItems(reviews, visibleCount.reviews)}
-          userId={Number(this.props.user.id)}
+          userId={this.props.user.id}
           onChanged={this.reloadReviews}
         />
         {this.renderLoadMore("reviews", reviews, visibleCount.reviews)}
