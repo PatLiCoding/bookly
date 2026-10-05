@@ -4,13 +4,10 @@ import { useParams, useSearchParams } from "react-router-dom";
 import BookPreviewList from "../../components/book-preview-list/book-preview-list";
 import FilterSidebar from "../../components/filter-sidebar/filter-sidebar";
 import Pagination from "../../components/pagination/pagination";
+import LoadStatus from "../../components/load-status/load-status";
 import { useCategoryBooks } from "./use-category-books";
 import { useScrollTarget } from "./use-scroll-target";
-import {
-  countActiveFilters,
-  NO_FILTERS,
-  parseSort,
-} from "../../utils/book-filter";
+import { countActiveFilters, NO_FILTERS, parseSort, } from "../../utils/book-filter";
 import type { Filters } from "../../utils/book-filter";
 import { ALL_CATEGORY, ALL_LABEL } from "../../utils/category";
 
@@ -58,15 +55,16 @@ function CategoryHeader({
   );
 }
 
-/** Book grid, or a hint if no book matches. */
+/** Book grid, a loading/error hint, or a note if no book matches. */
 function CategoryBooks({ list }: { list: BookList }) {
+  const { loading, error, books } = list;
   return (
     <div className="category-books">
-      {list.books.length === 0 ? (
+      <LoadStatus loading={loading} error={error} />
+      {!loading && !error && books.length === 0 && (
         <p className="book-empty">Keine Bücher gefunden.</p>
-      ) : (
-        <BookPreviewList books={list.books} layout="grid" />
       )}
+      {books.length > 0 && <BookPreviewList books={books} layout="grid" />}
     </div>
   );
 }
