@@ -2,6 +2,7 @@ import "./order-card.css";
 import { Component } from "react";
 import type { Order } from "../../interface/order";
 import { statusLabel } from "../../services/order-service";
+import { getCover } from "../../utils/book-cover";
 
 interface OrderCardProps {
   order: Order;
@@ -24,7 +25,7 @@ export class OrderCard extends Component<OrderCardProps> {
             <img
               key={item.id}
               className="order-cover-thumb"
-              src={item.bookCover}
+              src={getCover(item.bookCover)}
               alt={item.title}
               title={item.title}
             />

@@ -11,11 +11,7 @@ import { OrderCard } from "../../components/order/order-card";
 import { getOrders, splitOrdersByStatus, cancelOrder } from "../../services/order-service";
 import { UserReviews } from "../../components/review/user-reviews";
 import { getReviewsByUser } from "../../services/review-service";
-import {
-  mergedValue,
-  mergedDelivery,
-  buildUserUpdate,
-} from "../../services/user-service";
+import { mergedValue, mergedDelivery, buildUserUpdate, } from "../../services/user-service";
 import { visibleItems, hasMoreItems } from "../../utils/load-more";
 import "./profile.css";
 
@@ -86,7 +82,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
       <>
         <UserReviews
           reviews={visibleItems(reviews, visibleCount.reviews)}
-          userId={this.props.user.id}
+          userId={Number(this.props.user.id)}
           onChanged={this.reloadReviews}
         />
         {this.renderLoadMore("reviews", reviews, visibleCount.reviews)}
@@ -165,11 +161,10 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     const { cancellingOrderId } = this.state;
     if (!cancellingOrderId) return;
 
-    await cancelOrder(this.props.user, cancellingOrderId);
-    const orders = await getOrders(this.props.user);
+    const updatedOrders = await cancelOrder(this.props.user, cancellingOrderId);
 
     this.setState({
-      orders,
+      orders: updatedOrders,
       cancellingOrderId: null,
     });
   };

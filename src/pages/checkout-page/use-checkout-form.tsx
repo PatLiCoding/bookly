@@ -5,10 +5,9 @@ import { useCartContext } from "../../context/use-cart-context";
 import { useAuth } from "../../context/use-auth";
 import { useValues } from "./use-values";
 import {
-  buildUpdatedUser,
-  createOrder,
   initialBilling,
   initialShipping,
+  processCheckoutOrder,
   toFormData,
   validateCheckout,
 } from "../../services/checkout-service";
@@ -17,9 +16,9 @@ function useOrder(user: User, onOrdered: () => void) {
   const { cartItems, clearCart } = useCartContext();
   const { updateUser } = useAuth();
 
-  return (formData: Values) => {
-    const order = createOrder(cartItems);
-    updateUser(buildUpdatedUser(user, order, formData));
+  return async (formData: Values) => {
+    const { updatedUser } = await processCheckoutOrder(user, cartItems, formData);
+    updateUser(updatedUser);
     clearCart();
     onOrdered();
   };
@@ -31,10 +30,10 @@ export function useCheckoutForm(user: User, onOrdered: () => void) {
   const [error, setError] = useState("");
   const placeOrder = useOrder(user, onOrdered);
 
-  function submit(agb: boolean) {
+  async function submit(agb: boolean) {
     const problem = validateCheckout(billing, shipping, agb);
     if (problem) return setError(problem);
-    placeOrder(toFormData(billing, shipping));
+    await placeOrder(toFormData(billing, shipping));
   }
 
   return { billing, changeBilling, shipping, changeShipping, error, submit };
