@@ -12,7 +12,7 @@ export interface Book {
   price: string;
   rating: number;
   reviewCount: number;
-  cover: string;
+  cover?: string | null;
   category: string;
   releaseDate?: string;
   description?: string;
