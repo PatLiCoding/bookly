@@ -48,7 +48,7 @@
   min-width: 0;
 }
 
-.book-empty {
+.book-empty, .load-status {
   width: 100%;
   border-top: 1px solid #22304430;
   padding: 24px;

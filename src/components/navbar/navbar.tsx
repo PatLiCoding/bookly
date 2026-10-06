@@ -4,6 +4,7 @@ import { ALL_CATEGORY, ALL_LABEL } from "../../utils/category";
 
 const CATEGORIES = [
   "Fantasy",
+  "Science-Fiction",
   "Krimi",
   "Thriller",
   "Liebesroman",
@@ -11,7 +12,6 @@ const CATEGORIES = [
   "Young Adult",
   "Kinderbuch",
   "Ratgeber",
-  "Sachbuch",
   "History",
 ];
 

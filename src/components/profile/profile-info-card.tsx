@@ -17,22 +17,37 @@ interface ProfileInfoCardProps {
   onSave: () => void;
 }
 
+interface FieldOptions {
+  type?: string;
+  inputMode?: "text" | "numeric" | "email" | "tel";
+  maxLength?: number;
+  onlyNumbers?: boolean;
+}
+
 export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
-  private handleChange = (field: string) => {
+  private handleChange = (field: string, options?: FieldOptions) => {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
-      this.props.onFieldChange(field, e.target.value);
+      let value = e.target.value;
+      if (options?.onlyNumbers) {
+        value = value.replace(/\D/g, "");
+      }
+      this.props.onFieldChange(field, value);
     };
   };
 
-  private renderField(field: string, value: string, placeholder?: string) {
+  private renderField(field: string, value: string, placeholder?: string, options?: FieldOptions) {
     const { isEditing } = this.props;
     if (!isEditing) return <span title={value}>{value}</span>;
+
     return (
       <input
         className="profile-input"
+        type={options?.type || "text"}
+        inputMode={options?.inputMode}
+        maxLength={options?.maxLength}
         value={value}
         placeholder={placeholder}
-        onChange={this.handleChange(field)}
+        onChange={this.handleChange(field, options)}
       />
     );
   }
@@ -47,10 +62,13 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
           alt="Account Icon"
         />
         <div className="profile-name-row">
-          {this.renderField("firstname", firstname)}
-          {this.renderField("lastname", lastname)}
+          {this.renderField("firstname", firstname, "Vorname")}
+          {this.renderField("lastname", lastname, "Nachname")}
         </div>
-        {this.renderField("email", email)}
+        {this.renderField("email", email, "E-Mail", {
+          type: "email",
+          inputMode: "email",
+        })}
       </div>
     );
   }
@@ -66,7 +84,7 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     return (
       <div className="profile-sub-block">
         <p className="profile-column-title">Rechnungsadresse:</p>
-        <span>Keine Rechnungsadresse hinterlegt</span>
+        <span className="no-address">Keine Rechnungsadresse hinterlegt</span>
       </div>
     );
   }
@@ -78,7 +96,11 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
         <p className="profile-column-title">Rechnungsadresse:</p>
         {this.renderField("billingStreet", street, "Straße Hausnummer")}
         <div className="profile-name-row">
-          {this.renderField("billingZip", zip, "PLZ")}
+          {this.renderField("billingZip", zip, "PLZ", {
+            onlyNumbers: true,
+            maxLength: 5,
+            inputMode: "numeric",
+          })}
           {this.renderField("billingCity", city, "Stadt")}
         </div>
         {this.renderField("billingCountry", country, "Land")}
@@ -96,7 +118,7 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     return (
       <div className="profile-info-column">
         <p className="profile-column-title">Lieferadresse:</p>
-        <span>Keine Lieferadresse hinterlegt</span>
+        <span className="no-address">Keine Lieferadresse hinterlegt</span>
       </div>
     );
   }
@@ -115,16 +137,8 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     const { delivery } = this.props;
     return (
       <div className="profile-name-row">
-        {this.renderField(
-          "deliveryFirstname",
-          delivery?.Firstname ?? "",
-          "Vorname",
-        )}
-        {this.renderField(
-          "deliveryLastname",
-          delivery?.Lastname ?? "",
-          "Nachname",
-        )}
+        {this.renderField("deliveryFirstname", delivery?.Firstname ?? "", "Vorname")}
+        {this.renderField("deliveryLastname", delivery?.Lastname ?? "", "Nachname" )}
       </div>
     );
   }
@@ -133,13 +147,10 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     const { delivery } = this.props;
     return (
       <>
-        {this.renderField(
-          "deliveryStreet",
-          delivery?.street ?? "",
-          "Straße Hausnummer",
-        )}
+        {this.renderField("deliveryStreet", delivery?.street ?? "", "Straße Hausnummer")}
         <div className="profile-name-row">
-          {this.renderField("deliveryZip", delivery?.zip ?? "", "PLZ")}
+          {this.renderField("deliveryZip", delivery?.zip ?? "", "PLZ", {
+            onlyNumbers: true, maxLength: 5, inputMode: "numeric",})}
           {this.renderField("deliveryCity", delivery?.city ?? "", "Stadt")}
         </div>
         {this.renderField("deliveryCountry", delivery?.country ?? "", "Land")}
