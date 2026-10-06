@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import type { User } from "../../interface/user";
 import type { Order } from "../../interface/order";
 
-import { getOrders, statusLabel, cancelOrder } from "../../services/order-service";
+import { getOrderById, statusLabel, cancelOrder } from "../../services/order-service";
 import { CancelOrderModal } from "../../components/order/cancel-order-modal";
 import { formatPrice, calcSubtotal } from "../../utils/price";
 import "../order-page/order-page.css";
@@ -23,10 +23,6 @@ interface OrderDetailPageState {
   showCancelModal: boolean;
 }
 
-/**
- * Shipping costs = total price minus item prices.
- * Rounded to 2 decimals to avoid floating point errors.
- */
 function calcShipping(order: Order): number {
   const diff = order.totalPrice - calcSubtotal(order.items);
   return Math.max(0, Math.round(diff * 100) / 100);
@@ -52,9 +48,8 @@ export class OrderDetailPage extends Component<
 
   private async loadOrder() {
     this.setState({ isLoading: true });
-    const orders = await getOrders(this.props.user);
-    const order = orders.find((o) => String(o.id) === this.props.orderId);
-    this.setState({ order: order ?? null, isLoading: false });
+    const order = await getOrderById(this.props.orderId);
+    this.setState({ order, isLoading: false });
   }
 
   private handleOpenCancelModal = () => {
@@ -126,7 +121,6 @@ export class OrderDetailPage extends Component<
     );
   }
 
-  /** Renders one ordered item; clicking it opens the book details page. */
   private renderItem(item: OrderItem) {
     return (
       <Link

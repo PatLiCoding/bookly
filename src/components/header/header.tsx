@@ -1,15 +1,13 @@
 import { useState, useRef, useEffect } from "react";
 import "./header.css";
 import { Link, useNavigate } from "react-router-dom";
-import { Auth } from "./../auth/auth";
+import { Auth } from "../auth/auth";
 import SearchBar from "../search-bar/search-bar";
 import { useAuth } from "../../context/use-auth";
-import type { User } from "../../interface/user";
 import { useCartContext } from "../../context/use-cart-context";
 
-
 function Header() {
-  const { loggedUser, login, logout } = useAuth();
+  const { loggedUser, logout } = useAuth();
   const { cartCount } = useCartContext();
   const [isCartHovered, setIsCartHovered] = useState(false);
   const [isAccountHovered, setIsAccountHovered] = useState(false);
@@ -27,11 +25,6 @@ function Header() {
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
-
-  function handleLoginSuccess(user: User) {
-    login(user);
-    setIsAuthOpen(false);
-  }
 
   function handleProfileClick() {
     setIsMenuOpen(false);
@@ -109,28 +102,16 @@ function Header() {
                         {loggedUser.Lastname}
                       </span>
                     </div>
-                    <button
-                      className="account-menu-item"
-                      onClick={handleProfileClick}
-                    >
+                    <button className="account-menu-item" onClick={handleProfileClick}>
                       Profil
                     </button>
-                    <button
-                      className="account-menu-item"
-                      onClick={handleOrdersClick}
-                    >
+                    <button className="account-menu-item" onClick={handleOrdersClick}>
                       Bestellungen
                     </button>
-                    <button
-                      className="account-menu-item"
-                      onClick={handleReviewsClick}
-                    >
+                    <button className="account-menu-item" onClick={handleReviewsClick}>
                       Bewertungen
                     </button>
-                    <button
-                      className="account-menu-item logout"
-                      onClick={handleLogoutClick}
-                    >
+                    <button className="account-menu-item logout" onClick={handleLogoutClick}>
                       Ausloggen
                     </button>
                   </div>
@@ -146,7 +127,6 @@ function Header() {
           <Auth
             isOpen={isAuthOpen}
             onClose={() => setIsAuthOpen(false)}
-            onLoginSuccess={handleLoginSuccess}
           />
         </div>
       </div>

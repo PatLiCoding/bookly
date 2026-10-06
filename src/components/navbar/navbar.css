@@ -42,7 +42,7 @@
   padding: 4px 8px;
 }
 
-@media (max-width: 1300px) {
+@media (max-width: 1350px) {
   .navbar .navbar-content-max-width {
     flex-wrap: nowrap;
     justify-content: flex-start;

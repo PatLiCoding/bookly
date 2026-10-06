@@ -4,6 +4,7 @@ import type { CartItem } from "../interface/cart-item";
 import type { AddressConfig, Field, Values } from "../interface/checkout";
 import { calcTotal } from "../utils/price";
 import { buildUserUpdate } from "./user-service";
+import { saveOrderToSupabase } from "./order-service";
 
 export const BILLING: AddressConfig = {
   title: "Rechnungsadresse",
@@ -104,6 +105,12 @@ export function buildUpdatedUser(user: User, order: Order, data: Values): User {
     ...buildUserUpdate(user, data),
     order: [...(user.order ?? []), order],
   };
+}
+
+export async function processCheckoutOrder(user: User, items: CartItem[], data: Values) {
+  const order = createOrder(items);
+  await saveOrderToSupabase(order, user.id);
+  return { order, updatedUser: buildUpdatedUser(user, order, data) };
 }
 
 export function getDeliveryDate(): string {

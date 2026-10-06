@@ -8,7 +8,7 @@ import type { ReviewInput } from "../../services/review-service";
 
 interface UserReviewsProps {
   reviews: Review[];
-  userId: number;
+  userId: string;
   onChanged: () => void;
 }
 

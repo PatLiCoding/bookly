@@ -5,6 +5,7 @@ import { renderStars } from "../../utils/render-stars";
 import { parsePrice } from "../../utils/parse-price";
 import { QuantityControl } from "../quantity-control/quantity-control";
 import { useCartContext } from "../../context/use-cart-context";
+import { getCover } from "../../utils/book-cover";
 
 interface Props {
   book: Book;
@@ -24,7 +25,7 @@ function BookCard({ book }: Props) {
       title: book.title,
       author: book.author,
       price: parsePrice(book.price),
-      cover: book.cover,
+      cover: getCover(book.cover),
     });
   }
 
@@ -43,7 +44,7 @@ function BookCard({ book }: Props) {
   return (
     <Link to={`/book/${book.id}`} className="book-card">
       <div className="cover-wrapper">
-        <img className="bock-cover" src={book.cover} alt={book.title} />
+        <img className="bock-cover" src={getCover(book.cover)} alt={book.title} />
       </div>
       <div className="book-decription">
         <h3 className="title">{book.title}</h3>

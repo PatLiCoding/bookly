@@ -3,7 +3,7 @@ export interface Review {
   bookId: number;
   bookTitle: string;
   author: string;
-  userId: number;
+  userId: string;
   userName: string;
   rating: number;
   date: string;
