@@ -11,15 +11,28 @@ import { ReviewSection } from "../review/review-section";
 import { QuantityControl } from "../quantity-control/quantity-control";
 import { getCover } from "../../utils/book-cover";
 
+/** Props for the BookDetails component. */
 interface Props {
+  /** Detailed book information object. */
   book: Book;
+  /** Currently authenticated user, or null if unauthenticated. */
   loggedUser: User | null;
+  /** Current quantity of this item present in the cart. */
   cartQuantity?: number;
+  /** Callback triggered to add the book to the shopping cart. */
   onAddToCart: (item: NewCartItem) => void;
+  /** Optional callback to increment quantity in cart. */
   onIncreaseItem?: (id: number) => void;
+  /** Optional callback to decrement quantity in cart. */
   onDecreaseItem?: (id: number) => void;
 }
 
+/**
+ * Transforms a Book entity into a payload structure formatted for cart operations.
+ *
+ * @param book - Source book details.
+ * @returns Standardized new cart item object.
+ */
 function toCartItem(book: Book): NewCartItem {
   return {
     id: book.id,
@@ -30,12 +43,19 @@ function toCartItem(book: Book): NewCartItem {
   };
 }
 
+/** Props for displaying rating summary indicators. */
 interface RatingRowProps {
+  /** Average numerical rating value. */
   rating: number;
+  /** Total count of submitted reviews/comments. */
   count: number;
+  /** Action handler to scroll directly to the comments view. */
   onCommentsClick: () => void;
 }
 
+/**
+ * Displays star rating and total review count with quick navigation to reviews.
+ */
 function RatingRow({ rating, count, onCommentsClick }: RatingRowProps) {
   return (
     <div className="rating-summary-row">
@@ -47,10 +67,15 @@ function RatingRow({ rating, count, onCommentsClick }: RatingRowProps) {
   );
 }
 
+/** Props for the main meta information panel of a book. */
 interface BookInfoProps extends RatingRowProps {
+  /** The target book record. */
   book: Book;
 }
 
+/**
+ * Displays metadata including title, author, category, release date, and overall rating summary.
+ */
 function BookInfo({ book, ...rating }: BookInfoProps) {
   return (
     <div className="main-info">
@@ -65,14 +90,23 @@ function BookInfo({ book, ...rating }: BookInfoProps) {
   );
 }
 
+/** Props for price display and cart interaction controls. */
 interface PurchaseBoxProps {
+  /** Formatted price string. */
   price: string;
+  /** Active quantity in the cart. */
   cartQuantity: number;
+  /** Handler invoked when adding the book to cart. */
   onAdd: () => void;
+  /** Optional callback to increment quantity. */
   onIncrease?: () => void;
+  /** Optional callback to decrement quantity. */
   onDecrease?: () => void;
 }
 
+/**
+ * Box element containing purchase details, pricing information, and cart manipulation controls.
+ */
 function PurchaseBox({
   price,
   cartQuantity,
@@ -103,13 +137,21 @@ function PurchaseBox({
   );
 }
 
+/** Props combining book header data and interactive purchase options. */
 interface BookHeaderProps extends BookInfoProps {
+  /** Current quantity in cart. */
   cartQuantity: number;
+  /** Callback to add to cart. */
   onAdd: () => void;
+  /** Optional increment callback. */
   onIncrease?: () => void;
+  /** Optional decrement callback. */
   onDecrease?: () => void;
 }
 
+/**
+ * Top section layout of book detail view combining image cover, info text, and buying options.
+ */
 function BookHeader({
   cartQuantity,
   onAdd,
@@ -137,6 +179,9 @@ function BookHeader({
   );
 }
 
+/**
+ * Renders the descriptive synopsis section for a book.
+ */
 function Description({ text }: { text?: string }) {
   return (
     <section className="description-section">
@@ -146,6 +191,9 @@ function Description({ text }: { text?: string }) {
   );
 }
 
+/**
+ * Displays a prominent overall score badge for the book.
+ */
 function RatingBadge({ rating }: { rating: number }) {
   return (
     <div className="overall-rating-badge">
@@ -158,6 +206,9 @@ function RatingBadge({ rating }: { rating: number }) {
   );
 }
 
+/**
+ * Full page component rendering book metadata, description, reviews, and interactive actions.
+ */
 function BookDetails({
   book,
   loggedUser,

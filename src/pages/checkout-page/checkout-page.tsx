@@ -12,11 +12,18 @@ import CheckoutEmpty from "../../components/checkout/checkout-empty";
 import CheckoutConfirmation from "../../components/checkout/checkout-confirmation";
 import OrderOverview from "../../components/checkout/order-overview";
 
+/** Props for the CheckoutForm component. */
 interface FormProps {
+  /** Authenticated user profile data. */
   user: User;
+  /** Callback triggered after successfully placing an order. */
   onOrdered: () => void;
 }
 
+/**
+ * Inner layout component rendering the address form, order summary,
+ * validation errors, and submission buttons.
+ */
 function CheckoutForm({ user, onOrdered }: FormProps) {
   const form = useCheckoutForm(user, onOrdered);
   const { cartItems } = useCartContext();
@@ -39,6 +46,10 @@ function CheckoutForm({ user, onOrdered }: FormProps) {
   );
 }
 
+/**
+ * Top-level route component controlling access to checkout, empty state handling,
+ * order submission transition, and post-order confirmation view rendering.
+ */
 function CheckoutPage() {
   const { cartItems } = useCartContext();
   const { loggedUser } = useAuth();

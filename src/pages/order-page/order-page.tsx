@@ -11,22 +11,37 @@ import { visibleItems, hasMoreItems } from "../../utils/load-more";
 
 const PAGE_SIZE = 4;
 
+/** Display section category variant. */
 type Variant = "history" | "active";
 
+/** Props accepted by {@link OrdersPage}. */
 interface OrdersPageProps {
+  /** Authenticated user profile. */
   user: User;
+  /** Optional navigation callback triggered when selecting an order card. */
   onNavigateToDetail?: (orderId: string | number) => void;
 }
 
+/** Component state for {@link OrdersPage}. */
 interface OrdersPageState {
+  /** Complete list of user orders fetched from service. */
   orders: Order[];
+  /** Flag tracking initial data fetch state. */
   isLoading: boolean;
+  /** Max visible order cards in the active orders section. */
   visibleCountActive: number;
+  /** Max visible order cards in the historical orders section. */
   visibleCountHistory: number;
+  /** Current text filter query string. */
   query: string;
+  /** Current date sorting direction (ascending/descending). */
   direction: SortDirection;
 }
 
+/**
+ * Class component rendering the main orders overview page with search filtering,
+ * date sorting, incremental pagination ("load more"), and separation into active vs. historical orders.
+ */
 export class OrdersPage extends Component<OrdersPageProps, OrdersPageState> {
   state: OrdersPageState = {
     orders: [],
@@ -41,12 +56,14 @@ export class OrdersPage extends Component<OrdersPageProps, OrdersPageState> {
     this.loadOrders();
   }
 
+  /** Loads order history for active user profile. */
   private async loadOrders() {
     this.setState({ isLoading: true });
     const orders = await getOrders(this.props.user);
     this.setState({ orders, isLoading: false });
   }
 
+  /** Applies current search query filtering and date sorting rules to the orders list. */
   private shownOrders(): Order[] {
     const { orders, query, direction } = this.state;
     return sortByDate(
@@ -56,6 +73,7 @@ export class OrdersPage extends Component<OrdersPageProps, OrdersPageState> {
     );
   }
 
+  /** Updates active search query and resets incremental pagination limits. */
   private handleQueryChange = (query: string) => {
     this.setState({
       query,
@@ -64,22 +82,26 @@ export class OrdersPage extends Component<OrdersPageProps, OrdersPageState> {
     });
   };
 
+  /** Updates sorting direction order. */
   private handleDirectionChange = (direction: SortDirection) => {
     this.setState({ direction });
   };
 
+  /** Increases visible item limit for active orders section. */
   private handleLoadMoreActive = () => {
     this.setState((prev) => ({
       visibleCountActive: prev.visibleCountActive + PAGE_SIZE,
     }));
   };
 
+  /** Increases visible item limit for historical orders section. */
   private handleLoadMoreHistory = () => {
     this.setState((prev) => ({
       visibleCountHistory: prev.visibleCountHistory + PAGE_SIZE,
     }));
   };
 
+  /** Renders search and sort toolbar if orders exist. */
   private renderToolbar() {
     const { orders, query, direction } = this.state;
     if (orders.length === 0) return null;
@@ -93,6 +115,7 @@ export class OrdersPage extends Component<OrdersPageProps, OrdersPageState> {
     );
   }
 
+  /** Renders grid of order cards capped by the active pagination count. */
   private renderGrid(orders: Order[], count: number, variant: Variant) {
     return (
       <div className="order-grid">
@@ -108,6 +131,7 @@ export class OrdersPage extends Component<OrdersPageProps, OrdersPageState> {
     );
   }
 
+  /** Renders "load more" button if additional unrendered items remain in list. */
   private renderLoadMore(
     orders: Order[],
     count: number,
@@ -121,6 +145,7 @@ export class OrdersPage extends Component<OrdersPageProps, OrdersPageState> {
     );
   }
 
+  /** Renders list content grid or empty fallback message. */
   private renderOrderList(
     orders: Order[],
     count: number,
@@ -136,6 +161,7 @@ export class OrdersPage extends Component<OrdersPageProps, OrdersPageState> {
     );
   }
 
+  /** Renders contextual message when list is empty. */
   private renderEmpty() {
     const text = this.state.query
       ? "Keine Treffer."
@@ -143,6 +169,7 @@ export class OrdersPage extends Component<OrdersPageProps, OrdersPageState> {
     return <span className="empty-content">{text}</span>;
   }
 
+  /** Renders a titled section containing an order list group. */
   private renderSection(
     title: string,
     orders: Order[],
@@ -158,6 +185,7 @@ export class OrdersPage extends Component<OrdersPageProps, OrdersPageState> {
     );
   }
 
+  /** Renders loading state indicator. */
   private renderLoading() {
     return (
       <div className="orders-page-loading">Bestellungen werden geladen…</div>

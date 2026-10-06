@@ -7,16 +7,26 @@ import { QuantityControl } from "../quantity-control/quantity-control";
 import { useCartContext } from "../../context/use-cart-context";
 import { getCover } from "../../utils/book-cover";
 
+/** Props for the BookCard component. */
 interface Props {
+  /** Book entity data to display within the card. */
   book: Book;
 }
 
+/**
+ * Renders a summary card for a single book, including image, author, ratings,
+ * price, and cart controls.
+ */
 function BookCard({ book }: Props) {
   const { cartItems, addItem, increaseItem, decreaseItem } = useCartContext();
-
   const itemInCart = cartItems.find((item) => item.id === book.id);
   const cartQuantity = itemInCart ? itemInCart.quantity : 0;
 
+  /**
+   * Adds the book to the shopping cart while preventing link navigation.
+   *
+   * @param event - Mouse click event on the add button.
+   */
   function handleAddToCart(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
@@ -29,12 +39,22 @@ function BookCard({ book }: Props) {
     });
   }
 
+  /**
+   * Increments the item quantity in the cart.
+   *
+   * @param event - Mouse click event on the increase button.
+   */
   function handleIncrease(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();
     increaseItem(book.id);
   }
 
+  /**
+   * Decrements the item quantity in the cart.
+   *
+   * @param event - Mouse click event on the decrease button.
+   */
   function handleDecrease(event: React.MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     event.stopPropagation();

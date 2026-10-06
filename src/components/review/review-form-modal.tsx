@@ -5,21 +5,33 @@ import type { ReviewInput } from "../../services/review-service";
 import "../../styles/modal.css";
 import "./review.css";
 
+/** Props for the ReviewFormModal class component. */
 interface ReviewFormModalProps {
+  /** Modal dialog title heading. */
   title: string;
+  /** Initial review values when editing an existing review. */
   initial?: ReviewInput;
+  /** Callback fired with valid review data upon submission. */
   onSubmit: (input: ReviewInput) => void;
+  /** Callback fired to cancel and dismiss the modal. */
   onCancel: () => void;
 }
 
+/** State schema for managing review form fields and validation errors. */
 interface ReviewFormModalState {
+  /** Selected star rating value. */
   rating: number;
+  /** User-entered comment text string. */
   text: string;
+  /** Validation error message displayed on submission failure. */
   error: string;
 }
 
 const ERROR_TEXT = "Bitte Sterne wählen und einen Kommentar schreiben.";
 
+/**
+ * Class component rendering a modal form for submitting or editing product reviews.
+ */
 export class ReviewFormModal extends Component<
   ReviewFormModalProps,
   ReviewFormModalState
@@ -30,6 +42,7 @@ export class ReviewFormModal extends Component<
     error: "",
   };
 
+  /** Validates review fields and invokes `onSubmit` if valid; otherwise updates error state. */
   private handleSubmit = () => {
     const { rating, text } = this.state;
     const input = { rating, text: text.trim() };
@@ -40,6 +53,7 @@ export class ReviewFormModal extends Component<
     this.props.onSubmit(input);
   };
 
+  /** Renders the text area element for entering the review comment. */
   private renderTextarea() {
     return (
       <textarea
@@ -53,6 +67,7 @@ export class ReviewFormModal extends Component<
     );
   }
 
+  /** Renders modal action buttons for cancelling or saving the review. */
   private renderActions() {
     return (
       <div className="modal-actions">
@@ -66,6 +81,7 @@ export class ReviewFormModal extends Component<
     );
   }
 
+  /** Renders inner modal content including header, star rating input, comment textarea, and error state. */
   private renderContent() {
     const { error, rating } = this.state;
     return (

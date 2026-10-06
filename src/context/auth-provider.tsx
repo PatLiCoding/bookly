@@ -7,7 +7,9 @@ import type { AuthContextType } from "./auth-context";
 import * as auth from "../services/auth-service";
 import { loadUser, saveProfile } from "../services/profile-service";
 
-/** Follows the Supabase session (also restores it after a reload). */
+/**
+ * Custom hook listening to Supabase authentication state changes and managing session state.
+ */
 function useSession() {
   const [session, setSession] = useState<Session | null>(null);
   const [ready, setReady] = useState(false);
@@ -23,12 +25,23 @@ function useSession() {
   return { userId: session?.user.id ?? null, email: session?.user.email ?? "", ready };
 }
 
-/** Loads the user of the session; without a session there is no user. */
+/**
+ * Helper function fetching user profile details when a valid user ID is provided.
+ *
+ * @param userId - Unique user identifier from the active session.
+ * @param email - Email address associated with the active session.
+ */
 function fetchUser(userId: string | null, email: string): Promise<User | null> {
   return userId ? loadUser(userId, email) : Promise.resolve(null);
 }
 
-/** Loads profile and addresses as soon as the session is known. */
+/**
+ * Custom hook loading user profile details whenever the active session becomes ready.
+ *
+ * @param userId - User identifier from session state.
+ * @param email - User email address from session state.
+ * @param ready - Indicates whether session restoration has completed.
+ */
 function useLoggedUser(userId: string | null, email: string, ready: boolean) {
   const [loggedUser, setLoggedUser] = useState<User | null>(null);
 
@@ -45,7 +58,12 @@ function useLoggedUser(userId: string | null, email: string, ready: boolean) {
   return { loggedUser, setLoggedUser, loading: !ready || (!!userId && !loggedUser) };
 }
 
-/** Saves changes to Supabase, then reloads the user so new ids are in sync. */
+/**
+ * Custom hook returning a memoized callback to update and synchronize user profile data with Supabase.
+ *
+ * @param loggedUser - Current user state object.
+ * @param setLoggedUser - React state dispatcher for updating user state.
+ */
 function useUpdateUser(
   loggedUser: User | null,
   setLoggedUser: (user: User) => void,
@@ -61,6 +79,9 @@ function useUpdateUser(
   );
 }
 
+/**
+ * Assembles and memoizes the complete `AuthContextType` value bundle.
+ */
 function useAuthValue(): AuthContextType {
   const { userId, email, ready } = useSession();
   const { loggedUser, setLoggedUser, loading } = useLoggedUser(userId, email, ready);
@@ -80,6 +101,9 @@ function useAuthValue(): AuthContextType {
   );
 }
 
+/**
+ * Context Provider wrapping the component tree to supply global authentication state and methods.
+ */
 export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider value={useAuthValue()}>{children}</AuthContext.Provider>

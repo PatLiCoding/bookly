@@ -8,7 +8,14 @@ import { getPageCount, paginate } from "../../utils/paginate";
 
 const PAGE_SIZE = 10;
 
-/** Loads the books of a category, then searches and filters them. */
+/**
+ * Internal hook that fetches books for a category, applies text search filtering,
+ * and executes custom dynamic filter rules.
+ *
+ * @param category - Optional category slug or identifier.
+ * @param query - Text query string for filtering book title or author.
+ * @param filters - Active filter configuration object.
+ */
 function useFilteredBooks(
   category: string | undefined,
   query: string,
@@ -22,6 +29,15 @@ function useFilteredBooks(
   return { filtered: applyFilters(found, filters), loading, error };
 }
 
+/**
+ * Custom React hook that handles book retrieval, client-side searching, dynamic filtering,
+ * and page-based pagination state for category views.
+ *
+ * @param category - Selected category slug or identifier.
+ * @param initialFilters - Initial filter rules to seed state.
+ * @param query - Optional initial text search query string.
+ * @returns Object containing paginated books, page controls, filter state, and async status flags.
+ */
 export function useCategoryBooks(
   category: string | undefined,
   initialFilters: Filters = NO_FILTERS,
@@ -32,7 +48,16 @@ export function useCategoryBooks(
   const { filtered, loading, error } = useFilteredBooks(category, query, filters);
   const pageCount = getPageCount(filtered.length, PAGE_SIZE);
   const books = paginate(filtered, page, PAGE_SIZE);
-  const changeFilters = (next: Filters) => { setFilters(next); setPage(1); };
+
+  /**
+   * Updates current filter options and resets the current page view back to page 1.
+   *
+   * @param next - Updated filter rule state object.
+   */
+  const changeFilters = (next: Filters) => {
+    setFilters(next);
+    setPage(1);
+  };
 
   return { books, filters, changeFilters, page, setPage, pageCount, loading, error };
 }

@@ -7,17 +7,25 @@ import {
   calcTotal,
 } from "../../utils/price";
 
+/** Props for components that render a collection of cart items. */
 interface ItemsProps {
+  /** Array of items currently in the cart. */
   items: CartItem[];
 }
 
+/** Props for rendering individual price summary rows. */
 interface SummaryRowProps {
+  /** Row descriptor text (e.g., "Zwischensumme"). */
   label: string;
+  /** Monitory amount to display. */
   value: number;
+  /** Whether this row displays the final grand total emphasis. */
   isTotal?: boolean;
 }
 
-/** Eine Zeile der Lieferübersicht (Titel, Autor, Menge, Preis). */
+/**
+ * Renders an individual row showing book details, quantity, and line-item total price.
+ */
 function OrderItemRow({ item }: { item: CartItem }) {
   return (
     <div className="checkout-item">
@@ -30,7 +38,9 @@ function OrderItemRow({ item }: { item: CartItem }) {
   );
 }
 
-/** Karte "Lieferumfang" mit allen Artikeln. */
+/**
+ * Renders a card displaying the list of all ordered items.
+ */
 function OrderItems({ items }: ItemsProps) {
   return (
     <div className="checkout-card">
@@ -42,7 +52,9 @@ function OrderItems({ items }: ItemsProps) {
   );
 }
 
-/** Eine Zeile der Preisübersicht, optional hervorgehoben (Gesamtsumme). */
+/**
+ * Renders a single row in the price calculation breakdown.
+ */
 function SummaryRow({ label, value, isTotal = false }: SummaryRowProps) {
   const Tag = isTotal ? "strong" : "span";
   return (
@@ -53,7 +65,9 @@ function SummaryRow({ label, value, isTotal = false }: SummaryRowProps) {
   );
 }
 
-/** Zwischensumme, Versand und Gesamtsumme. */
+/**
+ * Displays the cost calculations including subtotal, shipping fees, and final grand total.
+ */
 function OrderSummary({ items }: ItemsProps) {
   return (
     <div className="checkout-card checkout-summary">
@@ -64,7 +78,9 @@ function OrderSummary({ items }: ItemsProps) {
   );
 }
 
-/** Hinweis auf das voraussichtliche Lieferdatum. */
+/**
+ * Displays an estimated delivery timeline banner.
+ */
 function DeliveryInfo() {
   return (
     <div className="checkout-delivery-info">
@@ -73,7 +89,9 @@ function DeliveryInfo() {
   );
 }
 
-/** Lieferdatum, Artikelliste und Preisübersicht der Bestellung. */
+/**
+ * Renders the entire order overview panel including delivery estimate, item breakdown, and pricing summary.
+ */
 function OrderOverview({ items }: ItemsProps) {
   return (
     <>

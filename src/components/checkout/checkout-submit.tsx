@@ -1,10 +1,15 @@
 import { useState } from "react";
 
-// interface SubmitProps {
-//   onSubmit: (agb: boolean) => void;
-// }
+/** Props for the CheckoutSubmit component. */
+interface CheckoutSubmitProps {
+  /** Callback invoked upon order submission, passing the current terms consent status. */
+  onSubmit: (agb: boolean) => void;
+}
 
-export function CheckoutSubmit({ onSubmit }: { onSubmit: (agb: boolean) => void }) {
+/**
+ * Renders the terms and conditions checkbox and the final purchase submit button.
+ */
+export function CheckoutSubmit({ onSubmit }: CheckoutSubmitProps) {
   const [agb, setAgb] = useState(false);
 
   return (

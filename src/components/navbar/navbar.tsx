@@ -2,6 +2,7 @@ import "./navbar.css";
 import { NavLink } from "react-router-dom";
 import { ALL_CATEGORY, ALL_LABEL } from "../../utils/category";
 
+/** List of featured book category names. */
 const CATEGORIES = [
   "Fantasy",
   "Science-Fiction",
@@ -15,6 +16,9 @@ const CATEGORIES = [
   "History",
 ];
 
+/**
+ * Renders the top navigation bar containing links for all book categories.
+ */
 function Navbar() {
   return (
     <section className="navbar">

@@ -16,6 +16,12 @@ import MyReviewsPage from "./pages/review-page/reviews-page";
 import { useAuth } from "./context/use-auth";
 import { ProtectedRoute } from "./components/protected-route/protected-route";
 
+/**
+ * Route wrapper component for displaying order details.
+ * Extracts the `orderId` route parameter and passes authenticated user context to `OrderDetailPage`.
+ *
+ * @returns The rendered `OrderDetailPage` component or `null` if the user is unauthenticated.
+ */
 function OrderDetailWrapper() {
   const { orderId } = useParams<{ orderId: string }>();
   const navigate = useNavigate();
@@ -30,6 +36,13 @@ function OrderDetailWrapper() {
   );
 }
 
+/**
+ * Route wrapper component for the user profile page.
+ * Bridges authenticated user state, profile updates, account deletion/logout,
+ * and navigation actions to the `Profile` component.
+ *
+ * @returns The rendered `Profile` component or `null` if the user is unauthenticated.
+ */
 function ProfileWrapper() {
   const { loggedUser, updateUser, logout } = useAuth();
   const navigate = useNavigate();
@@ -46,6 +59,12 @@ function ProfileWrapper() {
   );
 }
 
+/**
+ * Route wrapper component for the order history page.
+ * Passes the authenticated user context and navigation callbacks to `OrdersPage`.
+ *
+ * @returns The rendered `OrdersPage` component or `null` if the user is unauthenticated.
+ */
 function OrdersWrapper() {
   const { loggedUser } = useAuth();
   const navigate = useNavigate();
@@ -58,12 +77,24 @@ function OrdersWrapper() {
   );
 }
 
+/**
+ * Route wrapper component for the user reviews page.
+ * Passes authenticated user context to `MyReviewsPage`.
+ *
+ * @returns The rendered `MyReviewsPage` component or `null` if the user is unauthenticated.
+ */
 function ReviewsWrapper() {
   const { loggedUser } = useAuth();
   if (!loggedUser) return null;
   return <MyReviewsPage user={loggedUser} />;
 }
 
+/**
+ * Root Application component that sets up the main layout structure
+ * including Header, Navbar, Footer, public routing, and protected routes.
+ *
+ * @returns The main application JSX layout structure.
+ */
 function App() {
   return (
     <div className="appContainer">

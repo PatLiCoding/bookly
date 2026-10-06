@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 
-/** Überschrift der Checkout-Seite mit Link zurück zum Warenkorb. */
+/**
+ * Renders the checkout page header with a heading, subtext, and navigation back to the shopping cart.
+ */
 function CheckoutHeader() {
   return (
     <div className="checkout-header">

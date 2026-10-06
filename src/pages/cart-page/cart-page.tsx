@@ -12,6 +12,10 @@ import {
 } from "../../utils/price";
 import "./cart-page.css";
 
+/**
+ * Renders the primary shopping cart view, handling line items, quantity adjustments,
+ * subtotal calculations, guest checkout blocking, and navigation to checkout.
+ */
 function CartPage() {
   const { cartItems, removeItem, increaseItem, decreaseItem, clearCart } =
     useCartContext();
@@ -23,6 +27,10 @@ function CartPage() {
   const shippingCost = calcShippingCost(cartItems);
   const totalPrice = calcTotal(cartItems);
 
+  /**
+   * Validates checkout prerequisites (authenticated user and non-empty cart)
+   * and navigates to the checkout page.
+   */
   function handleCheckout(): void {
     if (!loggedUser) {
       setErrorMsg("Bestellen ist nur mit einem Account möglich.");

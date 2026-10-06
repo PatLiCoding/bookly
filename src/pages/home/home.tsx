@@ -10,7 +10,9 @@ import { ALL_CATEGORY } from "../../utils/category";
 
 const PREVIEW_COUNT = 6;
 
-/** Big intro section at the top of the start page. */
+/**
+ * Renders the primary hero section on the homepage with branding headline and action CTA link.
+ */
 function Hero() {
   return (
     <section className="hero-section">
@@ -33,14 +35,21 @@ function Hero() {
   );
 }
 
+/** Props for the {@link BookSection} component. */
 interface SectionProps {
+  /** The displayed title header for the section. */
   title: string;
+  /** CSS class name applied to the container section element. */
   className: string;
+  /** Sort key parameter used when navigating to the full category list. */
   sort: string;
+  /** Async loading state containing the retrieved book list, loading flag, and error. */
   state: AsyncResult<Book[]>;
 }
 
-/** Titled preview row with a "view all" link that presets the sorting. */
+/**
+ * Titled preview section presenting a grid of book previews along with a link to view all items under a given sort option.
+ */
 function BookSection({ title, className, sort, state }: SectionProps) {
   return (
     <section className={className}>
@@ -59,6 +68,9 @@ function BookSection({ title, className, sort, state }: SectionProps) {
   );
 }
 
+/**
+ * Main application landing page component showcasing top-rated highlights and recent book releases.
+ */
 function Home() {
   const highlights = useAsync(() => getTopRatedBooks(PREVIEW_COUNT), []);
   const releases = useAsync(() => getNewestBooks(PREVIEW_COUNT), []);

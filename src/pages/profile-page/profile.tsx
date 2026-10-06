@@ -11,31 +11,50 @@ import { OrderCard } from "../../components/order/order-card";
 import { getOrders, splitOrdersByStatus, cancelOrder } from "../../services/order-service";
 import { UserReviews } from "../../components/review/user-reviews";
 import { getReviewsByUser } from "../../services/review-service";
-import { mergedValue, mergedDelivery, buildUserUpdate, } from "../../services/user-service";
+import { mergedValue, mergedDelivery, buildUserUpdate } from "../../services/user-service";
 import { visibleItems, hasMoreItems } from "../../utils/load-more";
 import "./profile.css";
 
 const PAGE_SIZE = 4;
 
+/** Props accepted by {@link Profile}. */
 interface ProfileProps {
+  /** Active user profile data. */
   user: User;
+  /** Callback triggered to save profile edits. */
   onSave: (updated: Partial<User>) => void;
+  /** Callback triggered to delete user account. */
   onDeleteAccount: () => void;
+  /** Navigation callback targeting order detail view. */
   onNavigateToDetail: (orderId: string | number) => void;
 }
 
+/** State for {@link Profile}. */
 interface ProfileState {
+  /** Flag for toggleable inline edit mode. */
   isEditing: boolean;
+  /** Controls account deletion modal visibility. */
   showDeleteConfirm: boolean;
+  /** ID of order targeted for cancellation modal, or `null`. */
   cancellingOrderId: string | number | null;
+  /** Currently active navigation tab key. */
   activeTab: ProfileTabKey;
+  /** Form input state accumulator. */
   formData: Record<string, string>;
+  /** Tracked visible count pagination state per tab. */
   visibleCount: Record<ProfileTabKey, number>;
+  /** Fetched order records. */
   orders: Order[];
+  /** Fetched user review records. */
   reviews: Review[];
+  /** Data loading status indicator. */
   isLoading: boolean;
 }
 
+/**
+ * Class component representing user profile center, handling user details editing,
+ * account deletion, tabbed review history, active orders, and historical orders.
+ */
 export class Profile extends Component<ProfileProps, ProfileState> {
   state: ProfileState = {
     isEditing: false,
@@ -61,6 +80,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     if (prevProps.user !== this.props.user) this.loadData();
   }
 
+  /** Fetches order and review history for the active user asynchronously. */
   private async loadData() {
     this.setState({ isLoading: true });
     const { user } = this.props;
@@ -71,11 +91,13 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     this.setState({ orders, reviews, isLoading: false });
   }
 
+  /** Reloads user review entries after changes occur. */
   private reloadReviews = async () => {
     const reviews = await getReviewsByUser(this.props.user.id);
     this.setState({ reviews });
   };
 
+  /** Renders list of user reviews along with pagination controls. */
   private renderReviews() {
     const { reviews, visibleCount } = this.state;
     return (
@@ -90,26 +112,31 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     );
   }
 
+  /** Toggles profile input edit state and resets input form buffer. */
   private toggleEdit = () => {
     this.setState((prev) => ({ isEditing: !prev.isEditing, formData: {} }));
   };
 
+  /** Updates key-value entry in form state buffer. */
   private handleFieldChange = (field: string, value: string) => {
     this.setState((prev) => ({
       formData: { ...prev.formData, [field]: value },
     }));
   };
 
+  /** Constructs user update object and triggers external save handler. */
   private handleSave = () => {
     const { user, onSave } = this.props;
     onSave(buildUserUpdate(user, this.state.formData));
     this.setState({ isEditing: false, formData: {} });
   };
 
+  /** Sets active tab selection key. */
   private setActiveTab = (tab: ProfileTabKey) => {
     this.setState({ activeTab: tab });
   };
 
+  /** Increments pagination limit for specified tab identifier. */
   private loadMore = (tab: ProfileTabKey) => {
     this.setState((prev) => ({
       visibleCount: {
@@ -119,6 +146,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     }));
   };
 
+  /** Renders profile info card containing personal details and edit handlers. */
   private renderInfoCard() {
     const { user } = this.props;
     const { formData, isEditing } = this.state;
@@ -140,6 +168,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     );
   }
 
+  /** Filters order list by active status variant and renders corresponding grid. */
   private renderOrders(variant: "history" | "active") {
     const { history, active } = splitOrdersByStatus(this.state.orders);
     const orders = variant === "history" ? history : active;
@@ -153,10 +182,12 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     );
   }
 
+  /** Sets target order ID for cancellation confirmation. */
   private handleOpenCancelModal = (orderId: string | number) => {
     this.setState({ cancellingOrderId: orderId });
   };
 
+  /** Confirms cancellation for selected order and re-syncs state. */
   private handleConfirmCancel = async () => {
     const { cancellingOrderId } = this.state;
     if (!cancellingOrderId) return;
@@ -169,10 +200,12 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     });
   };
 
+  /** Dismisses order cancellation modal dialog. */
   private handleCloseCancelModal = () => {
     this.setState({ cancellingOrderId: null });
   };
 
+  /** Renders grid container of order items with cancellation handlers and pagination button. */
   private renderOrderGrid(
     orders: Order[],
     count: number,
@@ -198,6 +231,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     );
   }
 
+  /** Renders load-more pagination control or empty list indicator message. */
   private renderLoadMore<T>(tab: ProfileTabKey, items: T[], count: number) {
     if (items.length === 0)
       return <span className="empty-content">Keine Vorhanden</span>;
@@ -209,6 +243,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     );
   }
 
+  /** Selects and renders tab contents based on selected active tab key. */
   private renderTabContent() {
     if (this.state.isLoading)
       return <span className="empty-content">Lädt…</span>;

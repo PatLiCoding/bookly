@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import { getDeliveryDate } from "../../services/checkout-service";
 
-/** Danke-Text mit voraussichtlichem Lieferdatum. */
+/**
+ * Displays a thank you message along with the estimated order delivery date.
+ */
 function ConfirmationText() {
   return (
     <p>
@@ -12,7 +14,9 @@ function ConfirmationText() {
   );
 }
 
-/** Buttons nach erfolgreicher Bestellung. */
+/**
+ * Displays post-purchase action buttons for navigation.
+ */
 function ConfirmationActions() {
   return (
     <div className="checkout-confirmation-actions">
@@ -26,7 +30,9 @@ function ConfirmationActions() {
   );
 }
 
-/** Bestätigungsseite nach erfolgreicher Bestellung. */
+/**
+ * Order confirmation view rendered after a successful checkout completion.
+ */
 function CheckoutConfirmation() {
   return (
     <section className="checkout-confirmation">

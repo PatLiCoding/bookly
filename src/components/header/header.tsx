@@ -6,6 +6,10 @@ import SearchBar from "../search-bar/search-bar";
 import { useAuth } from "../../context/use-auth";
 import { useCartContext } from "../../context/use-cart-context";
 
+/**
+ * Renders the main top navigation header including logo, search bar,
+ * shopping cart indicator, and user account dropdown menu.
+ */
 function Header() {
   const { loggedUser, logout } = useAuth();
   const { cartCount } = useCartContext();
@@ -17,6 +21,11 @@ function Header() {
   const navigate = useNavigate();
 
   useEffect(() => {
+    /**
+     * Closes the user account dropdown menu when clicking outside of it.
+     *
+     * @param e - Global mouse event.
+     */
     function handleClickOutside(e: MouseEvent) {
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
         setIsMenuOpen(false);
@@ -26,21 +35,25 @@ function Header() {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  /** Navigates to the user profile page and closes the account menu. */
   function handleProfileClick() {
     setIsMenuOpen(false);
     navigate("/profil");
   }
 
+  /** Navigates to the user's order history page and closes the account menu. */
   function handleOrdersClick() {
     setIsMenuOpen(false);
     navigate("/order");
   }
 
+  /** Logs out the active user and closes the account menu. */
   function handleLogoutClick() {
     logout();
     setIsMenuOpen(false);
   }
 
+  /** Navigates to the user's review history page and closes the account menu. */
   function handleReviewsClick() {
     setIsMenuOpen(false);
     navigate("/reviews");

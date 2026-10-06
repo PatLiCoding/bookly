@@ -1,6 +1,8 @@
 import { Link } from "react-router-dom";
 
-/** Anzeige, wenn der Warenkorb leer ist. */
+/**
+ * Fallback view presented when the user navigates to checkout with an empty shopping cart.
+ */
 function CheckoutEmpty() {
   return (
     <section className="checkout-empty">

@@ -7,33 +7,51 @@ import Pagination from "../../components/pagination/pagination";
 import LoadStatus from "../../components/load-status/load-status";
 import { useCategoryBooks } from "./use-category-books";
 import { useScrollTarget } from "./use-scroll-target";
-import { countActiveFilters, NO_FILTERS, parseSort, } from "../../utils/book-filter";
+import { countActiveFilters, NO_FILTERS, parseSort } from "../../utils/book-filter";
 import type { Filters } from "../../utils/book-filter";
 import { ALL_CATEGORY, ALL_LABEL } from "../../utils/category";
 
+/** Type alias derived from the return type of the custom `useCategoryBooks` hook. */
 type BookList = ReturnType<typeof useCategoryBooks>;
 
-/** Title of the page: the "all books" key gets its label, a search adds the term. */
+/**
+ * Computes the page heading string based on current category name and search query parameters.
+ *
+ * @param name - Category identifier or slug from URL parameters.
+ * @param query - Active search term query string.
+ */
 function pageTitle(name?: string, query = ""): string | undefined {
   if (query && name === ALL_CATEGORY) return `Suchergebnisse für „${query}“`;
   const title = name === ALL_CATEGORY ? ALL_LABEL : name;
   return query ? `${title}: „${query}“` : title;
 }
 
-/** Label of the filter button; while closed it shows how many filters are active. */
+/**
+ * Generates button text indicating active filter count or toggle status.
+ *
+ * @param isOpen - Flag indicating whether the filter sidebar is currently visible.
+ * @param activeCount - Number of currently active filter rules.
+ */
 function filterLabel(isOpen: boolean, activeCount: number): string {
   if (isOpen) return "Filter ausblenden";
   return activeCount > 0 ? `Filter (${activeCount})` : "Filter";
 }
 
+/** Props for the CategoryHeader component. */
 interface HeaderProps {
+  /** Heading title string to render. */
   title?: string;
+  /** Whether the filter panel is expanded. */
   showFilters: boolean;
+  /** Count of active filter parameters. */
   activeCount: number;
+  /** Callback fired when the toggle filter button is clicked. */
   onToggle: () => void;
 }
 
-/** Category title on the left, filter toggle on the right. */
+/**
+ * Renders the category section header containing page title and filter toggle button.
+ */
 function CategoryHeader({
   title,
   showFilters,
@@ -55,7 +73,11 @@ function CategoryHeader({
   );
 }
 
-/** Book grid, a loading/error hint, or a note if no book matches. */
+/**
+ * Displays the grid list of book items, loading indicator, or empty state feedback.
+ *
+ * @param props - Component props containing the resolved book list object.
+ */
 function CategoryBooks({ list }: { list: BookList }) {
   const { loading, error, books } = list;
   return (
@@ -69,7 +91,9 @@ function CategoryBooks({ list }: { list: BookList }) {
   );
 }
 
-/** Book list next to the (optional) filter sidebar. */
+/**
+ * Layout container positioning the book grid alongside the optional collapsible filter sidebar.
+ */
 function CategoryContent({
   list,
   showFilters,
@@ -87,13 +111,19 @@ function CategoryContent({
   );
 }
 
+/** Props required by the CategoryView inner component. */
 interface ViewProps {
+  /** Category slug name. */
   name?: string;
+  /** Initial filter options including active sorting preference. */
   initialFilters: Filters;
+  /** Search query string. */
   query: string;
 }
 
-/** Category view; state (page, filters) lives here and resets via the key below. */
+/**
+ * Manages category state (pagination, active filters, and scroll positioning target).
+ */
 function CategoryView({ name, initialFilters, query }: ViewProps) {
   const { setTarget, scrollThen } = useScrollTarget();
   const list = useCategoryBooks(name, initialFilters, query);
@@ -119,7 +149,10 @@ function CategoryView({ name, initialFilters, query }: ViewProps) {
   );
 }
 
-/** Shows the books of the selected category (10 per page); `?sort=` presets the sorting, `?q=` searches title and author. */
+/**
+ * Top-level route component parsing route parameters, query search, and preset sorting,
+ * re-keying `CategoryView` to trigger state resets when parameters change.
+ */
 function CategoryPage() {
   const { name } = useParams();
   const [params] = useSearchParams();

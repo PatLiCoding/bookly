@@ -2,10 +2,15 @@ import { Component } from "react";
 import type { Review } from "../../interface/review";
 import { renderStars } from "../../utils/render-stars";
 
+/** Props for the ReviewComment component. */
 interface ReviewCommentProps {
+  /** Review data containing author name, star rating, creation date, and text body. */
   review: Review;
 }
 
+/**
+ * Class component displaying an individual user review comment card.
+ */
 export class ReviewComment extends Component<ReviewCommentProps> {
   render() {
     const { review } = this.props;

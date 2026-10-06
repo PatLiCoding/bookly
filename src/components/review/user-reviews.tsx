@@ -6,23 +6,35 @@ import { ReviewFormModal } from "./review-form-modal";
 import { deleteReview, updateReview } from "../../services/review-service";
 import type { ReviewInput } from "../../services/review-service";
 
+/** Props for the UserReviews component. */
 interface UserReviewsProps {
+  /** Array of reviews authored by the user. */
   reviews: Review[];
+  /** Unique ID string of the logged-in user. */
   userId: string;
+  /** Callback fired when a review is updated or deleted to trigger data reload. */
   onChanged: () => void;
 }
 
+/** State tracking active review target for edit or delete modals. */
 interface UserReviewsState {
+  /** Currently selected review for editing, or `null`. */
   editing: Review | null;
+  /** Currently selected review for deletion, or `null`. */
   deleting: Review | null;
 }
 
+/**
+ * Class component displaying a user's authored reviews on their profile page
+ * with inline support for editing and deleting via modal dialogs.
+ */
 export class UserReviews extends Component<
   UserReviewsProps,
   UserReviewsState
 > {
   state: UserReviewsState = { editing: null, deleting: null };
 
+  /** Handles edit form submission, updates review service, and notifies parent. */
   private handleEditSubmit = async (input: ReviewInput) => {
     const { editing } = this.state;
     if (!editing) return;
@@ -31,6 +43,7 @@ export class UserReviews extends Component<
     this.props.onChanged();
   };
 
+  /** Handles review deletion confirmation and notifies parent. */
   private handleDeleteConfirm = async () => {
     const { deleting } = this.state;
     if (!deleting) return;
@@ -39,6 +52,7 @@ export class UserReviews extends Component<
     this.props.onChanged();
   };
 
+  /** Renders an individual ReviewListItem component. */
   private renderItem = (review: Review) => (
     <ReviewListItem
       key={review.id}
@@ -48,6 +62,7 @@ export class UserReviews extends Component<
     />
   );
 
+  /** Renders modal dialog for editing an existing review. */
   private renderEditModal(review: Review) {
     return (
       <ReviewFormModal
@@ -59,6 +74,7 @@ export class UserReviews extends Component<
     );
   }
 
+  /** Renders modal dialog for confirming review deletion. */
   private renderDeleteModal() {
     return (
       <DeleteConfirmModal

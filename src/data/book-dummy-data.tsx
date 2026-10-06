@@ -1,7 +1,14 @@
 import type { BookBase } from "../interface/book";
 
+/**
+ * Default cover image asset path used as a fallback for dummy book data.
+ */
 const DEFAULT_COVER = "./assets/img/bookcover_default.png";
 
+/**
+ * Mock dataset containing initial book entries across various genres.
+ * Used for development, testing, and seeding the database.
+ */
 export const books: BookBase[] = [
   {
     id: 1,

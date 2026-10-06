@@ -4,14 +4,26 @@ import type { Order } from "../../interface/order";
 import { statusLabel } from "../../services/order-service";
 import { getCover } from "../../utils/book-cover";
 
+/** Props for the OrderCard component. */
 interface OrderCardProps {
+  /** Complete order data object. */
   order: Order;
+  /** Display variant controlling date vs status badge layout (`"history"` or `"active"`). */
   variant: "history" | "active";
+  /** Optional callback triggered to view detailed order information. */
   onDetailClick?: (orderId: string | number) => void;
+  /** Optional callback triggered to request order cancellation. */
   onCancelClick?: (orderId: string | number) => void;
 }
 
+/**
+ * Class component rendering an order card with item cover thumbnails, item counts, price total, and action buttons.
+ */
 export class OrderCard extends Component<OrderCardProps> {
+  /**
+   * Renders cover thumbnails for up to 2 items, an overflow counter for extra items,
+   * and total item count / pricing breakdown.
+   */
   private renderItemsPreview() {
     const { items } = this.props.order;
     const maxVisible = 2;

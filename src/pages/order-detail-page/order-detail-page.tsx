@@ -11,23 +11,41 @@ import "./order-detail-page.css";
 
 type OrderItem = Order["items"][number];
 
+/** Props accepted by {@link OrderDetailPage}. */
 interface OrderDetailPageProps {
+  /** Active user profile instance. */
   user: User;
+  /** Unique ID of the order to retrieve and render. */
   orderId: string;
+  /** Navigation callback to return to the order list view. */
   onBack: () => void;
 }
 
+/** Component state for {@link OrderDetailPage}. */
 interface OrderDetailPageState {
+  /** Resolved order details, or `null` if not found. */
   order: Order | null;
+  /** Flag indicating active order data fetch status. */
   isLoading: boolean;
+  /** Controls visibility of the order cancellation confirmation modal. */
   showCancelModal: boolean;
 }
 
+/**
+ * Calculates shipping cost based on the difference between total price and item subtotal.
+ *
+ * @param order - The target order object.
+ * @returns Shipping cost rounded to 2 decimal places, clamped at minimum 0.
+ */
 function calcShipping(order: Order): number {
   const diff = order.totalPrice - calcSubtotal(order.items);
   return Math.max(0, Math.round(diff * 100) / 100);
 }
 
+/**
+ * Class component displaying exhaustive information for a single order, including order items,
+ * financial totals, cancellation actions, and modal confirmations.
+ */
 export class OrderDetailPage extends Component<
   OrderDetailPageProps,
   OrderDetailPageState
@@ -46,20 +64,24 @@ export class OrderDetailPage extends Component<
     if (prev.orderId !== this.props.orderId) this.loadOrder();
   }
 
+  /** Fetches target order details asynchronously based on active props. */
   private async loadOrder() {
     this.setState({ isLoading: true });
     const order = await getOrderById(this.props.orderId);
     this.setState({ order, isLoading: false });
   }
 
+  /** Opens order cancellation modal dialog. */
   private handleOpenCancelModal = () => {
     this.setState({ showCancelModal: true });
   };
 
+  /** Closes order cancellation modal dialog. */
   private handleCloseCancelModal = () => {
     this.setState({ showCancelModal: false });
   };
 
+  /** Sends cancellation command for current order and refreshes component state. */
   private handleConfirmCancel = async () => {
     if (!this.state.order) return;
 
@@ -68,6 +90,7 @@ export class OrderDetailPage extends Component<
     await this.loadOrder();
   };
 
+  /** Renders fallback UI when specified order cannot be found. */
   private renderNotFound() {
     return (
       <div className="orders-page">
@@ -81,6 +104,7 @@ export class OrderDetailPage extends Component<
     );
   }
 
+  /** Renders header details including order ID, date, status badge, and action buttons. */
   private renderHeader(order: Order) {
     const canCancel = order.status === "processing";
 
@@ -109,6 +133,7 @@ export class OrderDetailPage extends Component<
     );
   }
 
+  /** Renders title, author, quantity, and unit price for an order item. */
   private renderItemDetails(item: OrderItem) {
     return (
       <div className="order-item-details">
@@ -121,6 +146,7 @@ export class OrderDetailPage extends Component<
     );
   }
 
+  /** Renders a single order line item as a clickable link pointing to its product page. */
   private renderItem(item: OrderItem) {
     return (
       <Link
@@ -134,6 +160,7 @@ export class OrderDetailPage extends Component<
     );
   }
 
+  /** Renders list container for all purchased items in the order. */
   private renderItems(order: Order) {
     return (
       <section className="orders-section">
@@ -145,6 +172,7 @@ export class OrderDetailPage extends Component<
     );
   }
 
+  /** Renders formatted text row within the order summary section. */
   private renderSummaryRow(label: string, value: string, isTotal = false) {
     const className = isTotal
       ? "order-summary-row order-detail-total"
@@ -157,6 +185,7 @@ export class OrderDetailPage extends Component<
     );
   }
 
+  /** Renders cost breakdown including subtotal, calculated shipping, and total sum. */
   private renderSummary(order: Order) {
     const shipping = calcShipping(order);
     const shippingText = shipping > 0 ? formatPrice(shipping) : "kostenlos";

@@ -2,29 +2,56 @@ import { Component } from "react";
 import type { Delivery } from "../../interface/user";
 import "../../pages/profile-page/profile.css";
 
+/** Props for the ProfileInfoCard class component. */
 interface ProfileInfoCardProps {
+  /** User's first name. */
   firstname: string;
+  /** User's last name. */
   lastname: string;
+  /** User's email address. */
   email: string;
+  /** Billing street address. */
   street: string;
+  /** Billing postal code. */
   zip: string;
+  /** Billing city. */
   city: string;
+  /** Billing country. */
   country: string;
+  /** Optional separate shipping/delivery address data. */
   delivery?: Delivery;
+  /** Whether the card is currently in editable input mode. */
   isEditing: boolean;
+  /** Callback triggered to toggle edit mode. */
   onEditToggle: () => void;
+  /** Callback fired when an input field value changes. */
   onFieldChange: (field: string, value: string) => void;
+  /** Callback fired when the user saves profile modifications. */
   onSave: () => void;
 }
 
+/** Input validation and HTML attribute constraints for form fields. */
 interface FieldOptions {
+  /** Standard HTML input type string. */
   type?: string;
+  /** Virtual keyboard hints for mobile devices. */
   inputMode?: "text" | "numeric" | "email" | "tel";
+  /** Maximum character length constraint. */
   maxLength?: number;
+  /** Restricts text input strictly to numeric digits. */
   onlyNumbers?: boolean;
 }
 
+/**
+ * Class component displaying and editing personal details, billing, and shipping addresses.
+ */
 export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
+  /**
+   * Generates a change handler that updates state and optionally sanitizes numeric input.
+   *
+   * @param field - Key name of the target field.
+   * @param options - Validation constraints such as `onlyNumbers`.
+   */
   private handleChange = (field: string, options?: FieldOptions) => {
     return (e: React.ChangeEvent<HTMLInputElement>) => {
       let value = e.target.value;
@@ -35,6 +62,7 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     };
   };
 
+  /** Renders either plain text or an interactive text input based on `isEditing`. */
   private renderField(field: string, value: string, placeholder?: string, options?: FieldOptions) {
     const { isEditing } = this.props;
     if (!isEditing) return <span title={value}>{value}</span>;
@@ -52,6 +80,7 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     );
   }
 
+  /** Renders personal user information including icon, full name, and email address. */
   private renderPersonalInfo() {
     const { firstname, lastname, email } = this.props;
     return (
@@ -73,6 +102,7 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     );
   }
 
+  /** Renders billing address section or empty state message. */
   private renderBillingAddress() {
     const { street, zip, city, country, isEditing } = this.props;
     const hasBillingAddress = street || zip || city || country;
@@ -80,6 +110,7 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     return this.renderBillingAddressFields();
   }
 
+  /** Renders a message when no billing address is set. */
   private renderNoBillingAddress() {
     return (
       <div className="profile-sub-block">
@@ -89,6 +120,7 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     );
   }
 
+  /** Renders editable or formatted billing address fields. */
   private renderBillingAddressFields() {
     const { street, zip, city, country } = this.props;
     return (
@@ -97,10 +129,7 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
         {this.renderField("billingStreet", street, "Straße Hausnummer")}
         <div className="profile-name-row">
           {this.renderField("billingZip", zip, "PLZ", {
-            onlyNumbers: true,
-            maxLength: 5,
-            inputMode: "numeric",
-          })}
+            onlyNumbers: true, maxLength: 5, inputMode: "numeric",})}
           {this.renderField("billingCity", city, "Stadt")}
         </div>
         {this.renderField("billingCountry", country, "Land")}
@@ -108,12 +137,14 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     );
   }
 
+  /** Renders delivery address section or empty state message. */
   private renderDeliveryAddress() {
     const { delivery, isEditing } = this.props;
     if (!delivery && !isEditing) return this.renderNoDelivery();
     return this.renderDeliveryFields();
   }
 
+  /** Renders a message when no delivery address is set. */
   private renderNoDelivery() {
     return (
       <div className="profile-info-column">
@@ -123,6 +154,7 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     );
   }
 
+  /** Renders delivery address section fields. */
   private renderDeliveryFields() {
     return (
       <div className="profile-info-column">
@@ -133,16 +165,18 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     );
   }
 
+  /** Renders recipient name input fields for delivery. */
   private renderDeliveryName() {
     const { delivery } = this.props;
     return (
       <div className="profile-name-row">
         {this.renderField("deliveryFirstname", delivery?.Firstname ?? "", "Vorname")}
-        {this.renderField("deliveryLastname", delivery?.Lastname ?? "", "Nachname" )}
+        {this.renderField("deliveryLastname", delivery?.Lastname ?? "", "Nachname")}
       </div>
     );
   }
 
+  /** Renders location and address fields for delivery. */
   private renderDeliveryLocation() {
     const { delivery } = this.props;
     return (
@@ -158,6 +192,7 @@ export class ProfileInfoCard extends Component<ProfileInfoCardProps> {
     );
   }
 
+  /** Renders top-corner edit toggle button. */
   private renderEditIcon() {
     return (
       <button

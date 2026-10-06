@@ -6,6 +6,10 @@ import { useAsync } from "../../hooks/use-async";
 import { useAuth } from "../../context/use-auth";
 import { useCartContext } from "../../context/use-cart-context";
 
+/**
+ * Route component responsible for fetching book details by URL parameter `id`
+ * and rendering the interactive `BookDetails` layout along with cart controls.
+ */
 function BookDetailsPage() {
   const { id } = useParams<{ id: string }>();
   const { loggedUser } = useAuth();
