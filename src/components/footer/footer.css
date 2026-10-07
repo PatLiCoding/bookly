@@ -8,6 +8,12 @@
   padding: 42px 16px;
 }
 
-.footer p {
-  margin: 0;
+.footer .link {
+ color: #223044;
+ text-decoration: none;
+}
+
+.footer .link:hover {
+ text-decoration: underline;
+ cursor: pointer;
 }

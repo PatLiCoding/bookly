@@ -90,13 +90,27 @@ npm install
 Copy the template and fill in your values:
 
 ```bash
-cp .env.template .env
+cp .env.template .env        # Windows (cmd): copy .env.template .env
 ```
 
 ```env
+# Supabase
 VITE_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+
+# Imprint and privacy policy (public)
+VITE_LEGAL_NAME="First Last"
+VITE_LEGAL_STREET="Example Street 1"
+VITE_LEGAL_ZIP="12345"
+VITE_LEGAL_CITY="Example City"
+VITE_LEGAL_COUNTRY="Germany"
+VITE_LEGAL_EMAIL="you@example.com"
+VITE_LEGAL_HOSTER="Hosting provider, city, country"
+VITE_LEGAL_LOG_RETENTION="7 days"
+VITE_LEGAL_SUPABASE_REGION="Frankfurt (EU)"
+VITE_LEGAL_AUTHORITY="Data protection authority"
+VITE_LEGAL_UPDATED="01.01.2026"
 ```
 
 | Variable | Used by | Where to find it |
@@ -104,10 +118,13 @@ SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
 | `VITE_SUPABASE_URL` | App and seed script | *Project Settings → API → Project URL* |
 | `VITE_SUPABASE_ANON_KEY` | App (browser) | *Project Settings → API → `anon` key* |
 | `SUPABASE_SERVICE_ROLE_KEY` | Seed script only | *Project Settings → API → `service_role` key* |
+| `VITE_LEGAL_*` | Imprint and privacy policy pages | Your own details |
 
 > ⚠️ **Keep the `service_role` key secret.** It bypasses all security rules (RLS). Never commit your `.env`, never give the key a `VITE_` prefix (Vite would bundle it into the browser code), and only use it in local scripts.
 >
-> The URL must not end with `/rest/v1/`.
+> The `VITE_LEGAL_*` values are built into the public site (imprint and privacy policy are public anyway). They are read at build time, so rebuild after changing them.
+>
+> The Supabase URL must not end with `/rest/v1/`.
 
 ### 4. Seed the books
 
@@ -137,6 +154,12 @@ npx vite build --base=/subfolder/      # build for a subfolder
 ```
 
 The router uses `import.meta.env.BASE_URL` as its `basename`. To make page reloads on sub-routes (e.g. `/orders`) work, the web server needs an `.htaccess` that rewrites to `index.html`.
+
+## ⚖️ Imprint & Privacy Policy
+
+The imprint (`/imprint`) and privacy policy (`/policy`) are rendered by one component, `LegalPage`, from the texts in `src/data/legal-content.ts`. Your personal details are read from the `VITE_LEGAL_*` variables in `.env`.
+
+> The texts are sample texts written for this demo project. If you fork or reuse the project, adapt them to your own setup (hosting, services, data you process) and check them before publishing.
 
 ##  Project Structure
 
