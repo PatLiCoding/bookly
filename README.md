@@ -1,75 +1,179 @@
-# React + TypeScript + Vite
+<div align="center">
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+#  Bookly
 
-Currently, two official plugins are available:
+**A small, clean bookstore built with React, TypeScript and Supabase**
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+![React](https://img.shields.io/badge/React-61DAFB?logo=react&logoColor=white&style=for-the-badge)
+![TypeScript](https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white&style=for-the-badge)
+![Vite](https://img.shields.io/badge/Vite-646CFF?logo=vite&logoColor=white&style=for-the-badge)
+![React Router](https://img.shields.io/badge/React_Router-CA4245?logo=reactrouter&logoColor=white&style=for-the-badge)
+![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=white&style=for-the-badge)
 
-## React Compiler
+[Live Demo](https://patricia-linne.de/bookly/) · [Features](#features) · [Installation](#installation) · [Roadmap](#roadmap)
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+> [!WARNING]
+> **Work in progress.** This project is still under development and is a portfolio/learning project. Features may be incomplete, and legal pages such as the imprint and privacy policy are not final yet. Please do not enter real personal data on the demo site, and note that no real orders are processed.
 
-## Expanding the ESLint configuration
+![Bookly home page](https://patricia-linne.de/bookly/Screenshot.png)
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+</div>
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+---
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+##  About
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+Bookly is a small online bookstore. Visitors can browse, search and filter books and add them to their cart without an account. An account is required to place an order. Registered users can rate and comment on books, manage their profile and track their orders including shipping status.
 
+##  Features
+
+**Books**
+- Book overview and detail pages for all visitors
+- Search by title and author
+- Filter by category and star rating (combinable), sort by price
+- Pagination, highlights (top rated) and new releases on the home page
+
+**Cart & Orders**
+- Cart works without login, item count in the header, persisted via `localStorage`
+- Checkout requires an account
+- Order overview and details with status: 🟡 In progress · 🔵 Shipped · 🟢 Delivered
+
+**Users**
+- Register, log in, log out
+- Edit profile, delete account (with confirmation)
+- Ratings and comments (one rating per user and book), editable and deletable
+
+**Privacy**
+- Users can only see their own data, admins can manage user data
+
+### Permissions
+
+| Feature                   | Visitor | User | Admin |
+|---------------------------|:-------:|:----:|:-----:|
+| View and search books     | ✅ | ✅ | ✅ |
+| Cart                      | ✅ | ✅ | ✅ |
+| Like and comment          | ❌ | ✅ | ✅ |
+| Order and view status     | ❌ | ✅ | ✅ |
+| Own data / account        | ❌ | ✅ | ✅ |
+| View other users' data    | ❌ | ❌ | ✅ |
+
+##  Tech Stack
+
+| Area       | Technology |
+|------------|------------|
+| Frontend   | React, TypeScript, Vite |
+| Routing    | React Router |
+| State      | React Context (`AuthContext`, `CartContext`) and custom hooks |
+| Backend    | Supabase (PostgreSQL), integration in progress |
+| Styling    | CSS, responsive, font *Playfair Display* |
+
+## Installation
+
+**Requirements:** Node.js (LTS), npm and a free [Supabase](https://supabase.com) account
+
+### 1. Clone the repository
+
+```bash
+git clone <repository-url>
+cd bookly
+npm install
 ```
 
-You can also install [eslint-plugin-react-x](https://npmx.dev/package/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://npmx.dev/package/eslint-plugin-react-dom) for React-specific lint rules:
+### 2. Set up Supabase
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+1. Create a new project at supabase.com.
+2. In the **SQL Editor**, run the contents of [`supabase/schema.sql`](supabase/schema.sql). This creates all tables: `books`, `profiles`, `reviews`, `delivery_addresses`, `orders`, `order_items`.
+3. Under **Project Settings → API**, copy the project URL and the `anon` key.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
+### 3. Environment variables
 
+Create a `.env` file in the project root (do not commit it):
+
+```env
+VITE_SUPABASE_URL=https://<your-project>.supabase.co
+VITE_SUPABASE_ANON_KEY=<your-anon-key>
 ```
+
+> ⚠️ The URL must not end with `/rest/v1/`.
+
+### 4. Seed the books
+
+Only the `books` table is pre-filled. All other tables fill up through normal use of the app (registration, orders, reviews).
+
+```bash
+npx tsx scripts/seed-books.ts
+```
+
+### 5. Start the app
+
+```bash
+npm run dev
+```
+
+The app is then available at `http://localhost:5173`.
+
+### Admin account
+
+Admins cannot be created through the app. After registering, set the role once in the Supabase dashboard (table `profiles`).
+
+##  Build & Deployment
+
+```bash
+npm run build                          # production build
+npx vite build --base=/subfolder/      # build for a subfolder
+```
+
+The router uses `import.meta.env.BASE_URL` as its `basename`. To make page reloads on sub-routes (e.g. `/orders`) work, the web server needs an `.htaccess` that rewrites to `index.html`.
+
+##  Project Structure
+
+```text
+src/
+├── components/   Reusable building blocks (Header, Footer, BookCard, Auth, Modal …)
+├── pages/        Pages (Home, CategoryPage, BookDetails, Cart, Checkout, Orders, Profile …)
+├── context/      AuthProvider, CartProvider and their hooks
+├── hooks/        Custom hooks (useCart, useCheckoutForm, useBookReviews …)
+├── services/     Logic and data access (book, order, review, user, checkout services)
+├── utils/        Helpers (paginate, price, book-cover, list-view …)
+├── interface/    TypeScript types (User, Book, Order, CartItem …)
+├── data/         Dummy data
+├── App.tsx       Routes
+└── main.tsx      Entry point
+scripts/          Seed script for Supabase
+```
+
+Logic lives in `services/`, `hooks/` and `utils/`, while components only handle rendering. When the data source changes, only the services need to be adapted.
+
+##  Design
+
+| Color | Hex | Usage |
+|-------|-----|-------|
+| Navy | `#223044` | Primary color, text |
+| Blue | `#A7D8FF` | Accents |
+| Light blue | `#CDEEFF` | Surfaces |
+| Beige | `#FFE9C7` | Accents |
+| Off-white | `#F7FAFF` | Background |
+
+##  Roadmap
+
+-  Book overview, category page, filters, pagination
+-  Login, registration, profile page
+-  Cart, checkout, orders with status
+-  Ratings and comments
+-  Supabase tables and seed script
+-  Fully migrate the frontend to Supabase
+-  Real authentication instead of dummy users
+-  More filters (most reviews, release date)
+-  Search and sorting on the reviews and orders pages
+
+## Demo data
+
+All books, descriptions, ratings and comments are fictional sample data created for demonstration purposes. Some texts and cover images were created with the help of AI.
+
+## License
+  
+This project was developed as part of a web development learning project and serves as a portfolio application.
+
+## Author
+
+Developed by Patricia Linne
