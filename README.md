@@ -13,7 +13,7 @@
 [Live Demo](https://patricia-linne.de/bookly/) · [Features](#features) · [Installation](#installation) · [Roadmap](#roadmap)
 
 > [!WARNING]
-> **Work in progress.** This project is still under development and is a portfolio/learning project. Features may be incomplete, and legal pages such as the imprint and privacy policy are not final yet. Please do not enter real personal data on the demo site, and note that no real orders are processed.
+> **Work in progress.** This project is still under development and is a portfolio/learning project. Please do not enter real personal data on the demo site, and note that no real orders are processed.
 
 <img src="public/assets/img/home.png" alt="Bookly home page" width="800">
 
@@ -155,7 +155,7 @@ npx vite build --base=/subfolder/      # build for a subfolder
 
 The router uses `import.meta.env.BASE_URL` as its `basename`. To make page reloads on sub-routes (e.g. `/orders`) work, the web server needs an `.htaccess` that rewrites to `index.html`.
 
-## ⚖️ Imprint & Privacy Policy
+## Imprint & Privacy Policy
 
 The imprint (`/imprint`) and privacy policy (`/policy`) are rendered by one component, `LegalPage`, from the texts in `src/data/legal-content.ts`. Your personal details are read from the `VITE_LEGAL_*` variables in `.env`.
 
