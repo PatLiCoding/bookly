@@ -15,7 +15,7 @@
 > [!WARNING]
 > **Work in progress.** This project is still under development and is a portfolio/learning project. Features may be incomplete, and legal pages such as the imprint and privacy policy are not final yet. Please do not enter real personal data on the demo site, and note that no real orders are processed.
 
-![Bookly home page](https://patricia-linne.de/bookly/Screenshot.png)
+<img src="public/assets/img/home.png" alt="Bookly home page" width="800">
 
 </div>
 
@@ -87,18 +87,31 @@ npm install
 
 ### 3. Environment variables
 
-Create a `.env` file in the project root (do not commit it):
+Copy the template and fill in your values:
 
-```env
-VITE_SUPABASE_URL=https://<your-project>.supabase.co
-VITE_SUPABASE_ANON_KEY=<your-anon-key>
+```bash
+cp .env.template .env
 ```
 
-> ⚠️ The URL must not end with `/rest/v1/`.
+```env
+VITE_SUPABASE_URL=https://YOUR-PROJECT.supabase.co
+VITE_SUPABASE_ANON_KEY=your-anon-key
+SUPABASE_SERVICE_ROLE_KEY=your-service-role-key
+```
+
+| Variable | Used by | Where to find it |
+|----------|---------|------------------|
+| `VITE_SUPABASE_URL` | App and seed script | *Project Settings → API → Project URL* |
+| `VITE_SUPABASE_ANON_KEY` | App (browser) | *Project Settings → API → `anon` key* |
+| `SUPABASE_SERVICE_ROLE_KEY` | Seed script only | *Project Settings → API → `service_role` key* |
+
+> ⚠️ **Keep the `service_role` key secret.** It bypasses all security rules (RLS). Never commit your `.env`, never give the key a `VITE_` prefix (Vite would bundle it into the browser code), and only use it in local scripts.
+>
+> The URL must not end with `/rest/v1/`.
 
 ### 4. Seed the books
 
-Only the `books` table is pre-filled. All other tables fill up through normal use of the app (registration, orders, reviews).
+The seed script inserts the sample books using the `service_role` key (the `anon` key is not allowed to write to `books`). It can safely be run more than once. All other tables fill up through normal use of the app (registration, orders, reviews).
 
 ```bash
 npx tsx scripts/seed-books.ts
