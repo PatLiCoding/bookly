@@ -52,15 +52,29 @@ function toRow(book: BookBase) {
 }
 
 /**
+ * Moves the id counter of "books" behind the highest seeded id, so books
+ * created later get a free id (see `sync_books_id_seq` in supabase/schema.sql).
+ */
+async function syncIdSequence() {
+  const { error } = await supabase.rpc("sync_books_id_seq");
+  if (error) {
+    console.error("Fehler beim Aktualisieren der ID-Sequenz:", error.message);
+    process.exit(1);
+  }
+}
+
+/**
  * Asynchronously seeds the database by uploading all dummy books into the "books" Supabase table.
+ * Uses upsert, so the script can safely be run more than once.
  * Exits the process with status code 1 if an error occurs.
  */
 async function seed() {
-  const { error } = await supabase.from("books").insert(books.map(toRow));
+  const { error } = await supabase.from("books").upsert(books.map(toRow));
   if (error) {
     console.error("Fehler:", error.message, error.details, error.hint);
     process.exit(1);
   }
+  await syncIdSequence();
   console.log(`${books.length} Bücher eingefügt`);
 }
 
