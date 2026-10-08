@@ -183,7 +183,7 @@
     width: 100%;
   }
 
-  .content-max-width {
+  .header-content-max-width {
     width: 100%;
     padding: 12px 16px;
     gap: 24px;
@@ -209,7 +209,7 @@
 }
 
 @media (max-width: 700px) {
-  .content-max-width {
+  .header-content-max-width {
     padding: 12px 16px;
   }
 
