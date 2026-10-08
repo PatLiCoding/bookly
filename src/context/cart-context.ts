@@ -1,5 +1,5 @@
 import { createContext } from "react";
-import type { NewCartItem } from "../utils/use-cart";
+import type { NewCartItem } from "../hooks/use-cart";
 import type { CartItem } from "../interface/cart-item";
 
 /** Interface defining the shopping cart context shape and mutation methods. */

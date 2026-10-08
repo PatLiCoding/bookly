@@ -3,7 +3,7 @@ import type { User } from "../../interface/user";
 import type { Values } from "../../interface/checkout";
 import { useCartContext } from "../../context/use-cart-context";
 import { useAuth } from "../../context/use-auth";
-import { useValues } from "./use-values";
+import { useValues } from "../../hooks/use-values";
 import {
   initialBilling,
   initialShipping,

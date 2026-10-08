@@ -1,5 +1,5 @@
 import { type ReactNode } from "react";
-import { useCart } from "../utils/use-cart";
+import { useCart } from "../hooks/use-cart";
 import { CartContext } from "./cart-context";
 
 /** Props for the CartProvider component. */

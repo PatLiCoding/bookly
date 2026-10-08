@@ -6,7 +6,7 @@ import FilterSidebar from "../../components/filter-sidebar/filter-sidebar";
 import Pagination from "../../components/pagination/pagination";
 import LoadStatus from "../../components/load-status/load-status";
 import { useCategoryBooks } from "./use-category-books";
-import { useScrollTarget } from "./use-scroll-target";
+import { useScrollTarget } from "../../hooks/use-scroll-target";
 import { countActiveFilters, NO_FILTERS, parseSort } from "../../utils/book-filter";
 import type { Filters } from "../../utils/book-filter";
 import { ALL_CATEGORY, ALL_LABEL } from "../../utils/category";

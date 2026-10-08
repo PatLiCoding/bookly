@@ -1,5 +1,5 @@
 import { useState } from "react";
-import type { Values } from "../../interface/checkout";
+import type { Values } from "../interface/checkout";
 
 /**
  * Custom React hook for managing key-value state pairs in form components.

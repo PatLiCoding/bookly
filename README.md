@@ -1,6 +1,6 @@
 <div align="center">
 
-#  Bookly
+# Bookly
 
 **A small, clean bookstore built with React, TypeScript and Supabase**
 
@@ -21,51 +21,55 @@
 
 ---
 
-##  About
+## About
 
 Bookly is a small online bookstore. Visitors can browse, search and filter books and add them to their cart without an account. An account is required to place an order. Registered users can rate and comment on books, manage their profile and track their orders including shipping status.
 
-##  Features
+## Features
 
 **Books**
+
 - Book overview and detail pages for all visitors
 - Search by title and author
 - Filter by category and star rating (combinable), sort by price
 - Pagination, highlights (top rated) and new releases on the home page
 
 **Cart & Orders**
+
 - Cart works without login, item count in the header, persisted via `localStorage`
 - Checkout requires an account
 - Order overview and details with status: 🟡 In progress · 🔵 Shipped · 🟢 Delivered
 
 **Users**
+
 - Register, log in, log out
 - Edit profile, delete account (with confirmation)
 - Ratings and comments (one rating per user and book), editable and deletable
 
 **Privacy**
+
 - Users can only see their own data, admins can manage user data
 
 ### Permissions
 
-| Feature                   | Visitor | User | Admin |
-|---------------------------|:-------:|:----:|:-----:|
-| View and search books     | ✅ | ✅ | ✅ |
-| Cart                      | ✅ | ✅ | ✅ |
-| Like and comment          | ❌ | ✅ | ✅ |
-| Order and view status     | ❌ | ✅ | ✅ |
-| Own data / account        | ❌ | ✅ | ✅ |
-| View other users' data    | ❌ | ❌ | ✅ |
+| Feature                | Visitor | User | Admin |
+| ---------------------- | :-----: | :--: | :---: |
+| View and search books  |   ✅    |  ✅  |  ✅   |
+| Cart                   |   ✅    |  ✅  |  ✅   |
+| Like and comment       |   ❌    |  ✅  |  ✅   |
+| Order and view status  |   ❌    |  ✅  |  ✅   |
+| Own data / account     |   ❌    |  ✅  |  ✅   |
+| View other users' data |   ❌    |  ❌  |  ✅   |
 
-##  Tech Stack
+## Tech Stack
 
-| Area       | Technology |
-|------------|------------|
-| Frontend   | React, TypeScript, Vite |
-| Routing    | React Router |
-| State      | React Context (`AuthContext`, `CartContext`) and custom hooks |
-| Backend    | Supabase (PostgreSQL), integration in progress |
-| Styling    | CSS, responsive, font *Playfair Display* |
+| Area     | Technology                                                    |
+| -------- | ------------------------------------------------------------- |
+| Frontend | React, TypeScript, Vite                                       |
+| Routing  | React Router                                                  |
+| State    | React Context (`AuthContext`, `CartContext`) and custom hooks |
+| Backend  | Supabase (PostgreSQL), integration in progress                |
+| Styling  | CSS, responsive, font _Playfair Display_                      |
 
 ## Installation
 
@@ -113,12 +117,12 @@ VITE_LEGAL_AUTHORITY="Data protection authority"
 VITE_LEGAL_UPDATED="01.01.2026"
 ```
 
-| Variable | Used by | Where to find it |
-|----------|---------|------------------|
-| `VITE_SUPABASE_URL` | App and seed script | *Project Settings → API → Project URL* |
-| `VITE_SUPABASE_ANON_KEY` | App (browser) | *Project Settings → API → `anon` key* |
-| `SUPABASE_SERVICE_ROLE_KEY` | Seed script only | *Project Settings → API → `service_role` key* |
-| `VITE_LEGAL_*` | Imprint and privacy policy pages | Your own details |
+| Variable                    | Used by                          | Where to find it                              |
+| --------------------------- | -------------------------------- | --------------------------------------------- |
+| `VITE_SUPABASE_URL`         | App and seed script              | _Project Settings → API → Project URL_        |
+| `VITE_SUPABASE_ANON_KEY`    | App (browser)                    | _Project Settings → API → `anon` key_         |
+| `SUPABASE_SERVICE_ROLE_KEY` | Seed script only                 | _Project Settings → API → `service_role` key_ |
+| `VITE_LEGAL_*`              | Imprint and privacy policy pages | Your own details                              |
 
 > ⚠️ **Keep the `service_role` key secret.** It bypasses all security rules (RLS). Never commit your `.env`, never give the key a `VITE_` prefix (Vite would bundle it into the browser code), and only use it in local scripts.
 >
@@ -146,7 +150,7 @@ The app is then available at `http://localhost:5173`.
 
 Admins cannot be created through the app. After registering, set the role once in the Supabase dashboard (table `profiles`).
 
-##  Build & Deployment
+## Build & Deployment
 
 ```bash
 npm run build                          # production build
@@ -161,14 +165,14 @@ The imprint (`/imprint`) and privacy policy (`/policy`) are rendered by one comp
 
 > The texts are sample texts written for this demo project. If you fork or reuse the project, adapt them to your own setup (hosting, services, data you process) and check them before publishing.
 
-##  Project Structure
+## Project Structure
 
 ```text
 src/
 ├── components/   Reusable building blocks (Header, Footer, BookCard, Auth, Modal …)
 ├── pages/        Pages (Home, CategoryPage, BookDetails, Cart, Checkout, Orders, Profile …)
 ├── context/      AuthProvider, CartProvider and their hooks
-├── hooks/        Custom hooks (useCart, useCheckoutForm, useBookReviews …)
+├── hooks/        Shared hooks (useCart, useBookReviews, useValues, useScrollTarget, useAsync)
 ├── services/     Logic and data access (book, order, review, user, checkout services)
 ├── utils/        Helpers (paginate, price, book-cover, list-view …)
 ├── interface/    TypeScript types (User, Book, Order, CartItem …)
@@ -180,34 +184,34 @@ scripts/          Seed script for Supabase
 
 Logic lives in `services/`, `hooks/` and `utils/`, while components only handle rendering. When the data source changes, only the services need to be adapted.
 
-##  Design
+## Design
 
-| Color | Hex | Usage |
-|-------|-----|-------|
-| Navy | `#223044` | Primary color, text |
-| Blue | `#A7D8FF` | Accents |
-| Light blue | `#CDEEFF` | Surfaces |
-| Beige | `#FFE9C7` | Accents |
-| Off-white | `#F7FAFF` | Background |
+| Color      | Hex       | Usage               |
+| ---------- | --------- | ------------------- |
+| Navy       | `#223044` | Primary color, text |
+| Blue       | `#A7D8FF` | Accents             |
+| Light blue | `#CDEEFF` | Surfaces            |
+| Beige      | `#FFE9C7` | Accents             |
+| Off-white  | `#F7FAFF` | Background          |
 
-##  Roadmap
+## Roadmap
 
--  Book overview, category page, filters, pagination
--  Login, registration, profile page
--  Cart, checkout, orders with status
--  Ratings and comments
--  Supabase tables and seed script
--  Fully migrate the frontend to Supabase
--  Real authentication instead of dummy users
--  More filters (most reviews, release date)
--  Search and sorting on the reviews and orders pages
+- Book overview, category page, filters, pagination
+- Login, registration, profile page
+- Cart, checkout, orders with status
+- Ratings and comments
+- Supabase tables and seed script
+- Fully migrate the frontend to Supabase
+- Real authentication instead of dummy users
+- More filters (most reviews, release date)
+- Search and sorting on the reviews and orders pages
 
 ## Demo data
 
 All books, descriptions, ratings and comments are fictional sample data created for demonstration purposes. Some texts and cover images were created with the help of AI.
 
 ## License
-  
+
 This project was developed as part of a web development learning project and serves as a portfolio application.
 
 ## Author
