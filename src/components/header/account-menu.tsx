@@ -15,7 +15,15 @@ const MENU_ITEMS = [
   { label: "Profil", path: "/profil" },
   { label: "Bestellungen", path: "/order" },
   { label: "Bewertungen", path: "/reviews" },
+
 ];
+
+const ADMIN_ITEM = { label: "Admin", path: "/admin/order" };
+
+/** Standard menu entries, plus the admin entry for admins. */
+function getMenuItems(user: User) {
+  return user.role === "admin" ? [...MENU_ITEMS, ADMIN_ITEM] : MENU_ITEMS;
+}
 
 /** First and last name of the logged-in user. */
 function AccountMenuName({ user }: { user: User }) {
@@ -60,11 +68,10 @@ function LogoutButton({ onClose }: CloseProps) {
 }
 
 /** Dropdown with the user's name, navigation entries and logout. */
-function AccountMenu({ user, onClose }: CloseProps & { user: User }) {
-  return (
+function AccountMenu({ user, onClose }: CloseProps & { user: User }) {return (
     <div className="account-menu">
       <AccountMenuName user={user} />
-      {MENU_ITEMS.map((item) => (
+      {getMenuItems(user).map((item) => (
         <MenuItem key={item.path} {...item} onClose={onClose} />
       ))}
       <LogoutButton onClose={onClose} />

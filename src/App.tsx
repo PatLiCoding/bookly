@@ -14,8 +14,10 @@ import OrdersPage from "./pages/order-page/order-page";
 import OrderDetailPage from "./pages/order-detail-page/order-detail-page";
 import MyReviewsPage from "./pages/review-page/reviews-page";
 import LegalPage from "./pages/legal-page/legal-page";
+import AdminOrdersPage from "./pages/admin-page/admin-orders-page";
 import { useAuth } from "./context/use-auth";
 import { ProtectedRoute } from "./components/protected-route/protected-route";
+import AdminRoute from "./components/admin/admin-route";
 
 /**
  * Route wrapper component for displaying order details.
@@ -109,6 +111,8 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/imprint" element={<LegalPage type="imprint" />} />
           <Route path="/policy" element={<LegalPage type="privacy" />} />
+          <Route path="/admin/order" element={
+            <AdminRoute><AdminOrdersPage /></AdminRoute>}/>
           <Route element={<ProtectedRoute />}>
             <Route path="/profil" element={<ProfileWrapper />} />
             <Route path="/order" element={<OrdersWrapper />} />

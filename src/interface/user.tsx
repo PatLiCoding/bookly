@@ -1,6 +1,11 @@
 import type { Order } from "./order";
 
 /**
+ * Access level of a user account. Set in Supabase (profiles.role).
+ */
+export type Role = "user" | "admin";
+
+/**
  * Secondary delivery/shipping address record for a user.
  */
 export interface Delivery {
@@ -44,4 +49,6 @@ export interface User {
   deliveryAddress?: Delivery[];
   /** Optional list of historical user orders. */
   order?: Order[];
+  /** Access level; admins can manage orders and view all users. */
+  role?: Role;
 }
