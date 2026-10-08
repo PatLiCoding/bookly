@@ -120,11 +120,7 @@ export class OrderDetailPage extends Component<
         <div className="order-detail-header-actions">
           <div className="order-detail-badge">{statusLabel(order.status)}</div>
           {canCancel && (
-            <button
-              type="button"
-              className="order-cancel-btn"
-              onClick={this.handleOpenCancelModal}
-            >
+            <button type="button" className="order-cancel-btn" onClick={this.handleOpenCancelModal}>
               Bestellung stornieren
             </button>
           )}

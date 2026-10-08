@@ -1,6 +1,6 @@
-import type { ChangeEvent } from "react";
 import type { ChangeHandler, Values } from "../../interface/checkout";
 import { BILLING, SHIPPING } from "../../services/checkout-service";
+import { BILLING_ROWS, SHIPPING_ROWS, type AddressField } from "./address-fields";
 
 /** Props for the AddressForm component. */
 interface AddressFormProps {
@@ -14,133 +14,85 @@ interface AddressFormProps {
   onUpdateShipping?: ChangeHandler;
 }
 
+/** Values and change handler shared by all address parts. */
+interface CardProps {
+  values: Values;
+  onChange: ChangeHandler;
+}
+
+const noop: ChangeHandler = () => {};
+
+/** Labeled text input. */
+function TextField({ label, value = "", onChange }: {
+  label: string;
+  value?: string;
+  onChange: (value: string) => void;
+}) {
+  return (
+    <label className="checkout-field">
+      <span>{label}</span>
+      <input
+        type="text"
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+      />
+    </label>
+  );
+}
+
+/** One row of fields; several fields are placed side by side. */
+function FieldRow({ fields, values, onChange }: CardProps & {
+  fields: AddressField[];
+}) {
+  const inputs = fields.map((field) => (
+    <TextField
+      key={field.key}
+      label={field.label}
+      value={values[field.key]}
+      onChange={(value) => onChange(field.key, value)}
+    />
+  ));
+
+  if (fields.length === 1) return <>{inputs}</>;
+  return <div className="checkout-field-row">{inputs}</div>;
+}
+
+/** Section card with a title and the given rows of input fields. */
+function AddressCard({ title, rows, ...shared }: CardProps & {
+  title: string;
+  rows: AddressField[][];
+}) {
+  return (
+    <div className="checkout-card">
+      <h3>{title}</h3>
+      {rows.map((fields) => (
+        <FieldRow key={fields[0].key} fields={fields} {...shared} />
+      ))}
+    </div>
+  );
+}
+
+/** Billing address section card. */
+function BillingCard(props: CardProps) {
+  return <AddressCard title={BILLING.title} rows={BILLING_ROWS} {...props} />;
+}
+
+/** Shipping address section card. */
+function ShippingCard(props: CardProps) {
+  return <AddressCard title={SHIPPING.title} rows={SHIPPING_ROWS} {...props} />;
+}
+
 /**
  * Renders billing and shipping address input forms during the checkout process.
  */
-export function AddressForm({
-  billing = {},
-  shipping = {},
-  onUpdateBilling,
-  onUpdateShipping,
-}: AddressFormProps) {
-  /**
-   * Invokes the billing update callback with the specified key-value pair.
-   *
-   * @param key - The field identifier.
-   * @param value - The updated field value.
-   */
-  const handleBillingChange = (key: string, value: string) => {
-    if (onUpdateBilling) {
-      onUpdateBilling(key, value);
-    }
-  };
-
-  /**
-   * Invokes the shipping update callback with the specified key-value pair.
-   *
-   * @param key - The field identifier.
-   * @param value - The updated field value.
-   */
-  const handleShippingChange = (key: string, value: string) => {
-    if (onUpdateShipping) {
-      onUpdateShipping(key, value);
-    }
-  };
-
-  /**
-   * Helper method to render a labeled input field.
-   *
-   * @param label - Visible text label above the input.
-   * @param value - Current value string of the input field.
-   * @param onChange - Callback triggered upon input value change.
-   * @returns JSX element containing the input field.
-   */
-  const renderInput = (
-    label: string,
-    value: string = "",
-    onChange: (value: string) => void
-  ) => {
-    return (
-      <label className="checkout-field">
-        <span>{label}</span>
-        <input
-          type="text"
-          value={value ?? ""}
-          onChange={(event: ChangeEvent<HTMLInputElement>) =>
-            onChange(event.target.value)
-          }
-        />
-      </label>
-    );
-  };
-
-  /** Renders name and street address fields for billing. */
-  const renderBillingMainFields = () => (
-    <>
-      {renderInput("Name", billing.name, (v) => handleBillingChange("name", v))}
-      {renderInput("Straße & Hausnummer", billing.street, (v) =>
-        handleBillingChange("street", v)
-      )}
-    </>
-  );
-
-  /** Renders postal code and city fields for billing. */
-  const renderBillingLocationFields = () => (
-    <div className="checkout-field-row">
-      {renderInput("PLZ", billing.zip, (v) => handleBillingChange("zip", v))}
-      {renderInput("Ort", billing.city, (v) => handleBillingChange("city", v))}
-    </div>
-  );
-
-  /** Renders the complete billing address section card. */
-  const renderBillingAddress = () => (
-    <div className="checkout-card">
-      <h3>{BILLING.title}</h3>
-      {renderBillingMainFields()}
-      {renderBillingLocationFields()}
-      {renderInput("Land", billing.country, (v) => handleBillingChange("country", v))}
-    </div>
-  );
-
-  /** Renders first name and last name fields for shipping. */
-  const renderShippingNameFields = () => (
-    <div className="checkout-field-row">
-      {renderInput("Vorname", shipping.Firstname, (v) =>
-        handleShippingChange("Firstname", v)
-      )}
-      {renderInput("Nachname", shipping.Lastname, (v) =>
-        handleShippingChange("Lastname", v)
-      )}
-    </div>
-  );
-
-  /** Renders postal code and city fields for shipping. */
-  const renderShippingLocationFields = () => (
-    <div className="checkout-field-row">
-      {renderInput("PLZ", shipping.zip, (v) => handleShippingChange("zip", v))}
-      {renderInput("Ort", shipping.city, (v) => handleShippingChange("city", v))}
-    </div>
-  );
-
-  /** Renders the complete shipping address section card. */
-  const renderShippingAddress = () => (
-    <div className="checkout-card">
-      <h3>{SHIPPING.title}</h3>
-      {renderShippingNameFields()}
-      {renderInput("Straße & Hausnummer", shipping.street, (v) =>
-        handleShippingChange("street", v)
-      )}
-      {renderShippingLocationFields()}
-      {renderInput("Land", shipping.country, (v) =>
-        handleShippingChange("country", v)
-      )}
-    </div>
-  );
+export function AddressForm(props: AddressFormProps) {
+  const { billing = {}, shipping = {} } = props;
+  const { onUpdateBilling = noop, onUpdateShipping = noop } = props;
 
   return (
     <div className="checkout-addresses">
-      {renderBillingAddress()}
-      {renderShippingAddress()}
+      <BillingCard values={billing} onChange={onUpdateBilling} />
+      <ShippingCard values={shipping} onChange={onUpdateShipping} />
     </div>
   );
 }

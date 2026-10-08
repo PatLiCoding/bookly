@@ -107,24 +107,16 @@ interface PurchaseBoxProps {
 /**
  * Box element containing purchase details, pricing information, and cart manipulation controls.
  */
-function PurchaseBox({
-  price,
-  cartQuantity,
-  onAdd,
-  onIncrease,
-  onDecrease,
-}: PurchaseBoxProps) {
+function PurchaseBox({price, cartQuantity, onAdd, onIncrease, onDecrease,}: PurchaseBoxProps) {
   return (
     <div className="purchase-box">
       <span className="price-tag">{price}</span>
       {cartQuantity > 0 ? (
         <div className="cart-quantity-wrapper">
           <span className="cart-quantity-label">Im Warenkorb:</span>
-          <QuantityControl
-            quantity={cartQuantity}
-            onIncrease={() => onIncrease?.()}
-            onDecrease={() => onDecrease?.()}
-            size="medium"
+          <QuantityControl 
+            quantity={cartQuantity} onIncrease={() => onIncrease?.()}
+            onDecrease={() => onDecrease?.()} size="medium"
           />
         </div>
       ) : (
@@ -152,13 +144,7 @@ interface BookHeaderProps extends BookInfoProps {
 /**
  * Top section layout of book detail view combining image cover, info text, and buying options.
  */
-function BookHeader({
-  cartQuantity,
-  onAdd,
-  onIncrease,
-  onDecrease,
-  ...info
-}: BookHeaderProps) {
+function BookHeader({cartQuantity, onAdd, onIncrease, onDecrease, ...info}: BookHeaderProps) {
   const { book } = info;
   return (
     <div className="book-header">
@@ -168,11 +154,8 @@ function BookHeader({
       <div className="book-info-col">
         <BookInfo {...info} />
         <PurchaseBox
-          price={book.price}
-          cartQuantity={cartQuantity}
-          onAdd={onAdd}
-          onIncrease={onIncrease}
-          onDecrease={onDecrease}
+          price={book.price} cartQuantity={cartQuantity} onAdd={onAdd}
+          onIncrease={onIncrease}onDecrease={onDecrease}
         />
       </div>
     </div>
@@ -209,14 +192,8 @@ function RatingBadge({ rating }: { rating: number }) {
 /**
  * Full page component rendering book metadata, description, reviews, and interactive actions.
  */
-function BookDetails({
-  book,
-  loggedUser,
-  cartQuantity = 0,
-  onAddToCart,
-  onIncreaseItem,
-  onDecreaseItem,
-}: Props) {
+function BookDetails({book, loggedUser, cartQuantity = 0, onAddToCart,
+  onIncreaseItem, onDecreaseItem,}: Props) {
   const commentsRef = useRef<HTMLDivElement>(null);
   const { reviews, loaded, reload } = useBookReviews(book.id);
   const rating = loaded ? averageRating(reviews) : book.rating;

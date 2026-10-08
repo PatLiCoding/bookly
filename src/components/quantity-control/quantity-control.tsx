@@ -17,26 +17,14 @@ interface Props {
  * Renders an interactive quantity selector with increment (+) and decrement (-) buttons.
  */
 export function QuantityControl({
-  quantity,
-  onIncrease,
-  onDecrease,
-  size = "medium",
-}: Props) {
+  quantity,onIncrease, onDecrease, size = "medium",}: Props) {
   return (
     <div className={`quantity-control quantity-control--${size}`}>
-      <button
-        onClick={onDecrease}
-        aria-label="Menge verringern"
-        type="button"
-      >
+      <button onClick={onDecrease} aria-label="Menge verringern" type="button">
         -
       </button>
       <span>{quantity}</span>
-      <button
-        onClick={onIncrease}
-        aria-label="Menge erhöhen"
-        type="button"
-      >
+      <button onClick={onIncrease} aria-label="Menge erhöhen" type="button">
         +
       </button>
     </div>

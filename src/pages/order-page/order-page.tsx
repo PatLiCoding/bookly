@@ -200,20 +200,10 @@ export class OrdersPage extends Component<OrdersPageProps, OrdersPageState> {
       <div className="orders-page">
         <h1>Meine Bestellungen</h1>
         {this.renderToolbar()}
-        {this.renderSection(
-          "Laufende Bestellungen",
-          active,
-          a,
-          "active",
-          this.handleLoadMoreActive,
-        )}
-        {this.renderSection(
-          "Frühere Bestellungen",
-          history,
-          h,
-          "history",
-          this.handleLoadMoreHistory,
-        )}
+        {this.renderSection("Laufende Bestellungen", active,
+          a,"active",this.handleLoadMoreActive,)}
+        {this.renderSection("Frühere Bestellungen", history,
+          h, "history", this.handleLoadMoreHistory,)}
       </div>
     );
   }
