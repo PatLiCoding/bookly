@@ -18,7 +18,7 @@ const MENU_ITEMS = [
 
 ];
 
-const ADMIN_ITEM = { label: "Admin", path: "/admin/order" };
+const ADMIN_ITEM = { label: "Admin", path: "/admin" };
 
 /** Standard menu entries, plus the admin entry for admins. */
 function getMenuItems(user: User) {

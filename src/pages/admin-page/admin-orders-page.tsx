@@ -1,43 +1,49 @@
-import useAdminOrders from "../../hooks/use-admin-orders";
-import type { OrderStatus } from "../../services/admin-service";
+import { useState } from "react";
+import "./admin-page.css";
+import AdminSearch from "../../components/admin/admin-search";
+import AdminTabs, { type AdminTab } from "../../components/admin/admin-tabs";
+import OrdersTab from "../../components/admin/orders-tab";
+import ReviewsTab from "../../components/admin/reviews-tab";
+import UsersTab from "../../components/admin/users-tab";
+import useDebounce from "../../hooks/use-debounce";
 
-const STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
-  { value: "processing", label: "🟡 In Bearbeitung" },
-  { value: "shipped", label: "🔵 Versendet" },
-  { value: "delivered", label: "🟢 Zugestellt" },
-];
+const PLACEHOLDERS: Record<AdminTab, string> = {
+  orders: "Suche nach Bestellnummer oder Kunde",
+  reviews: "Suche nach Buch, User oder Kommentar",
+  users: "Suche nach Name",
+};
 
-/** Admin page: all orders with a status dropdown. */
-export default function AdminOrdersPage() {
-  const { orders, names, changeStatus } = useAdminOrders();
+/** Selected tab and search text; the search is cleared when the tab changes. */
+function useAdminView() {
+  const [tab, setTab] = useState<AdminTab>("orders");
+  const [search, setSearch] = useState("");
+  const term = useDebounce(search.trim());
+
+  const changeTab = (next: AdminTab) => {
+    setTab(next);
+    setSearch("");
+  };
+
+  return { tab, search, setSearch, term, changeTab };
+}
+
+/** Renders the list that belongs to the selected tab. */
+function ActiveTab({ tab, term }: { tab: AdminTab; term: string }) {
+  if (tab === "orders") return <OrdersTab term={term} />;
+  if (tab === "reviews") return <ReviewsTab term={term} />;
+  return <UsersTab term={term} />;
+}
+
+/** Admin page: tabs for orders, reviews and users with dynamic search. */
+export default function AdminPage() {
+  const { tab, search, setSearch, term, changeTab } = useAdminView();
+
   return (
     <main className="admin-page">
-      <h1>Bestellungen verwalten</h1>
-      <table className="admin-table">
-        <thead>
-          <tr><th>Nr.</th><th>Kunde</th><th>Datum</th><th>Summe</th><th>Status</th></tr>
-        </thead>
-        <tbody>
-          {orders.map((o) => (
-            <tr key={o.id}>
-              <td>{o.id}</td>
-              <td>{names[o.user_id] || "—"}</td>
-              <td>{new Date(o.order_date).toLocaleDateString("de-DE")}</td>
-              <td>{Number(o.total_price).toFixed(2)} €</td>
-              <td>
-                <select
-                  value={o.status}
-                  onChange={(e) => changeStatus(o.id, e.target.value as OrderStatus)}
-                >
-                  {STATUS_OPTIONS.map((s) => (
-                    <option key={s.value} value={s.value}>{s.label}</option>
-                  ))}
-                </select>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <h1>Admin</h1>
+      <AdminTabs active={tab} onChange={changeTab} />
+      <AdminSearch value={search} placeholder={PLACEHOLDERS[tab]} onChange={setSearch} />
+      <ActiveTab tab={tab} term={term} />
     </main>
   );
 }

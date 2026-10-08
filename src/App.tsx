@@ -111,14 +111,15 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/imprint" element={<LegalPage type="imprint" />} />
           <Route path="/policy" element={<LegalPage type="privacy" />} />
-          <Route path="/admin/order" element={
-            <AdminRoute><AdminOrdersPage /></AdminRoute>}/>
+          
           <Route element={<ProtectedRoute />}>
             <Route path="/profil" element={<ProfileWrapper />} />
             <Route path="/order" element={<OrdersWrapper />} />
             <Route path="/order/:orderId" element={<OrderDetailWrapper />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/reviews" element={<ReviewsWrapper />} />
+            <Route path="/admin" element={
+            <AdminRoute><AdminOrdersPage /></AdminRoute>}/>
           </Route>
         </Routes>
       </main>
