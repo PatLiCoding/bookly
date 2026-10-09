@@ -4,6 +4,11 @@ export const PAGE_SIZE = 10;
 
 export type OrderStatus = "processing" | "shipped" | "delivered";
 
+/** Editable book fields (everything except the id). */
+export type BookInput = Omit<AdminBook, "id">;
+
+const BOOK_COLUMNS = "id, title, author, category, price, cover, release_date, description";
+
 export interface AdminOrder {
   id: number;
   user_id: string;
@@ -39,6 +44,9 @@ export interface AdminBook {
   author: string;
   category: string;
   price: number;
+  cover: string | null;
+  release_date: string | null;
+  description: string | null;
 }
 
 /** Removes characters that would break a PostgREST filter string. */
@@ -171,7 +179,7 @@ export async function fetchUsers(offset: number, search: string): Promise<AdminU
 /** One page of books (newest first), searchable by title, author or category. */
 export async function fetchBooks(offset: number, search: string): Promise<AdminBook[]> {
   const term = cleanTerm(search);
-  let query = supabase.from("books").select("id, title, author, category, price");
+  let query = supabase.from("books").select(BOOK_COLUMNS);
   if (term) {
     query = query.or(
       `title.ilike.%${term}%,author.ilike.%${term}%,category.ilike.%${term}%`,
@@ -182,4 +190,27 @@ export async function fetchBooks(offset: number, search: string): Promise<AdminB
     .range(...pageRange(offset));
   if (error) throw error;
   return (data ?? []) as AdminBook[];
+}
+
+/** Creates a book and returns the saved row. */
+export async function createBook(input: BookInput): Promise<AdminBook> {
+  const { data, error } = await supabase
+    .from("books")
+    .insert(input)
+    .select(BOOK_COLUMNS)
+    .single();
+  if (error) throw error;
+  return data as AdminBook;
+}
+
+/** Updates a book and returns the saved row. */
+export async function updateBook(id: number, input: BookInput): Promise<AdminBook> {
+  const { data, error } = await supabase
+    .from("books")
+    .update(input)
+    .eq("id", id)
+    .select(BOOK_COLUMNS)
+    .single();
+  if (error) throw error;
+  return data as AdminBook;
 }

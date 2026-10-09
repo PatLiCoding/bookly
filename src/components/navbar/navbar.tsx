@@ -1,20 +1,21 @@
 import "./navbar.css";
 import { NavLink } from "react-router-dom";
 import { ALL_CATEGORY, ALL_LABEL } from "../../utils/category";
+import { CATEGORIES } from "../../constants/categories";
 
 /** List of featured book category names. */
-const CATEGORIES = [
-  "Fantasy",
-  "Science-Fiction",
-  "Krimi",
-  "Thriller",
-  "Liebesroman",
-  "Komödie",
-  "Young Adult",
-  "Kinderbuch",
-  "Ratgeber",
-  "History",
-];
+// const CATEGORIES = [
+//   "Fantasy",
+//   "Science-Fiction",
+//   "Krimi",
+//   "Thriller",
+//   "Liebesroman",
+//   "Komödie",
+//   "Young Adult",
+//   "Kinderbuch",
+//   "Ratgeber",
+//   "History",
+// ];
 
 /**
  * Renders the top navigation bar containing links for all book categories.

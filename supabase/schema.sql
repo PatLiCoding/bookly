@@ -2,6 +2,7 @@
 -- Bookly database schema (Supabase / PostgreSQL)
 --
 -- Run this file ONCE in the SQL Editor of a new, empty Supabase project.
+-- For an existing database use sql/sync-policies.sql instead.
 -- Order: tables -> helper functions -> trigger -> indexes -> RLS policies.
 -- =====================================================================
 
@@ -200,7 +201,8 @@ create policy "profiles: admin delete" on public.profiles
   using (public.is_admin());
 
 -- The role column cannot be changed through the API (no user can make
--- themselves admin). Set it in the Supabase dashboard instead.
+-- themselves admin). Create the first admin with scripts/seed-admin.ts
+-- or set the role in the Supabase dashboard.
 revoke insert, update on public.profiles from anon, authenticated;
 grant insert (id, firstname, lastname, street, zip, city, country)
   on public.profiles to authenticated;

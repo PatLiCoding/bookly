@@ -1,22 +1,60 @@
+import { useState } from "react";
 import usePagedList from "../../hooks/use-paged-list";
 import { fetchBooks, type AdminBook } from "../../services/admin-service";
 import AdminList from "./admin-list";
+import BookDialog from "./book-dialog";
 
-/** One book: title, author, category and price (read-only). */
-function BookRow({ book }: { book: AdminBook }) {
+/** Dialog state: closed (null), new book ({ book: null }) or edit ({ book }). */
+type DialogState = { book: AdminBook | null } | null;
+
+/** Replaces an edited book in the list or puts a new one on top. */
+function upsertBook(books: AdminBook[], saved: AdminBook): AdminBook[] {
+  const exists = books.some((b) => b.id === saved.id);
+  return exists ? books.map((b) => (b.id === saved.id ? saved : b)) : [saved, ...books];
+}
+
+interface RowProps {
+  book: AdminBook;
+  onEdit: (book: AdminBook) => void;
+}
+
+/** One book: title, author, category and price; click opens the edit dialog. */
+function BookRow({ book, onEdit }: RowProps) {
   return (
-    <>
-      <div className="admin-row-main">
+    <button type="button" className="admin-row-btn" title="Bearbeiten" onClick={() => onEdit(book)}>
+      <span className="admin-row-main">
         <strong>{book.title}</strong>
         <span>{book.author} · {book.category}</span>
-      </div>
+      </span>
       <span>{Number(book.price).toFixed(2)} €</span>
-    </>
+    </button>
   );
 }
 
-/** Books tab: paged, searchable, read-only list of all books. */
+/** Books tab: paged, searchable list; click to edit, button to add. */
 export default function BooksTab({ term }: { term: string }) {
   const list = usePagedList(fetchBooks, term);
-  return <AdminList list={list} renderItem={(b) => <BookRow book={b} />} />;
+  const [dialog, setDialog] = useState<DialogState>(null);
+
+  function handleSaved(saved: AdminBook) {
+    list.setItems((prev) => upsertBook(prev, saved));
+    setDialog(null);
+  }
+
+  return (
+    <>
+      <div className="admin-toolbar">
+        <button className="admin-add-btn" onClick={() => setDialog({ book: null })}>
+          + Buch hinzufügen
+        </button>
+      </div>
+      <AdminList
+        list={list}
+        renderItem={(b) => <BookRow book={b} onEdit={(book) => setDialog({ book })} />}
+      />
+      {dialog && (
+        <BookDialog book={dialog.book} onClose={() => setDialog(null)} onSaved={handleSaved} />
+      )}
+    </>
+  );
 }
