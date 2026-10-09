@@ -49,6 +49,11 @@ export default function BooksTab({ term }: { term: string }) {
     setDialog(null);
   }
 
+  function handleDeleted(id: number) {
+    list.setItems((prev) => prev.filter((b) => b.id !== id));
+    setDialog(null);
+  }
+
   return (
     <>
       <div className="admin-toolbar">
@@ -58,7 +63,12 @@ export default function BooksTab({ term }: { term: string }) {
       </div>
       <AdminList list={list} renderItem={(b) => <BookRow book={b} onEdit={openEdit} />} />
       {dialog && (
-        <BookDialog book={dialog.book} onClose={() => setDialog(null)} onSaved={handleSaved} />
+        <BookDialog
+          book={dialog.book}
+          onClose={() => setDialog(null)}
+          onSaved={handleSaved}
+          onDeleted={handleDeleted}
+        />
       )}
     </>
   );

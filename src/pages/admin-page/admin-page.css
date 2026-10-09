@@ -310,31 +310,26 @@
 
 .admin-cancel-btn,
 .admin-save-btn {
+    margin-right: auto;
     padding: 8px 20px;
+    border-radius: 10px;
     cursor: pointer;
     color: #223044;
-    border-radius: 10px;
 }
 
-.admin-cancel-btn {
+.admin-cancel-btn, 
+.admin-save-btn {
     background: none;
     border: 1px solid #a7d8ff;
 }
 
-.admin-cancel-btn:hover {
+.admin-cancel-btn:hover, 
+.admin-save-btn:hover {
     background: #f7faff;
 }
 
-.admin-save-btn {
-    background: #cdeeff;
-    border: none;
-}
-
-.admin-save-btn:hover {
-    background: #a7d8ff;
-}
-
-.admin-save-btn:disabled {
+.admin-delete-btn:disabled,
+.admin-cancel-btn:disabled {
     opacity: 0.6;
     cursor: default;
 }

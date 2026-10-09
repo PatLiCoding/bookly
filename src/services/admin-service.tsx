@@ -229,3 +229,14 @@ export async function updateBook(id: number, input: BookInput): Promise<BookList
   if (error) throw error;
   return data as BookListItem;
 }
+
+/** Deletes a book. Throws if nothing was deleted (e.g. missing admin rights). */
+export async function deleteBook(id: number): Promise<void> {
+  const { data, error } = await supabase
+    .from("books")
+    .delete()
+    .eq("id", id)
+    .select("id");
+  if (error) throw error;
+  if (!data?.length) throw new Error("Das Buch wurde nicht gelöscht.");
+}

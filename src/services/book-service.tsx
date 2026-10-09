@@ -129,3 +129,15 @@ export async function getTopRatedBooks(limit: number): Promise<Book[]> {
 export async function getNewestBooks(limit: number): Promise<Book[]> {
   return sortBooks(await getBooks(), "newest").slice(0, limit);
 }
+
+/** Returns the ids from the list that no longer exist in the books table. */
+export async function findMissingBookIds(ids: number[]): Promise<number[]> {
+  if (ids.length === 0) return [];
+  const { data, error } = await supabase
+    .from("books")
+    .select("id")
+    .in("id", ids);
+  if (error) throw error;
+  const existing = new Set((data ?? []).map((b) => b.id));
+  return ids.filter((id) => !existing.has(id));
+}

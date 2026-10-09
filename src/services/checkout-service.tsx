@@ -5,6 +5,7 @@ import type { AddressConfig, Field, Values } from "../interface/checkout";
 import { calcTotal } from "../utils/price";
 import { buildUserUpdate } from "./user-service";
 import { saveOrderToSupabase } from "./order-service";
+import { findMissingBookIds } from "./book-service";
 
 /** Configuration schema for billing address input fields. */
 export const BILLING: AddressConfig = {
@@ -172,6 +173,13 @@ export function buildUpdatedUser(user: User, order: Order, data: Values): User {
  * @returns Object containing saved order entity and modified user state.
  */
 export async function processCheckoutOrder(user: User, items: CartItem[], data: Values) {
+  const cartBookIds = items.map((item) => item.id);
+  const missingIds = await findMissingBookIds(cartBookIds);
+  if (missingIds.length > 0) {
+    throw new Error(
+      "Einige Artikel aus Ihrem Warenkorb sind leider nicht mehr verfügbar. Bitte aktualisieren Sie Ihren Warenkorb."
+    );
+  }
   const order = createOrder(items);
   await saveOrderToSupabase(order, user.id);
   return { order, updatedUser: buildUpdatedUser(user, order, data) };
