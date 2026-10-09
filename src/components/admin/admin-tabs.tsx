@@ -1,7 +1,8 @@
-export type AdminTab = "orders" | "reviews" | "users";
+export type AdminTab = "orders" | "books" | "reviews" | "users";
 
 const TABS: { id: AdminTab; label: string }[] = [
   { id: "orders", label: "Bestellungen" },
+  { id: "books", label: "Bücher" },
   { id: "reviews", label: "Bewertungen" },
   { id: "users", label: "User" },
 ];

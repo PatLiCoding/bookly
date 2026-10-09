@@ -1,14 +1,17 @@
 import { useState } from "react";
+import type { ComponentType } from "react";
 import "./admin-page.css";
 import AdminSearch from "../../components/admin/admin-search";
 import AdminTabs, { type AdminTab } from "../../components/admin/admin-tabs";
 import OrdersTab from "../../components/admin/orders-tab";
+import BooksTab from "../../components/admin/books-tab";
 import ReviewsTab from "../../components/admin/reviews-tab";
 import UsersTab from "../../components/admin/users-tab";
 import useDebounce from "../../hooks/use-debounce";
 
 const PLACEHOLDERS: Record<AdminTab, string> = {
   orders: "Suche nach Bestellnummer oder Kunde",
+  books: "Suche nach Titel, Autor oder Kategorie",
   reviews: "Suche nach Buch, User oder Kommentar",
   users: "Suche nach Name",
 };
@@ -27,11 +30,17 @@ function useAdminView() {
   return { tab, search, setSearch, term, changeTab };
 }
 
+const TAB_VIEWS: Record<AdminTab, ComponentType<{ term: string }>> = {
+  orders: OrdersTab,
+  books: BooksTab,
+  reviews: ReviewsTab,
+  users: UsersTab,
+};
+
 /** Renders the list that belongs to the selected tab. */
 function ActiveTab({ tab, term }: { tab: AdminTab; term: string }) {
-  if (tab === "orders") return <OrdersTab term={term} />;
-  if (tab === "reviews") return <ReviewsTab term={term} />;
-  return <UsersTab term={term} />;
+  const View = TAB_VIEWS[tab];
+  return <View term={term} />;
 }
 
 /** Admin page: tabs for orders, reviews and users with dynamic search. */

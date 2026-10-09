@@ -33,6 +33,14 @@ export interface AdminUser {
   role: "user" | "admin";
 }
 
+export interface AdminBook {
+  id: number;
+  title: string;
+  author: string;
+  category: string;
+  price: number;
+}
+
 /** Removes characters that would break a PostgREST filter string. */
 function cleanTerm(term: string): string {
   return term.replace(/[,()%*\\]/g, " ").trim();
@@ -158,4 +166,20 @@ export async function fetchUsers(offset: number, search: string): Promise<AdminU
     .range(...pageRange(offset));
   if (error) throw error;
   return (data ?? []) as AdminUser[];
+}
+
+/** One page of books (newest first), searchable by title, author or category. */
+export async function fetchBooks(offset: number, search: string): Promise<AdminBook[]> {
+  const term = cleanTerm(search);
+  let query = supabase.from("books").select("id, title, author, category, price");
+  if (term) {
+    query = query.or(
+      `title.ilike.%${term}%,author.ilike.%${term}%,category.ilike.%${term}%`,
+    );
+  }
+  const { data, error } = await query
+    .order("id", { ascending: false })
+    .range(...pageRange(offset));
+  if (error) throw error;
+  return (data ?? []) as AdminBook[];
 }
