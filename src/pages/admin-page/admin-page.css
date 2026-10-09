@@ -13,6 +13,7 @@
     padding: 24px;
     display: flex;
     flex-direction: column;
+    cursor: default;
 }
 
 .admin-tabs {
@@ -121,6 +122,7 @@
     background: #fff;
     border-radius: 10px;
     box-shadow: 0 0 0 1px #cdeeff;
+    overflow: hidden;
 }
 
 .admin-row-main {
@@ -211,8 +213,9 @@
     justify-content: space-between;
     align-items: center;
     gap: 12px;
-    width: 100%;
-    padding: 0;
+    width: calc(100% + 24px);
+    margin: -12px;
+    padding: 12px;
     font: inherit;
     color: inherit;
     text-align: left;
@@ -221,17 +224,33 @@
     cursor: pointer;
 }
 
+.admin-row-btn:hover {
+    background-color: #cdeeff;
+    border-radius: 10px;
+    margin: -12px;
+    padding-right: -200px;
+    padding: 12px;
+}
+
 .admin-row-btn:hover strong {
     text-decoration: underline;
 }
 
 .admin-dialog {
-    width: min(520px, calc(100% - 32px));
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    margin: 0;
+    width: min(520px, calc(100vw - 32px));
+    max-height: calc(100vh - 32px);
+    box-sizing: border-box;
     padding: 0;
     color: #223044;
     background: #fff;
     border: 1px solid #a7d8ff;
     border-radius: 12px;
+    overflow: hidden;
 }
 
 .admin-dialog::backdrop {
@@ -243,9 +262,10 @@
     flex-direction: column;
     gap: 12px;
     box-sizing: border-box;
-    max-height: 85vh;
+    max-height: calc(100vh - 32px);
     padding: 24px;
     overflow-y: auto;
+    overscroll-behavior: contain;
 }
 
 .admin-dialog-form h2 {
@@ -271,6 +291,10 @@
     background: #f7faff;
     border: 1px solid #a7d8ff;
     border-radius: 8px;
+}
+
+.admin-row select:hover {
+    cursor: pointer;
 }
 
 .admin-field textarea {
@@ -315,6 +339,19 @@
     cursor: default;
 }
 
+.admin-dialog-form::-webkit-scrollbar {
+  width: 6px;
+}
+
+.admin-dialog-form::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.admin-dialog-form::-webkit-scrollbar-thumb {
+  background: #cdeeff;
+  border-radius: 10px;
+}
+
 @media (max-width: 700px) {
     .admin-tab {
         padding: 10px 4px;
@@ -324,5 +361,17 @@
     .admin-row {
         flex-direction: column;
         align-items: stretch;
+    }
+}
+
+@media (max-width: 600px) {
+    .admin-dialog {
+        width: calc(100vw - 24px);
+        max-height: calc(100vh - 24px);
+    }
+
+    .admin-dialog-form {
+        padding: 16px;
+        max-height: calc(100vh - 24px);
     }
 }
