@@ -3,6 +3,7 @@ import {
   createBook,
   updateBook,
   type AdminBook,
+  type BookListItem,
 } from "../services/admin-service";
 import {
   toBookInput,
@@ -22,7 +23,7 @@ function useBookValues(book: AdminBook | null) {
 function saveBook(
   book: AdminBook | null,
   values: BookFormValues,
-): Promise<AdminBook> {
+): Promise<BookListItem> {
   const input = toBookInput(values);
   return book ? updateBook(book.id, input) : createBook(input);
 }
@@ -31,7 +32,7 @@ function saveBook(
 function useSaveBook(
   book: AdminBook | null,
   values: BookFormValues,
-  onSaved: (saved: AdminBook) => void,
+  onSaved: (saved: BookListItem) => void,
 ) {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
@@ -54,7 +55,7 @@ function useSaveBook(
 /** State and submit logic of the book dialog (create and edit). */
 export default function useBookForm(
   book: AdminBook | null,
-  onSaved: (saved: AdminBook) => void,
+  onSaved: (saved: BookListItem) => void,
 ) {
   const { values, change } = useBookValues(book);
   const save = useSaveBook(book, values, onSaved);

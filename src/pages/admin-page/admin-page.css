@@ -339,6 +339,22 @@
     cursor: default;
 }
 
+.admin-cover-preview {
+    align-self: flex-start;
+    max-width: 160px;
+    max-height: 220px;
+    object-fit: contain;
+    background: #f7faff;
+    border: 1px solid #cdeeff;
+    border-radius: 8px;
+}
+
+.admin-cover-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
 .admin-dialog-form::-webkit-scrollbar {
   width: 6px;
 }

@@ -7,8 +7,6 @@ export type OrderStatus = "processing" | "shipped" | "delivered";
 /** Editable book fields (everything except the id). */
 export type BookInput = Omit<AdminBook, "id">;
 
-const BOOK_COLUMNS = "id, title, author, category, price, cover, release_date, description";
-
 export interface AdminOrder {
   id: number;
   user_id: string;
@@ -48,6 +46,12 @@ export interface AdminBook {
   release_date: string | null;
   description: string | null;
 }
+
+/** Fields shown in the admin list (no cover: base64 covers are large). */
+export type BookListItem = Pick<AdminBook, "id" | "title" | "author" | "category" | "price">;
+
+const BOOK_COLUMNS = "id, title, author, category, price, cover, release_date, description";
+const LIST_COLUMNS = "id, title, author, category, price";
 
 /** Removes characters that would break a PostgREST filter string. */
 function cleanTerm(term: string): string {
@@ -177,9 +181,9 @@ export async function fetchUsers(offset: number, search: string): Promise<AdminU
 }
 
 /** One page of books (newest first), searchable by title, author or category. */
-export async function fetchBooks(offset: number, search: string): Promise<AdminBook[]> {
+export async function fetchBooks(offset: number, search: string): Promise<BookListItem[]> {
   const term = cleanTerm(search);
-  let query = supabase.from("books").select(BOOK_COLUMNS);
+  let query = supabase.from("books").select(LIST_COLUMNS);
   if (term) {
     query = query.or(
       `title.ilike.%${term}%,author.ilike.%${term}%,category.ilike.%${term}%`,
@@ -189,28 +193,39 @@ export async function fetchBooks(offset: number, search: string): Promise<AdminB
     .order("id", { ascending: false })
     .range(...pageRange(offset));
   if (error) throw error;
-  return (data ?? []) as AdminBook[];
+  return (data ?? []) as BookListItem[];
 }
 
-/** Creates a book and returns the saved row. */
-export async function createBook(input: BookInput): Promise<AdminBook> {
+/** Loads one complete book including cover (for the edit dialog). */
+export async function fetchBook(id: number): Promise<AdminBook> {
   const { data, error } = await supabase
     .from("books")
-    .insert(input)
     .select(BOOK_COLUMNS)
+    .eq("id", id)
     .single();
   if (error) throw error;
   return data as AdminBook;
 }
 
-/** Updates a book and returns the saved row. */
-export async function updateBook(id: number, input: BookInput): Promise<AdminBook> {
+/** Creates a book and returns its list fields. */
+export async function createBook(input: BookInput): Promise<BookListItem> {
+  const { data, error } = await supabase
+    .from("books")
+    .insert(input)
+    .select(LIST_COLUMNS)
+    .single();
+  if (error) throw error;
+  return data as BookListItem;
+}
+
+/** Updates a book and returns its list fields. */
+export async function updateBook(id: number, input: BookInput): Promise<BookListItem> {
   const { data, error } = await supabase
     .from("books")
     .update(input)
     .eq("id", id)
-    .select(BOOK_COLUMNS)
+    .select(LIST_COLUMNS)
     .single();
   if (error) throw error;
-  return data as AdminBook;
+  return data as BookListItem;
 }

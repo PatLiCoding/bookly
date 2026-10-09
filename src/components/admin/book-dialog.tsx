@@ -1,7 +1,8 @@
 import type { MouseEvent } from "react";
 import useBookForm from "../../hooks/use-book-form";
 import useModalDialog from "../../hooks/use-modal-dialog";
-import type { AdminBook } from "../../services/admin-service";
+import CoverField from "./cover-field";
+import type { AdminBook, BookListItem } from "../../services/admin-service";
 import type { BookFormValues, ChangeField } from "../../utils/book-form";
 import { CATEGORIES } from "../../constants/categories";
 
@@ -27,7 +28,6 @@ const FIELDS: FieldConfig[] = [
     { key: "category", label: "Kategorie", required: true, options: CATEGORIES },
     { key: "price", label: "Preis (€)", type: "number", min: "0", step: "0.01", required: true },
     { key: "release_date", label: "Erscheinungsdatum", type: "date" },
-    { key: "cover", label: "Cover (Pfad oder URL)" },
 ];
 
 /** Dropdown; a current value that is not in the list stays selectable. */
@@ -66,6 +66,7 @@ function BookFields({ values, change }: { values: BookFormValues; change: Change
           </label>
         );
       })}
+      <CoverField value={values.cover} onChange={(v) => change("cover", v)} />
       <label className="admin-field">
         Beschreibung
         <textarea
@@ -101,7 +102,7 @@ interface Props {
     /** Book to edit, or null to create a new one. */
     book: AdminBook | null;
     onClose: () => void;
-    onSaved: (saved: AdminBook) => void;
+    onSaved: (saved: BookListItem) => void;
 }
 
 /** Dialog to create a new book or edit an existing one. */
