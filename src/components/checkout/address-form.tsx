@@ -8,6 +8,10 @@ interface AddressFormProps {
   billing?: Values;
   /** Form field values for the shipping address. */
   shipping?: Values;
+  /** Flag indicating whether the shipping address is identical to the billing address. */
+  sameAsBilling?: boolean;
+  /** Callback fired when the "same as billing" checkbox state changes. */
+  onToggleSameAsBilling?: (checked: boolean) => void;
   /** Callback fired when a billing address field is updated. */
   onUpdateBilling?: ChangeHandler;
   /** Callback fired when a shipping address field is updated. */
@@ -22,7 +26,11 @@ interface CardProps {
 
 const noop: ChangeHandler = () => {};
 
-/** Labeled text input. */
+/**
+ * Labeled text input component.
+ *
+ * @param props - Component properties including label, value, and change handler.
+ */
 function TextField({ label, value = "", onChange }: {
   label: string;
   value?: string;
@@ -40,7 +48,9 @@ function TextField({ label, value = "", onChange }: {
   );
 }
 
-/** One row of fields; several fields are placed side by side. */
+/**
+ * Renders one row of fields; several fields are placed side by side.
+ */
 function FieldRow({ fields, values, onChange }: CardProps & {
   fields: AddressField[];
 }) {
@@ -57,7 +67,9 @@ function FieldRow({ fields, values, onChange }: CardProps & {
   return <div className="checkout-field-row">{inputs}</div>;
 }
 
-/** Section card with a title and the given rows of input fields. */
+/**
+ * Renders a section card with a title and the given rows of input fields.
+ */
 function AddressCard({ title, rows, ...shared }: CardProps & {
   title: string;
   rows: AddressField[][];
@@ -83,16 +95,37 @@ function ShippingCard(props: CardProps) {
 }
 
 /**
- * Renders billing and shipping address input forms during the checkout process.
+ * Renders billing and shipping address input forms during the checkout process,
+ * featuring a top checkbox bar and a side-by-side grid layout for addresses.
  */
 export function AddressForm(props: AddressFormProps) {
-  const { billing = {}, shipping = {} } = props;
-  const { onUpdateBilling = noop, onUpdateShipping = noop } = props;
+  const {
+    billing = {},
+    shipping = {},
+    sameAsBilling = true,
+    onToggleSameAsBilling = () => {},
+    onUpdateBilling = noop,
+    onUpdateShipping = noop,
+  } = props;
 
   return (
-    <div className="checkout-addresses">
-      <BillingCard values={billing} onChange={onUpdateBilling} />
-      <ShippingCard values={shipping} onChange={onUpdateShipping} />
+    <div className="checkout-address-container">
+      <div className="checkout-same-address-wrapper">
+        <label className="checkout-same-address-label">
+          <input
+            type="checkbox"
+            checked={sameAsBilling}
+            onChange={(e) => onToggleSameAsBilling(e.target.checked)}
+          />
+          <span>Lieferadresse entspricht der Rechnungsadresse</span>
+        </label>
+      </div>
+      <div className="checkout-addresses">
+        <BillingCard values={billing} onChange={onUpdateBilling} />
+        {!sameAsBilling && (
+          <ShippingCard values={shipping} onChange={onUpdateShipping} />
+        )}
+      </div>
     </div>
   );
 }

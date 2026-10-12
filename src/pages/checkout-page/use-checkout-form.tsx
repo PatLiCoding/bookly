@@ -41,11 +41,45 @@ function useOrder(user: User, onOrdered: () => void) {
  * @returns State properties and submission handler for managing checkout inputs.
  */
 export function useCheckoutForm(user: User, onOrdered: () => void) {
-  const [billing, changeBilling] = useValues(() => initialBilling(user));
-  const [shipping, changeShipping] = useValues(() => initialShipping(user));
+  const [sameAsBilling, setSameAsBilling] = useState(true);
+  const [billing, setBilling] = useValues(() => initialBilling(user));
+  const [shipping, setShipping] = useValues(() => initialShipping(user));
   const [error, setError] = useState("");
   const placeOrder = useOrder(user, onOrdered);
   const { ensureAvailable } = useCartAvailability();
+
+  /**
+   * Updates a specific billing field and automatically syncs it to the shipping address
+   * if the "same as billing" option is enabled.
+   *
+   * @param key - The field key being modified.
+   * @param value - The new field value.
+   */
+  const changeBilling = (key: string, value: string) => {
+    setBilling(key, value);
+    if (sameAsBilling) {
+      const shippingKey = key === "firstname" ? "Firstname" : key === "lastname" ? "Lastname" : key;
+      setShipping(shippingKey, value);
+    }
+  };
+
+  /**
+   * Toggles whether the shipping address matches the billing address.
+   * Copies current billing values over to shipping if checked.
+   *
+   * @param checked - Boolean flag indicating if shipping equals billing.
+   */
+  const toggleSameAsBilling = (checked: boolean) => {
+    setSameAsBilling(checked);
+    if (checked) {
+      setShipping("Firstname", billing.firstname ?? "");
+      setShipping("Lastname", billing.lastname ?? "");
+      setShipping("street", billing.street ?? "");
+      setShipping("zip", billing.zip ?? "");
+      setShipping("city", billing.city ?? "");
+      setShipping("country", billing.country ?? "");
+    }
+  };
 
   /**
    * Validates form inputs and terms acceptance, submitting the order payload if valid.
@@ -64,5 +98,14 @@ export function useCheckoutForm(user: User, onOrdered: () => void) {
     }
   }
 
-  return { billing, changeBilling, shipping, changeShipping, error, submit };
+  return {
+    billing,
+    changeBilling,
+    shipping,
+    changeShipping: setShipping,
+    sameAsBilling,
+    toggleSameAsBilling,
+    error,
+    submit,
+  };
 }

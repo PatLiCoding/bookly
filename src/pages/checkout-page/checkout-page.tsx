@@ -32,12 +32,14 @@ function CheckoutForm({ user, onOrdered }: FormProps) {
     <section className="checkout-page">
       <CheckoutHeader />
       {form.error && <p className="checkout-error" role="alert">{form.error}</p>}
-      
-      <AddressForm 
-        billing={form.billing} 
-        shipping={form.shipping} 
-        onUpdateBilling={form.changeBilling} 
-        onUpdateShipping={form.changeShipping} 
+
+      <AddressForm
+        billing={form.billing}
+        shipping={form.shipping}
+        sameAsBilling={form.sameAsBilling}
+        onToggleSameAsBilling={form.toggleSameAsBilling}
+        onUpdateBilling={form.changeBilling}
+        onUpdateShipping={form.changeShipping}
       />
 
       <OrderOverview items={cartItems} />
