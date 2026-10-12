@@ -31,7 +31,10 @@ interface ControlProps {
   onChange: (value: string) => void;
 }
 
-/** Dropdown; a current value that is not in the list stays selectable. */
+/**
+ * Renders a select dropdown control. 
+ * A current value that is not in the list stays selectable.
+ */
 function SelectControl({ field, value, onChange }: ControlProps) {
   const base = field.options ?? [];
   const options = value && !base.includes(value) ? [value, ...base] : base;
@@ -43,7 +46,9 @@ function SelectControl({ field, value, onChange }: ControlProps) {
   );
 }
 
-/** Text, number or date input. */
+/**
+ * Renders a standard text, number, or date input control.
+ */
 function InputControl({ field, value, onChange }: ControlProps) {
   const { type, required, min, step } = field;
   return (
@@ -60,20 +65,42 @@ interface FieldsProps {
   setHidden: (hidden: boolean) => void;
 }
 
-/** All inputs of the book form: generated fields, cover, description, visibility. */
+/**
+ * Renders all inputs of the book form: generated fields, cover, description, visibility.
+ */
 function BookFields({ values, change, setHidden }: FieldsProps) {
+  // Helper to render a specific field config
+  const renderField = (field: FieldConfig) => {
+    const Control = field.options ? SelectControl : InputControl;
+    return (
+      <label key={field.key} className="admin-field">
+        {field.label}
+        <Control field={field} value={values[field.key]} onChange={(v) => change(field.key, v)} />
+      </label>
+    );
+  };
+
+  const titleField = FIELDS.find((f) => f.key === "title")!;
+  const authorField = FIELDS.find((f) => f.key === "author")!;
+  const categoryField = FIELDS.find((f) => f.key === "category")!;
+  const priceField = FIELDS.find((f) => f.key === "price")!;
+  const releaseDateField = FIELDS.find((f) => f.key === "release_date")!;
+
   return (
     <>
-      {FIELDS.map((field) => {
-        const Control = field.options ? SelectControl : InputControl;
-        return (
-          <label key={field.key} className="admin-field">
-            {field.label}
-            <Control field={field} value={values[field.key]} onChange={(v) => change(field.key, v)} />
-          </label>
-        );
-      })}
+      {renderField(titleField)}
+      {renderField(authorField)}
+
+      {/* Grid container for Category and Price */}
+      <div className="admin-form-grid">
+        {renderField(categoryField)}
+        {renderField(priceField)}
+      </div>
+
+      {renderField(releaseDateField)}
+
       <CoverField value={values.cover} onChange={(v) => change("cover", v)} />
+
       <label className="admin-field">
         Beschreibung
         <textarea
@@ -82,6 +109,7 @@ function BookFields({ values, change, setHidden }: FieldsProps) {
           onChange={(e) => change("description", e.target.value)}
         />
       </label>
+
       <label className="admin-check">
         <input type="checkbox" checked={!values.hidden} onChange={(e) => setHidden(!e.target.checked)} />
         Im Shop sichtbar
@@ -90,7 +118,9 @@ function BookFields({ values, change, setHidden }: FieldsProps) {
   );
 }
 
-/** Cancel and save buttons. */
+/**
+ * Cancel and save buttons.
+ */
 function DialogActions({ saving, onCancel }: { saving: boolean; onCancel: () => void }) {
   return (
     <div className="admin-dialog-actions">
@@ -104,7 +134,9 @@ function DialogActions({ saving, onCancel }: { saving: boolean; onCancel: () => 
   );
 }
 
-/** Closes the dialog when the backdrop (not the content) is clicked. */
+/**
+ * Closes the dialog when the backdrop (not the content) is clicked.
+ */
 function closeOnBackdrop(e: MouseEvent<HTMLDialogElement>) {
   if (e.target === e.currentTarget) e.currentTarget.close();
 }
@@ -116,7 +148,9 @@ interface Props {
   onSaved: (saved: BookListItem) => void;
 }
 
-/** Dialog to create a new book or edit an existing one. */
+/**
+ * Dialog to create a new book or edit an existing one.
+ */
 export default function BookDialog({ book, onClose, onSaved }: Props) {
   const ref = useModalDialog();
   const form = useBookForm(book, onSaved);
