@@ -9,6 +9,7 @@ const STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
   { value: "processing", label: "In Bearbeitung" },
   { value: "shipped", label: "Versendet" },
   { value: "delivered", label: "Zugestellt" },
+  { value: "cancelled", label: "Storniert" },
 ];
 
 interface RowProps {

@@ -20,7 +20,10 @@ create table public.books (
   cover        text,
   category     text    not null,
   release_date date,
-  description  text
+  description  text,
+  -- Hidden books are not shown in the shop and cannot be ordered, but stay
+  -- readable so old orders can still show their cover (no delete needed).
+  hidden       boolean not null default false
 );
 
 -- One profile per auth user. Created automatically by a trigger (see 3.).
@@ -66,7 +69,7 @@ create table public.orders (
   order_date     timestamptz not null default now(),
   delivered_date timestamptz,
   status         text not null default 'processing'
-                 check (status in ('processing', 'shipped', 'delivered'))
+                 check (status in ('processing', 'shipped', 'delivered', 'cancelled'))
 );
 
 -- title, author and price are copied from the book at order time,
@@ -229,7 +232,8 @@ create policy "addresses: own or admin" on public.delivery_addresses
   with check (user_id = auth.uid() or public.is_admin());
 
 -- Orders: users read and create their own orders (always as 'processing').
--- Only admins can change the status (processing -> shipped -> delivered).
+-- Only admins can change the status (processing -> shipped -> delivered,
+-- or cancelled).
 create policy "orders: read own or admin" on public.orders
   for select to authenticated
   using (user_id = auth.uid() or public.is_admin());

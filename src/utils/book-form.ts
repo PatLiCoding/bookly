@@ -1,6 +1,6 @@
 import type { AdminBook, BookInput } from "../services/admin-service";
 
-/** All form fields as strings, as typed into the inputs. */
+/** All form fields: text as typed into the inputs, plus the visibility flag. */
 export interface BookFormValues {
   title: string;
   author: string;
@@ -9,9 +9,14 @@ export interface BookFormValues {
   cover: string;
   release_date: string;
   description: string;
+  /** True if the book is hidden in the shop. */
+  hidden: boolean;
 }
 
-export type ChangeField = (field: keyof BookFormValues, value: string) => void;
+/** Names of the fields that hold text. */
+export type TextField = Exclude<keyof BookFormValues, "hidden">;
+
+export type ChangeField = (field: TextField, value: string) => void;
 
 const EMPTY: BookFormValues = {
   title: "",
@@ -21,6 +26,7 @@ const EMPTY: BookFormValues = {
   cover: "",
   release_date: "",
   description: "",
+  hidden: false,
 };
 
 /** Form values for an existing book, or an empty form for a new one. */
@@ -34,6 +40,7 @@ export function toFormValues(book: AdminBook | null): BookFormValues {
     cover: book.cover ?? "",
     release_date: book.release_date ?? "",
     description: book.description ?? "",
+    hidden: book.hidden,
   };
 }
 
@@ -47,5 +54,6 @@ export function toBookInput(v: BookFormValues): BookInput {
     cover: v.cover.trim() || null,
     release_date: v.release_date || null,
     description: v.description.trim() || null,
+    hidden: v.hidden,
   };
 }

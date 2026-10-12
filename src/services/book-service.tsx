@@ -7,6 +7,7 @@ import { getCover } from "../utils/book-cover";
 import type { Book, BookBase } from "../interface/book";
 import type { BookStats } from "./review-service";
 
+
 /** Represents a single raw database record row from the `books` table. */
 interface BookRow {
   id: number;
@@ -65,7 +66,10 @@ function withStats(book: BookBase, stats: Map<number, BookStats>): Book {
  * @returns List of database row records.
  */
 async function fetchRows(): Promise<BookRow[]> {
-  const { data, error } = await supabase.from("books").select("*");
+  const { data, error } = await supabase
+    .from("books")
+    .select("*")
+    .eq("hidden", false);
   if (error) throw error;
   return data ?? [];
 }
@@ -92,6 +96,7 @@ export async function getBookById(id: number): Promise<Book | undefined> {
     .from("books")
     .select("*")
     .eq("id", id)
+    .eq("hidden", false)
     .maybeSingle();
   if (error) throw error;
   if (!data) return undefined;
@@ -136,7 +141,8 @@ export async function findMissingBookIds(ids: number[]): Promise<number[]> {
   const { data, error } = await supabase
     .from("books")
     .select("id")
-    .in("id", ids);
+    .in("id", ids)
+    .eq("hidden", false);
   if (error) throw error;
   const existing = new Set((data ?? []).map((b) => b.id));
   return ids.filter((id) => !existing.has(id));

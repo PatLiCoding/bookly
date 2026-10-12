@@ -2,6 +2,7 @@ import { useParams } from "react-router-dom";
 import { getBookById } from "../../services/book-service";
 import BookDetails from "../../components/book-details/book-details";
 import LoadStatus from "../../components/load-status/load-status";
+import BookNotFound from "../../components/book-not-found/book-not-found";
 import { useAsync } from "../../hooks/use-async";
 import { useAuth } from "../../context/use-auth";
 import { useCartContext } from "../../context/use-cart-context";
@@ -20,7 +21,7 @@ function BookDetailsPage() {
   );
 
   if (loading || error) return <LoadStatus loading={loading} error={error} />;
-  if (!book) return <p>Buch nicht gefunden.</p>;
+  if (!book) return <BookNotFound />;
 
   const itemInCart = cartItems.find((item) => item.id === book.id);
   const cartQuantity = itemInCart ? itemInCart.quantity : 0;

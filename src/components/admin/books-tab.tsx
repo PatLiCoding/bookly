@@ -23,7 +23,10 @@ function BookRow({ book, onEdit }: RowProps) {
   return (
     <button type="button" className="admin-row-btn" title="Bearbeiten" onClick={() => onEdit(book)}>
       <span className="admin-row-main">
-        <strong>{book.title}</strong>
+        <strong>
+          {book.title}
+          {book.hidden && <span className="admin-badge">Ausgeblendet</span>}
+        </strong>
         <span>{book.author} · {book.category}</span>
       </span>
       <span>{Number(book.price).toFixed(2)} €</span>
@@ -49,11 +52,6 @@ export default function BooksTab({ term }: { term: string }) {
     setDialog(null);
   }
 
-  function handleDeleted(id: number) {
-    list.setItems((prev) => prev.filter((b) => b.id !== id));
-    setDialog(null);
-  }
-
   return (
     <>
       <div className="admin-toolbar">
@@ -67,7 +65,6 @@ export default function BooksTab({ term }: { term: string }) {
           book={dialog.book}
           onClose={() => setDialog(null)}
           onSaved={handleSaved}
-          onDeleted={handleDeleted}
         />
       )}
     </>

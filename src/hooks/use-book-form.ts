@@ -9,14 +9,17 @@ import {
   toBookInput,
   toFormValues,
   type BookFormValues,
+  type TextField,
 } from "../utils/book-form";
 
-/** Form values and a change handler for single fields. */
+/** Form values plus change handlers for text fields and the visibility flag. */
 function useBookValues(book: AdminBook | null) {
   const [values, setValues] = useState(() => toFormValues(book));
-  const change = (field: keyof BookFormValues, value: string) =>
+  const change = (field: TextField, value: string) =>
     setValues((prev) => ({ ...prev, [field]: value }));
-  return { values, change };
+  const setHidden = (hidden: boolean) =>
+    setValues((prev) => ({ ...prev, hidden }));
+  return { values, change, setHidden };
 }
 
 /** Updates the given book, or creates a new one if there is none. */
@@ -57,7 +60,7 @@ export default function useBookForm(
   book: AdminBook | null,
   onSaved: (saved: BookListItem) => void,
 ) {
-  const { values, change } = useBookValues(book);
+  const { values, change, setHidden } = useBookValues(book);
   const save = useSaveBook(book, values, onSaved);
-  return { values, change, ...save };
+  return { values, change, setHidden, ...save };
 }

@@ -4,6 +4,7 @@ import type { Values } from "../../interface/checkout";
 import { useCartContext } from "../../context/use-cart-context";
 import { useAuth } from "../../context/use-auth";
 import { useValues } from "../../hooks/use-values";
+import { useCartAvailability } from "../../hooks/use-cart-availability";
 import {
   initialBilling,
   initialShipping,
@@ -44,6 +45,7 @@ export function useCheckoutForm(user: User, onOrdered: () => void) {
   const [shipping, changeShipping] = useValues(() => initialShipping(user));
   const [error, setError] = useState("");
   const placeOrder = useOrder(user, onOrdered);
+  const { ensureAvailable } = useCartAvailability();
 
   /**
    * Validates form inputs and terms acceptance, submitting the order payload if valid.
@@ -53,7 +55,13 @@ export function useCheckoutForm(user: User, onOrdered: () => void) {
   async function submit(agb: boolean) {
     const problem = validateCheckout(billing, shipping, agb);
     if (problem) return setError(problem);
-    await placeOrder(toFormData(billing, shipping));
+    setError("");
+    try {
+      if (!(await ensureAvailable())) return;
+      await placeOrder(toFormData(billing, shipping));
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Bestellung fehlgeschlagen. Bitte versuche es erneut.");
+    }
   }
 
   return { billing, changeBilling, shipping, changeShipping, error, submit };

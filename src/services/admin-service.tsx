@@ -2,7 +2,7 @@ import { supabase } from "../lib/supabase";
 
 export const PAGE_SIZE = 10;
 
-export type OrderStatus = "processing" | "shipped" | "delivered";
+export type OrderStatus = "processing" | "shipped" | "delivered" | "cancelled";
 
 /** Editable book fields (everything except the id). */
 export type BookInput = Omit<AdminBook, "id">;
@@ -45,13 +45,17 @@ export interface AdminBook {
   cover: string | null;
   release_date: string | null;
   description: string | null;
+  hidden: boolean;
 }
 
 /** Fields shown in the admin list (no cover: base64 covers are large). */
-export type BookListItem = Pick<AdminBook, "id" | "title" | "author" | "category" | "price">;
+export type BookListItem = Pick<
+  AdminBook,
+  "id" | "title" | "author" | "category" | "price" | "hidden"
+>;
 
-const BOOK_COLUMNS = "id, title, author, category, price, cover, release_date, description";
-const LIST_COLUMNS = "id, title, author, category, price";
+const BOOK_COLUMNS = "id, title, author, category, price, hidden, cover, release_date, description";
+const LIST_COLUMNS = "id, title, author, category, price, hidden";
 
 /** Removes characters that would break a PostgREST filter string. */
 function cleanTerm(term: string): string {
@@ -228,15 +232,4 @@ export async function updateBook(id: number, input: BookInput): Promise<BookList
     .single();
   if (error) throw error;
   return data as BookListItem;
-}
-
-/** Deletes a book. Throws if nothing was deleted (e.g. missing admin rights). */
-export async function deleteBook(id: number): Promise<void> {
-  const { data, error } = await supabase
-    .from("books")
-    .delete()
-    .eq("id", id)
-    .select("id");
-  if (error) throw error;
-  if (!data?.length) throw new Error("Das Buch wurde nicht gelöscht.");
 }

@@ -83,7 +83,8 @@ export async function saveOrderToSupabase(order: Order, userId: string): Promise
  * @returns Formatted order item entity.
  */
 function mapOrderItem(row: Record<string, unknown>): OrderItem {
-  const rawCover = (row.book_cover ?? row.cover ?? row.bookCover) as string | undefined;
+  const book = row.books as { cover: string | null } | null;
+  const rawCover = (book?.cover ?? row.book_cover ?? row.cover ?? row.bookCover) as string | undefined;
   return {
     id: Number(row.id),
     bookId: Number(row.book_id),
@@ -122,7 +123,7 @@ function mapOrderRow(row: Record<string, unknown>): Order {
 export async function getOrders(user: User): Promise<Order[]> {
   const { data, error } = await supabase
     .from("orders")
-    .select("*, order_items(*)")
+    .select("*, order_items(*, books(cover))")
     .eq("user_id", user.id)
     .order("id", { ascending: false });
 
@@ -139,7 +140,7 @@ export async function getOrders(user: User): Promise<Order[]> {
 export async function getOrderById(orderId: string | number): Promise<Order | null> {
   const { data, error } = await supabase
     .from("orders")
-    .select("*, order_items(*)")
+    .select("*, order_items(*, books(cover))")
     .eq("id", orderId)
     .single();
 

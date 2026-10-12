@@ -177,7 +177,7 @@ export async function processCheckoutOrder(user: User, items: CartItem[], data: 
   const missingIds = await findMissingBookIds(cartBookIds);
   if (missingIds.length > 0) {
     throw new Error(
-      "Einige Artikel aus Ihrem Warenkorb sind leider nicht mehr verfügbar. Bitte aktualisieren Sie Ihren Warenkorb."
+      "Einige Artikel aus deinem Warenkorb sind leider nicht mehr verfügbar. Bitte lade die Seite neu und prüfe deinen Warenkorb.",
     );
   }
   const order = createOrder(items);

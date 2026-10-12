@@ -4,6 +4,7 @@ import CartSummary from "../../components/cart/cart-summary";
 import { useCartContext } from "../../context/use-cart-context";
 import { useCheckoutGuard } from "../../hooks/use-checkout-guard";
 import type { CartItem } from "../../interface/cart-item";
+import CartRemovedNotice from "../../components/cart/cart-removed-notice";
 import "./cart-page.css";
 
 /** Page title with a button that empties the cart. */
@@ -37,6 +38,7 @@ function EmptyMessage() {
 function EmptyCart() {
   return (
     <section className="cart-page">
+      <CartRemovedNotice />
       <div className="cart-page-header">
         <h2 className="cart-page-title">Warenkorb</h2>
       </div>
@@ -51,6 +53,7 @@ function FilledCart({ items }: { items: CartItem[] }) {
 
   return (
     <section className="cart-page">
+      <CartRemovedNotice />
       <CartHeader />
       <div className="cart-page-content">
         <CartItemList items={items} />
