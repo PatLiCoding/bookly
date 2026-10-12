@@ -34,3 +34,18 @@ export interface Order {
   /** Current processing state of the order. */
   status: OrderStatus;
 }
+
+/** Address copied into the order at purchase time (invoice, shipping, returns). */
+export interface AddressSnapshot {
+  name: string;
+  street: string;
+  zip: string;
+  city: string;
+  country: string;
+}
+
+/** Billing and shipping address of an order. */
+export interface OrderAddresses {
+  billing: AddressSnapshot;
+  shipping: AddressSnapshot;
+}

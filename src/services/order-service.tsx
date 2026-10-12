@@ -1,5 +1,5 @@
 import type { User } from "../interface/user";
-import type { Order, OrderStatus, OrderItem } from "../interface/order";
+import type { Order, OrderStatus, OrderItem, OrderAddresses } from "../interface/order";
 import { supabase } from "../lib/supabase";
 import { getCover } from "../utils/book-cover";
 
@@ -31,12 +31,17 @@ export function formatDate(dateStr?: string | null): string {
  * @returns Database auto-generated order identifier primary key.
  * @throws Database error if insertion fails.
  */
-export async function insertOrderRow(order: Order, userId: string): Promise<number> {
+export async function insertOrderRow(
+  order: Order,
+  userId: string,
+  addresses: OrderAddresses,
+): Promise<number> {
   const payload = {
     user_id: userId,
     total_price: order.totalPrice,
     status: order.status,
-    order_date: order.orderDate,
+    billing_address: addresses.billing,
+    shipping_address: addresses.shipping,
   };
   const { data, error } = await supabase.from("orders").insert([payload]).select("id").single();
   if (error) throw error;
@@ -70,8 +75,12 @@ export async function insertOrderItemsRows(order: Order, orderId: number) {
  * @param userId - Target user identifier.
  * @returns Saved order object updated with persistent primary key ID.
  */
-export async function saveOrderToSupabase(order: Order, userId: string): Promise<Order> {
-  const generatedId = await insertOrderRow(order, userId);
+export async function saveOrderToSupabase(
+  order: Order,
+  userId: string,
+  addresses: OrderAddresses,
+): Promise<Order> {
+  const generatedId = await insertOrderRow(order, userId, addresses);
   await insertOrderItemsRows(order, generatedId);
   return { ...order, id: generatedId };
 }

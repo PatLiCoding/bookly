@@ -1,4 +1,5 @@
 import { supabase } from "../lib/supabase";
+import type { AddressSnapshot } from "../interface/order";
 
 export const PAGE_SIZE = 10;
 
@@ -9,10 +10,12 @@ export type BookInput = Omit<AdminBook, "id">;
 
 export interface AdminOrder {
   id: number;
-  user_id: string;
+  user_id: string | null; 
   total_price: number;
   order_date: string;
   status: OrderStatus;
+  billing_address: AddressSnapshot | null;
+  shipping_address: AddressSnapshot | null;
   customer: string;
 }
 
@@ -34,6 +37,7 @@ export interface AdminUser {
   city: string | null;
   country: string | null;
   role: "user" | "admin";
+  banned_at: string | null; 
 }
 
 export interface AdminBook {
@@ -102,7 +106,8 @@ type OrderRow = Omit<AdminOrder, "customer">;
 
 /** Loads one page of raw order rows, newest first. */
 async function fetchOrderRows(offset: number, filter: string | null): Promise<OrderRow[]> {
-  let query = supabase.from("orders").select("id, user_id, total_price, order_date, status");
+  let query = supabase.from("orders").select(
+    "id, user_id, total_price, order_date, status, billing_address, shipping_address");
   if (filter) query = query.or(filter);
   const { data, error } = await query
     .order("order_date", { ascending: false })
@@ -111,11 +116,18 @@ async function fetchOrderRows(offset: number, filter: string | null): Promise<Or
   return (data ?? []) as OrderRow[];
 }
 
+/** Name of the customer, or the stored billing name if the account was deleted. */
+function customerName(order: OrderRow, names: Record<string, string>): string {
+  if (order.user_id) return names[order.user_id] || "—";
+  return `${order.billing_address?.name ?? "Unbekannt"} (Konto gelöscht)`;
+}
+
 /** Adds the customer name to each order row. */
 async function withCustomers(rows: OrderRow[]): Promise<AdminOrder[]> {
   if (rows.length === 0) return [];
-  const names = await namesByIds([...new Set(rows.map((o) => o.user_id))]);
-  return rows.map((o) => ({ ...o, customer: names[o.user_id] || "—" }));
+  const ids = rows.map((o) => o.user_id).filter((id): id is string => id !== null);
+  const names = ids.length ? await namesByIds([...new Set(ids)]) : {};
+  return rows.map((o) => ({ ...o, customer: customerName(o, names) }));
 }
 
 /** One page of orders, optionally filtered by order number or customer. */
@@ -174,7 +186,7 @@ export async function fetchUsers(offset: number, search: string): Promise<AdminU
   const term = cleanTerm(search);
   let query = supabase
     .from("profiles")
-    .select("id, firstname, lastname, street, zip, city, country, role");
+    .select("id, firstname, lastname, street, zip, city, country, role, banned_at");
   if (term) query = query.or(`firstname.ilike.%${term}%,lastname.ilike.%${term}%`);
   const { data, error } = await query
     .order("lastname", { ascending: true })
@@ -182,6 +194,12 @@ export async function fetchUsers(offset: number, search: string): Promise<AdminU
     .range(...pageRange(offset));
   if (error) throw error;
   return (data ?? []) as AdminUser[];
+}
+
+/** Blocks or unblocks a user (the database function checks the admin role). */
+export async function setUserBanned(id: string, banned: boolean): Promise<void> {
+  const { error } = await supabase.rpc("admin_set_user_banned", { target: id, banned });
+  if (error) throw error;
 }
 
 /** One page of books (newest first), searchable by title, author or category. */

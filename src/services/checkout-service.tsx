@@ -1,5 +1,5 @@
 import type { User } from "../interface/user";
-import type { Order } from "../interface/order";
+import type { Order, OrderAddresses } from "../interface/order";
 import type { CartItem } from "../interface/cart-item";
 import type { AddressConfig, Field, Values } from "../interface/checkout";
 import { calcTotal } from "../utils/price";
@@ -101,6 +101,7 @@ export function validateCheckout(b: Values, s: Values, agb: boolean): string {
  */
 export function toFormData(billing: Values, shipping: Values): Values {
   return {
+    billingName: billing.name,
     billingStreet: billing.street,
     billingZip: billing.zip,
     billingCity: billing.city,
@@ -181,7 +182,7 @@ export async function processCheckoutOrder(user: User, items: CartItem[], data: 
     );
   }
   const order = createOrder(items);
-  await saveOrderToSupabase(order, user.id);
+  await saveOrderToSupabase(order, user.id, toAddresses(data));
   return { order, updatedUser: buildUpdatedUser(user, order, data) };
 }
 
@@ -194,4 +195,24 @@ export function getDeliveryDate(): string {
   const date = new Date();
   date.setDate(date.getDate() + 7);
   return date.toLocaleDateString("de-DE");
+}
+
+/** Address snapshots for the order, built from the checkout form data. */
+function toAddresses(data: Values): OrderAddresses {
+  return {
+    billing: {
+      name: data.billingName,
+      street: data.billingStreet,
+      zip: data.billingZip,
+      city: data.billingCity,
+      country: data.billingCountry,
+    },
+    shipping: {
+      name: `${data.deliveryFirstname} ${data.deliveryLastname}`.trim(),
+      street: data.deliveryStreet,
+      zip: data.deliveryZip,
+      city: data.deliveryCity,
+      country: data.deliveryCountry,
+    },
+  };
 }

@@ -3,6 +3,7 @@ import {
   fetchOrders, updateOrderStatus,
   type AdminOrder, type OrderStatus,
 } from "../../services/admin-service";
+import type { AddressSnapshot } from "../../interface/order";
 import AdminList from "./admin-list";
 
 const STATUS_OPTIONS: { value: OrderStatus; label: string }[] = [
@@ -17,6 +18,12 @@ interface RowProps {
   onStatusChange: (id: number, status: OrderStatus) => void;
 }
 
+/** One-line address, or a hint if the order has no stored address. */
+function addressLine(a: AddressSnapshot | null): string {
+  if (!a) return "Keine Adresse gespeichert";
+  return `${a.name}, ${a.street}, ${a.zip} ${a.city}, ${a.country}`;
+}
+
 /** One order: number, customer, date, total and status dropdown. */
 function OrderRow({ order, onStatusChange }: RowProps) {
   const date = new Date(order.order_date).toLocaleDateString("de-DE");
@@ -25,6 +32,7 @@ function OrderRow({ order, onStatusChange }: RowProps) {
       <div className="admin-row-main">
         <strong>#{order.id} · {order.customer}</strong>
         <span>{date} · {Number(order.total_price).toFixed(2)} €</span>
+        <small>Lieferung an: {addressLine(order.shipping_address)}</small>
       </div>
       <select
         value={order.status}

@@ -249,6 +249,11 @@
     height: 18px;
 }
 
+.admin-badge--banned {
+    color: #d64545;
+    background: #fdecec;
+}
+
 .admin-dialog {
     position: fixed;
     top: 50%;

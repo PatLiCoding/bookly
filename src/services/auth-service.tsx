@@ -18,6 +18,7 @@ const MESSAGES: Record<string, string> = {
   user_already_exists: "E-Mail wird bereits verwendet",
   email_exists: "E-Mail wird bereits verwendet",
   weak_password: "Das Passwort ist zu schwach (mindestens 6 Zeichen)",
+  user_banned: "Dein Konto wurde gesperrt. Bitte wende dich an den Support.",
 };
 
 /**
@@ -67,6 +68,13 @@ export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
 }
 
+/** Translates the database error for a blocked account deletion. */
+function deleteMessage(message: string): string {
+  return message.includes("open_orders")
+    ? "Du hast noch offene Bestellungen. Das Konto kann gelöscht werden, sobald sie zugestellt oder storniert sind."
+    : message;
+}
+
 /**
  * Deletes the authenticated user's own account via RPC database function call,
  * then terminates local session storage.
@@ -75,6 +83,6 @@ export async function signOut(): Promise<void> {
  */
 export async function deleteAccount(): Promise<void> {
   const { error } = await supabase.rpc("delete_own_account");
-  if (error) throw new Error(error.message);
+  if (error) throw new Error(deleteMessage(error.message));
   await supabase.auth.signOut({ scope: "local" });
 }
