@@ -86,3 +86,18 @@ export async function deleteAccount(): Promise<void> {
   if (error) throw new Error(deleteMessage(error.message));
   await supabase.auth.signOut({ scope: "local" });
 }
+
+/**
+ * Deletes the user account via RPC and signs out locally if successful.
+ * Throws a localized error if blocked (e.g. by open orders).
+ */
+export async function deleteOwnAccountAndSignOut(): Promise<void> {
+  const { error } = await supabase.rpc("delete_own_account");
+  if (error) {
+    const message = error.message.includes("open_orders")
+      ? "Du hast noch offene oder versendete Bestellungen. Das Konto kann erst gelöscht werden, wenn alle Bestellungen zugestellt oder storniert sind."
+      : error.message;
+    throw new Error(message, { cause: error });
+  }
+  await supabase.auth.signOut({ scope: "local" });
+}

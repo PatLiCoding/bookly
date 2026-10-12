@@ -251,3 +251,14 @@ export async function updateBook(id: number, input: BookInput): Promise<BookList
   if (error) throw error;
   return data as BookListItem;
 }
+
+/** Deletes a user account via database RPC function (checks admin role and open orders). */
+export async function deleteUserAccount(id: string): Promise<void> {
+  const { error } = await supabase.rpc("admin_delete_user", { target: id });
+  if (error) {
+    if (error.message.includes("open_orders")) {
+      throw new Error("Dieser User hat noch offene Bestellungen und kann erst gelöscht werden, wenn diese zugestellt oder storniert sind.");
+    }
+    throw error;
+  }
+}

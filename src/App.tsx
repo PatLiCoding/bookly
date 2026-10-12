@@ -18,6 +18,7 @@ import AdminOrdersPage from "./pages/admin-page/admin-page";
 import { useAuth } from "./context/use-auth";
 import { ProtectedRoute } from "./components/protected-route/protected-route";
 import AdminRoute from "./components/admin/admin-route";
+import { deleteOwnAccountAndSignOut } from "./services/auth-service";
 
 /**
  * Route wrapper component for displaying order details.
@@ -47,7 +48,7 @@ function OrderDetailWrapper() {
  * @returns The rendered `Profile` component or `null` if the user is unauthenticated.
  */
 function ProfileWrapper() {
-  const { loggedUser, updateUser, logout } = useAuth();
+  const { loggedUser, updateUser } = useAuth();
   const navigate = useNavigate();
 
   if (!loggedUser) return null;
@@ -56,7 +57,7 @@ function ProfileWrapper() {
     <Profile
       user={loggedUser}
       onSave={updateUser}
-      onDeleteAccount={logout}
+      onDeleteAccount={deleteOwnAccountAndSignOut}
       onNavigateToDetail={(id) => navigate(`/order/${id}`)}
     />
   );

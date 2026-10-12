@@ -11,7 +11,8 @@ import { findMissingBookIds } from "./book-service";
 export const BILLING: AddressConfig = {
   title: "Rechnungsadresse",
   fields: [
-    { key: "name", label: "Name" },
+    { key: "firstname", label: "Vorname" },
+    { key: "lastname", label: "Nachname" },
     { key: "street", label: "Straße & Hausnummer" },
     { key: "zip", label: "PLZ" },
     { key: "city", label: "Ort" },
@@ -58,7 +59,8 @@ export function initialShipping(user: User): Values {
  */
 export function initialBilling(user: User): Values {
   return {
-    name: `${user.Firstname} ${user.Lastname}`.trim(),
+    firstname: user.Firstname ?? "",
+    lastname: user.Lastname ?? "",
     street: user.street ?? "",
     zip: String(user.zip ?? ""),
     city: user.city ?? "",
@@ -101,7 +103,8 @@ export function validateCheckout(b: Values, s: Values, agb: boolean): string {
  */
 export function toFormData(billing: Values, shipping: Values): Values {
   return {
-    billingName: billing.name,
+    billingFirstname: billing.firstname,
+    billingLastname: billing.lastname,
     billingStreet: billing.street,
     billingZip: billing.zip,
     billingCity: billing.city,
@@ -201,7 +204,7 @@ export function getDeliveryDate(): string {
 function toAddresses(data: Values): OrderAddresses {
   return {
     billing: {
-      name: data.billingName,
+      name: `${data.billingFirstname} ${data.billingLastname}`.trim(),
       street: data.billingStreet,
       zip: data.billingZip,
       city: data.billingCity,

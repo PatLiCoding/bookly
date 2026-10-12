@@ -1,5 +1,5 @@
 import usePagedList from "../../hooks/use-paged-list";
-import { fetchUsers, setUserBanned, type AdminUser } from "../../services/admin-service";
+import { fetchUsers, setUserBanned, deleteUserAccount, type AdminUser } from "../../services/admin-service";
 import AdminList from "./admin-list";
 
 /** Full name or a fallback if the profile has no name. */
@@ -25,10 +25,11 @@ function banConfirm(user: AdminUser): string {
 interface RowProps {
   user: AdminUser;
   onToggleBan: (user: AdminUser) => void;
+  onDeleteUser: (user: AdminUser) => void;
 }
 
-/** One user: name, badges, address and a block button (not shown for admins). */
-function UserRow({ user, onToggleBan }: RowProps) {
+/** One user: name, badges, address and action buttons (not shown for admins). */
+function UserRow({ user, onToggleBan, onDeleteUser }: RowProps) {
   const banned = Boolean(user.banned_at);
   return (
     <>
@@ -41,18 +42,26 @@ function UserRow({ user, onToggleBan }: RowProps) {
         <span>{fullAddress(user) || "Keine Adresse hinterlegt"}</span>
       </div>
       {user.role !== "admin" && (
-        <button
-          className={banned ? "admin-cancel-btn" : "admin-delete-btn"}
-          onClick={() => onToggleBan(user)}
-        >
-          {banned ? "Entsperren" : "Sperren"}
-        </button>
+        <div style={{ display: "flex", gap: "8px" }}>
+          <button
+            className={banned ? "admin-cancel-btn" : "admin-delete-btn"}
+            onClick={() => onToggleBan(user)}
+          >
+            {banned ? "Entsperren" : "Sperren"}
+          </button>
+          <button
+            className="admin-delete-btn"
+            onClick={() => onDeleteUser(user)}
+          >
+            Löschen
+          </button>
+        </div>
       )}
     </>
   );
 }
 
-/** Users tab: paged, searchable list of profiles; admins can block and unblock users. */
+/** Users tab: paged, searchable list of profiles; admins can block, unblock and delete users. */
 export default function UsersTab({ term }: { term: string }) {
   const list = usePagedList(fetchUsers, term);
 
@@ -68,5 +77,23 @@ export default function UsersTab({ term }: { term: string }) {
     }
   }
 
-  return <AdminList list={list} renderItem={(u) => <UserRow user={u} onToggleBan={toggleBan} />} />;
+  async function handleDeleteUser(user: AdminUser) {
+    if (!window.confirm(`${fullName(user)} wirklich endgültig löschen? Bestellungen bleiben erhalten.`)) return;
+    try {
+      await deleteUserAccount(user.id);
+      list.setItems((prev) => prev.filter((u) => u.id !== user.id));
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Der Account konnte nicht gelöscht werden.";
+      window.alert(message);
+    }
+  }
+
+  return (
+    <AdminList
+      list={list}
+      renderItem={(u) => (
+        <UserRow user={u} onToggleBan={toggleBan} onDeleteUser={handleDeleteUser} />
+      )}
+    />
+  );
 }

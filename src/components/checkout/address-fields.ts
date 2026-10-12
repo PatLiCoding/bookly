@@ -6,7 +6,10 @@ export interface AddressField {
 
 /** Field rows of the billing address; fields in one row are shown side by side. */
 export const BILLING_ROWS: AddressField[][] = [
-  [{ key: "name", label: "Name" }],
+  [
+    { key: "firstname", label: "Vorname" },
+    { key: "lastname", label: "Nachname" },
+  ],
   [{ key: "street", label: "Straße & Hausnummer" }],
   [
     { key: "zip", label: "PLZ" },
