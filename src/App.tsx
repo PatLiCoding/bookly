@@ -14,8 +14,11 @@ import OrdersPage from "./pages/order-page/order-page";
 import OrderDetailPage from "./pages/order-detail-page/order-detail-page";
 import MyReviewsPage from "./pages/review-page/reviews-page";
 import LegalPage from "./pages/legal-page/legal-page";
+import AdminOrdersPage from "./pages/admin-page/admin-page";
 import { useAuth } from "./context/use-auth";
 import { ProtectedRoute } from "./components/protected-route/protected-route";
+import AdminRoute from "./components/admin/admin-route";
+import { deleteOwnAccountAndSignOut } from "./services/auth-service";
 
 /**
  * Route wrapper component for displaying order details.
@@ -45,7 +48,7 @@ function OrderDetailWrapper() {
  * @returns The rendered `Profile` component or `null` if the user is unauthenticated.
  */
 function ProfileWrapper() {
-  const { loggedUser, updateUser, logout } = useAuth();
+  const { loggedUser, updateUser } = useAuth();
   const navigate = useNavigate();
 
   if (!loggedUser) return null;
@@ -54,7 +57,7 @@ function ProfileWrapper() {
     <Profile
       user={loggedUser}
       onSave={updateUser}
-      onDeleteAccount={logout}
+      onDeleteAccount={deleteOwnAccountAndSignOut}
       onNavigateToDetail={(id) => navigate(`/order/${id}`)}
     />
   );
@@ -109,12 +112,15 @@ function App() {
           <Route path="/cart" element={<CartPage />} />
           <Route path="/imprint" element={<LegalPage type="imprint" />} />
           <Route path="/policy" element={<LegalPage type="privacy" />} />
+          
           <Route element={<ProtectedRoute />}>
             <Route path="/profil" element={<ProfileWrapper />} />
             <Route path="/order" element={<OrdersWrapper />} />
             <Route path="/order/:orderId" element={<OrderDetailWrapper />} />
             <Route path="/checkout" element={<CheckoutPage />} />
             <Route path="/reviews" element={<ReviewsWrapper />} />
+            <Route path="/admin" element={
+            <AdminRoute><AdminOrdersPage /></AdminRoute>}/>
           </Route>
         </Routes>
       </main>

@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import type { CartItem } from "../interface/cart-item";
+import { findMissingBookIds } from "../services/book-service";
 
 /**
  * Type helper for adding a new item to the cart without requiring an initial quantity property.
@@ -84,6 +85,19 @@ export function useCart() {
   const [cartItems, setCartItems] = useState<CartItem[]>(loadCart);
 
   useEffect(() => saveCart(cartItems), [cartItems]);
+
+  useEffect(() => {
+    async function validateCart() {
+      if (cartItems.length === 0) return;
+      const ids = cartItems.map((item) => item.id);
+      const missing = await findMissingBookIds(ids);
+      if (missing.length > 0) {
+        setCartItems((prev) => prev.filter((item) => !missing.includes(item.id)));
+      }
+    }
+    validateCart();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const addItem = (item: NewCartItem) =>
     setCartItems((prev) => addToLines(prev, item));

@@ -1,5 +1,5 @@
 import { supabase } from "../lib/supabase";
-import type { Delivery, User } from "../interface/user";
+import type { Delivery, Role, User } from "../interface/user";
 
 /** Internal database record schema for user profiles. */
 interface ProfileRow {
@@ -9,6 +9,7 @@ interface ProfileRow {
   zip: string | null;
   city: string | null;
   country: string | null;
+  role: Role;
 }
 
 /** Internal database record schema for delivery address entities. */
@@ -60,6 +61,7 @@ function mapUser(
     email,
     Firstname: p?.firstname ?? "",
     Lastname: p?.lastname ?? "",
+    role: p?.role ?? "user",
     street: p?.street ?? undefined,
     zip: p?.zip ?? undefined,
     city: p?.city ?? undefined,

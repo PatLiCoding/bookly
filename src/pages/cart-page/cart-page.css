@@ -291,6 +291,37 @@
   background: #fef2f2;
 }
 
+.cart-notice {
+  margin-bottom: 16px;
+  padding: 16px;
+  color: #223044;
+  background: #ffe9c7;
+  border: 1px solid #a7d8ff;
+  border-radius: 10px;
+}
+
+.cart-notice p {
+  margin: 0 0 8px;
+}
+
+.cart-notice ul {
+  margin: 0 0 8px;
+  padding-left: 20px;
+}
+
+.cart-notice button {
+  padding: 6px 16px;
+  cursor: pointer;
+  color: #223044;
+  background: #cdeeff;
+  border: none;
+  border-radius: 8px;
+}
+
+.cart-notice button:hover {
+  background: #a7d8ff;
+}
+
 @media (max-width: 850px) {
   .cart-page-content {
     grid-template-columns: 1fr;

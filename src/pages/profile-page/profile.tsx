@@ -35,6 +35,7 @@ interface ProfileState {
   isEditing: boolean;
   /** Controls account deletion modal visibility. */
   showDeleteConfirm: boolean;
+  deleteError: string | null;
   /** ID of order targeted for cancellation modal, or `null`. */
   cancellingOrderId: string | number | null;
   /** Currently active navigation tab key. */
@@ -59,6 +60,7 @@ export class Profile extends Component<ProfileProps, ProfileState> {
   state: ProfileState = {
     isEditing: false,
     showDeleteConfirm: false,
+    deleteError: null,
     cancellingOrderId: null,
     activeTab: "reviews",
     formData: {},
@@ -129,6 +131,17 @@ export class Profile extends Component<ProfileProps, ProfileState> {
     const { user, onSave } = this.props;
     onSave(buildUserUpdate(user, this.state.formData));
     this.setState({ isEditing: false, formData: {} });
+  };
+
+  /** Handler when user confirms account deletion in the modal. */
+  private handleConfirmDelete = async () => {
+    this.setState({ deleteError: null });
+    try {
+      await this.props.onDeleteAccount();
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : "Der Account konnte nicht gelöscht werden.";
+      this.setState({ deleteError: message });
+    }
   };
 
   /** Sets active tab selection key. */
@@ -273,8 +286,9 @@ export class Profile extends Component<ProfileProps, ProfileState> {
         <div className="profile-tab-content">{this.renderTabContent()}</div>
         {showDeleteConfirm && (
           <DeleteConfirmModal
-            onConfirm={this.props.onDeleteAccount}
-            onCancel={() => this.setState({ showDeleteConfirm: false })}
+            error={this.state.deleteError}
+            onConfirm={this.handleConfirmDelete}
+            onCancel={() => this.setState({ showDeleteConfirm: false, deleteError: null })}
           />
         )}
         {cancellingOrderId !== null && (
