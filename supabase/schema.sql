@@ -2,7 +2,7 @@
 -- Bookly database schema (Supabase / PostgreSQL)
 --
 -- Run this file ONCE in the SQL Editor of a new, empty Supabase project.
--- For an existing database use sql/sync-policies.sql instead.
+-- For an existing database use sql/sync-policies.sql and sql/migrations/ instead.
 -- Order: tables -> helper functions -> trigger -> indexes -> RLS policies.
 -- =====================================================================
 
@@ -35,7 +35,10 @@ create table public.profiles (
   zip       text,
   city      text,
   country   text,
-  role      text not null default 'user' check (role in ('user', 'admin'))
+  role      text not null default 'user' check (role in ('user', 'admin')),
+  -- Set by admin_set_user_banned(); mirrors auth.users.banned_until so admins can
+  -- see who is blocked. Not part of the column grants (see 5.).
+  banned_at timestamptz
 );
 
 -- user_id may be NULL so that demo reviews can be seeded without an account.
@@ -64,12 +67,18 @@ create table public.delivery_addresses (
 
 create table public.orders (
   id             bigint generated always as identity primary key,
-  user_id        uuid not null references auth.users (id) on delete cascade,
+  -- NULL after the account was deleted: orders are kept for the legal retention
+  -- period, but are no longer linked to a person (see delete_own_account()).
+  user_id        uuid references auth.users (id) on delete set null,
   total_price    numeric not null check (total_price >= 0),
   order_date     timestamptz not null default now(),
   delivered_date timestamptz,
   status         text not null default 'processing'
-                 check (status in ('processing', 'shipped', 'delivered', 'cancelled'))
+                 check (status in ('processing', 'shipped', 'delivered', 'cancelled')),
+  -- Address snapshots at purchase time (needed for invoice, shipping, returns).
+  -- Shape: { name, street, zip, city, country }
+  billing_address  jsonb,
+  shipping_address jsonb
 );
 
 -- title, author and price are copied from the book at order time,
@@ -117,18 +126,110 @@ $$;
 
 revoke execute on function public.sync_books_id_seq() from public, anon, authenticated;
 
--- Lets a logged-in user delete their own account. All related data
--- (profile, addresses, reviews, orders) is removed via ON DELETE CASCADE.
+-- Lets a logged-in user delete their own account. Profile, addresses and
+-- reviews are removed via ON DELETE CASCADE. Orders are kept (user_id becomes
+-- NULL) because of the legal retention period. Refused while orders are open.
 -- Call from the frontend with: supabase.rpc('delete_own_account')
 create function public.delete_own_account()
 returns void
-language sql security definer set search_path = ''
+language plpgsql security definer set search_path = ''
 as $$
+begin
+  if exists (
+    select 1 from public.orders
+    where user_id = auth.uid() and status in ('processing', 'shipped')
+  ) then
+    raise exception 'open_orders';
+  end if;
   delete from auth.users where id = auth.uid();
+end;
 $$;
 
 revoke execute on function public.delete_own_account() from public, anon;
 grant  execute on function public.delete_own_account() to authenticated;
+
+-- Admin only: blocks or unblocks a user. Uses the ban feature of Supabase Auth
+-- (auth.users.banned_until), so a blocked user cannot log in; open sessions are
+-- ended. Admins cannot block themselves or other admins.
+-- Call from the frontend with: supabase.rpc('admin_set_user_banned', { target, banned })
+create function public.admin_set_user_banned(target uuid, banned boolean)
+returns void
+language plpgsql security definer set search_path = ''
+as $$
+begin
+  if not public.is_admin() then
+    raise exception 'not allowed';
+  end if;
+  if target = auth.uid() then
+    raise exception 'You cannot block yourself';
+  end if;
+  if exists (select 1 from public.profiles where id = target and role = 'admin') then
+    raise exception 'Admins cannot be blocked';
+  end if;
+
+  update auth.users
+     set banned_until = case when banned then now() + interval '100 years' else null end
+   where id = target;
+
+  update public.profiles
+     set banned_at = case when banned then now() else null end
+   where id = target;
+
+  if banned then
+    delete from auth.sessions where user_id = target;
+  end if;
+end;
+$$;
+
+revoke execute on function public.admin_set_user_banned(uuid, boolean) from public, anon;
+grant  execute on function public.admin_set_user_banned(uuid, boolean) to authenticated;
+
+-- Admin only: deletes a user account (same effects as delete_own_account()).
+-- Refused for admins, for the caller and while the user has open orders.
+-- Call from the frontend with: supabase.rpc('admin_delete_user', { target })
+create function public.admin_delete_user(target uuid)
+returns void
+language plpgsql security definer set search_path = ''
+as $$
+begin
+  if not public.is_admin() then
+    raise exception 'not allowed';
+  end if;
+  if target = auth.uid() then
+    raise exception 'You cannot delete yourself';
+  end if;
+  if exists (select 1 from public.profiles where id = target and role = 'admin') then
+    raise exception 'Admins cannot be deleted';
+  end if;
+  if exists (
+    select 1 from public.orders
+    where user_id = target and status in ('processing', 'shipped')
+  ) then
+    raise exception 'open_orders';
+  end if;
+  delete from auth.users where id = target;
+end;
+$$;
+
+revoke execute on function public.admin_delete_user(uuid) from public, anon;
+grant  execute on function public.admin_delete_user(uuid) to authenticated;
+
+-- Deletes orders whose retention period has ended: the end of the calendar year
+-- of the order plus retention_years (default 8). Order items go with them.
+-- Only callable with the service_role key or from the SQL editor.
+create function public.purge_expired_orders(retention_years int default 8)
+returns integer
+language sql security definer set search_path = ''
+as $$
+  with deleted as (
+    delete from public.orders
+    where order_date < date_trunc('year', now()) - make_interval(years => retention_years)
+    returning 1
+  )
+  select count(*)::int from deleted;
+$$;
+
+revoke execute on function public.purge_expired_orders(int) from public, anon, authenticated;
 
 
 -- ---------------------------------------------------------------------
@@ -203,9 +304,9 @@ create policy "profiles: admin delete" on public.profiles
   for delete to authenticated
   using (public.is_admin());
 
--- The role column cannot be changed through the API (no user can make
--- themselves admin). Create the first admin with scripts/seed-admin.ts
--- or set the role in the Supabase dashboard.
+-- The role and banned_at columns cannot be changed through the API (no user
+-- can make themselves admin or lift a block). Create the first admin with
+-- scripts/seed-admin.ts or set the role in the Supabase dashboard.
 revoke insert, update on public.profiles from anon, authenticated;
 grant insert (id, firstname, lastname, street, zip, city, country)
   on public.profiles to authenticated;
@@ -233,7 +334,8 @@ create policy "addresses: own or admin" on public.delivery_addresses
 
 -- Orders: users read and create their own orders (always as 'processing').
 -- Only admins can change the status (processing -> shipped -> delivered,
--- or cancelled).
+-- or cancelled). Customers may only cancel their own order while it is still
+-- processing.
 create policy "orders: read own or admin" on public.orders
   for select to authenticated
   using (user_id = auth.uid() or public.is_admin());
@@ -247,6 +349,10 @@ create policy "orders: insert own" on public.orders
 create policy "orders: admin update" on public.orders
   for update to authenticated
   using (public.is_admin()) with check (public.is_admin());
+create policy "orders: cancel own" on public.orders
+  for update to authenticated
+  using (user_id = auth.uid() and status = 'processing')
+  with check (user_id = auth.uid() and status = 'cancelled');
 create policy "orders: admin delete" on public.orders
   for delete to authenticated
   using (public.is_admin());
