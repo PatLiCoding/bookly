@@ -1,10 +1,11 @@
-import type { MouseEvent } from "react";
+import { type MouseEvent } from "react";
 import { CATEGORIES } from "../../constants/categories";
 import useBookForm from "../../hooks/use-book-form";
 import useModalDialog from "../../hooks/use-modal-dialog";
 import type { AdminBook, BookListItem } from "../../services/admin-service";
 import type { BookFormValues, ChangeField, TextField } from "../../utils/book-form";
 import CoverField from "./cover-field";
+import AdminSelect from "./admin-select";
 
 interface FieldConfig {
   key: TextField;
@@ -32,17 +33,19 @@ interface ControlProps {
 }
 
 /**
- * Renders a select dropdown control. 
+ * Renders a custom select dropdown control for categories. 
  * A current value that is not in the list stays selectable.
  */
 function SelectControl({ field, value, onChange }: ControlProps) {
   const base = field.options ?? [];
   const options = value && !base.includes(value) ? [value, ...base] : base;
+  
   return (
-    <select required={field.required} value={value} onChange={(e) => onChange(e.target.value)}>
-      <option value="">Bitte wählen</option>
-      {options.map((o) => <option key={o} value={o}>{o}</option>)}
-    </select>
+    <AdminSelect
+      value={value || options[0]}
+      options={options}
+      onChange={(val) => onChange(val)}
+    />
   );
 }
 
