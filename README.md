@@ -106,10 +106,6 @@ cannot be changed through the API, so nobody can make themselves an admin.
  
 - Node.js 20.6 or newer (the scripts use `--env-file`)
 - A free [Supabase](https://supabase.com) project
-- 
-### 1. Install
-
-**Requirements:** Node.js (LTS), npm and a free [Supabase](https://supabase.com) account
 
 ### 1. Clone the repository
 
@@ -120,16 +116,12 @@ npm install
 ```
 
 ### 2. Create the database
- 
-Open the **SQL Editor** of a new, empty Supabase project and run `schema.sql` **once**. It creates
-the tables, helper functions, the sign-up trigger, indexes and all Row Level Security policies.
- 
-For an already existing database use `sql/sync-policies.sql` instead; further changes are
-documented in `sql/migrations/`.
 
 1. Create a new project at supabase.com.
 2. In the **SQL Editor**, run the contents of [`supabase/schema.sql`](supabase/schema.sql). This creates all tables: `books`, `profiles`, `reviews`, `delivery_addresses`, `orders`, `order_items`.
 3. Under **Project Settings → API**, copy the project URL and the `anon` key.
+
+>  **For existing databases:** If you already set up an older version of Bookly, you can apply the incremental changes step-by-step from the `sql/migrations/` folder.
 
 ### 3. Environment variables
 
