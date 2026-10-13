@@ -10,7 +10,7 @@
 ![React Router](https://img.shields.io/badge/React_Router-CA4245?logo=reactrouter&logoColor=white&style=for-the-badge)
 ![Supabase](https://img.shields.io/badge/Supabase-3FCF8E?logo=supabase&logoColor=white&style=for-the-badge)
 
-[Live Demo](https://patricia-linne.de/bookly/) · [Features](#features) · [Installation](#installation) · [Roadmap](#roadmap)
+[Live Demo](https://patricia-linne.de/bookly/) · [Features](#features) · [Installation](#getting-started)
 
 > [!WARNING]
 > **Work in progress.** This project is still under development and is a portfolio/learning project. Please do not enter real personal data on the demo site, and note that no real orders are processed.
@@ -23,55 +23,91 @@
 
 ## About
 
-Bookly is a small online bookstore. Visitors can browse, search and filter books and add them to their cart without an account. An account is required to place an order. Registered users can rate and comment on books, manage their profile and track their orders including shipping status.
-
+Bookly is a small bookshop built with **React**, **TypeScript** and **Supabase**.
+Visitors can browse, search and filter books and fill a shopping cart without an account.
+Registered users can order books, follow the status of their orders, rate and comment on
+books and manage their profile. Admins manage orders, books, reviews and users in a
+dedicated admin area.
+ 
+## Table of contents
+ 
+- [Features](#features)
+- [Roles and permissions](#roles-and-permissions)
+- [Tech stack](#tech-stack)
+- [Getting started](#getting-started)
+- [Imprint and Privacy Policy](#imprint-and-privacy-policy)
+- [Project structure](#project-structure)
+- [Architecture](#architecture)
+- [Database](#database)
+- [Business rules](#business-rules)
+- [Admin area](#admin-area)
+- [Data protection and retention](#data-protection-and-retention)
+- [Code conventions](#code-conventions)
+- [Design](#design)
+- [Known limitations and roadmap](#known-limitations-and-roadmap)
+- [Demo data](#demo-data)
+- [License](#license)
+- [Author](#author)
+  
 ## Features
-
-**Books**
-
-- Book overview and detail pages for all visitors
+ 
+### Visitors (no account)
+ 
+- Browse all books with cover, title, author, category, description, price, star rating and reviews
 - Search by title and author
-- Filter by category and star rating (combinable), sort by price
-- Pagination, highlights (top rated) and new releases on the home page
+- Filter by category and star rating; filters can be combined
+- Shopping cart with a live item counter in the header
+- Responsive layout for phones, tablets and desktops
+### Registered users
+ 
+- Register, log in and log out
+- Edit the own profile and delivery address, delete the own account
+- Check out with separate billing and shipping address (an account is required to order)
+- Follow the order status: *In Bearbeitung* → *Versendet* → *Zugestellt*, or *Storniert*
+- Cancel an order while it is still being processed
+- Rate books (1 to 5 stars) and write comments; one review per book, editable and deletable
+- Reviews show the user's name, the star rating and the comment
+### Admins
+ 
+- See all orders including the stored shipping address and change their status
+- Create, edit, hide and show books (with cover upload)
+- Delete inappropriate reviews
+- List users, block / unblock them and delete accounts
+- Everything an admin may do is enforced by the database (Row Level Security), not only by the UI
+## Roles and permissions
+ 
+| Function | Visitor | User | Admin |
+| --- | :---: | :---: | :---: |
+| View, search and filter books | ✅ | ✅ | ✅ |
+| Use the shopping cart | ✅ | ✅ | ✅ |
+| Rate and comment on books | ❌ | ✅ | ✅ |
+| Place an order | ❌ | ✅ | ✅ |
+| See the status of own orders | ❌ | ✅ | ✅ |
+| Edit own data, delete own account | ❌ | ✅ | ✅ |
+| See all orders, change order status | ❌ | ❌ | ✅ |
+| Create, edit, hide books | ❌ | ❌ | ✅ |
+| Delete any review | ❌ | ❌ | ✅ |
+| See other users' data, block and delete users | ❌ | ❌ | ✅ |
+ 
+Normal users can only read and change their own personal data. The `role` column of a profile
+cannot be changed through the API, so nobody can make themselves an admin.
+ 
+## Tech stack
+ 
+- **React** with function components and hooks, **TypeScript**, **Vite**
+- **React Router** for navigation
+- **Supabase**: PostgreSQL, Auth and Row Level Security (RLS)
+- Plain CSS, one stylesheet per page or component group, font Playfair Display
+- `tsx` to run the setup scripts in `scripts/`
 
-**Cart & Orders**
-
-- Cart works without login, item count in the header, persisted via `localStorage`
-- Checkout requires an account
-- Order overview and details with status: 🟡 In progress · 🔵 Shipped · 🟢 Delivered
-
-**Users**
-
-- Register, log in, log out
-- Edit profile, delete account (with confirmation)
-- Ratings and comments (one rating per user and book), editable and deletable
-
-**Privacy**
-
-- Users can only see their own data, admins can manage user data
-
-### Permissions
-
-| Feature                | Visitor | User | Admin |
-| ---------------------- | :-----: | :--: | :---: |
-| View and search books  |   ✅    |  ✅  |  ✅   |
-| Cart                   |   ✅    |  ✅  |  ✅   |
-| Like and comment       |   ❌    |  ✅  |  ✅   |
-| Order and view status  |   ❌    |  ✅  |  ✅   |
-| Own data / account     |   ❌    |  ✅  |  ✅   |
-| View other users' data |   ❌    |  ❌  |  ✅   |
-
-## Tech Stack
-
-| Area     | Technology                                                    |
-| -------- | ------------------------------------------------------------- |
-| Frontend | React, TypeScript, Vite                                       |
-| Routing  | React Router                                                  |
-| State    | React Context (`AuthContext`, `CartContext`) and custom hooks |
-| Backend  | Supabase (PostgreSQL), integration in progress                |
-| Styling  | CSS, responsive, font _Playfair Display_                      |
-
-## Installation
+## Getting started
+ 
+### Prerequisites
+ 
+- Node.js 20.6 or newer (the scripts use `--env-file`)
+- A free [Supabase](https://supabase.com) project
+- 
+### 1. Install
 
 **Requirements:** Node.js (LTS), npm and a free [Supabase](https://supabase.com) account
 
@@ -83,7 +119,13 @@ cd bookly
 npm install
 ```
 
-### 2. Set up Supabase
+### 2. Create the database
+ 
+Open the **SQL Editor** of a new, empty Supabase project and run `schema.sql` **once**. It creates
+the tables, helper functions, the sign-up trigger, indexes and all Row Level Security policies.
+ 
+For an already existing database use `sql/sync-policies.sql` instead; further changes are
+documented in `sql/migrations/`.
 
 1. Create a new project at supabase.com.
 2. In the **SQL Editor**, run the contents of [`supabase/schema.sql`](supabase/schema.sql). This creates all tables: `books`, `profiles`, `reviews`, `delivery_addresses`, `orders`, `order_items`.
@@ -130,59 +172,199 @@ VITE_LEGAL_UPDATED="01.01.2026"
 >
 > The Supabase URL must not end with `/rest/v1/`.
 
-### 4. Seed the books
-
-The seed script inserts the sample books using the `service_role` key (the `anon` key is not allowed to write to `books`). It can safely be run more than once. All other tables fill up through normal use of the app (registration, orders, reviews).
-
+### 4. Seed the data
+ 
 ```bash
-npx tsx scripts/seed-books.ts
+# demo books (and demo reviews)
+npx tsx --env-file=.env scripts/seed-books.ts
+ 
+# first admin account
+npx tsx --env-file=.env scripts/seed-admin.ts
+```
+ 
+The scripts run locally and use the service role key, which must never be part of the frontend.
+An admin can also be created by registering normally and setting `profiles.role` to `admin` in the
+Supabase dashboard.
+
+### 5. Run
+ 
+```bash
+npm run dev      # development server
+npm run build    # type check and production build
 ```
 
-### 5. Start the app
-
-```bash
-npm run dev
-```
-
-The app is then available at `http://localhost:5173`.
-
-### Admin account
-
-Admins cannot be created through the app. After registering, set the role once in the Supabase dashboard (table `profiles`).
-
-## Build & Deployment
-
-```bash
-npm run build                          # production build
-npx vite build --base=/subfolder/      # build for a subfolder
-```
-
-The router uses `import.meta.env.BASE_URL` as its `basename`. To make page reloads on sub-routes (e.g. `/orders`) work, the web server needs an `.htaccess` that rewrites to `index.html`.
-
-## Imprint & Privacy Policy
+## Imprint and Privacy Policy
 
 The imprint (`/imprint`) and privacy policy (`/policy`) are rendered by one component, `LegalPage`, from the texts in `src/data/legal-content.ts`. Your personal details are read from the `VITE_LEGAL_*` variables in `.env`.
 
 > The texts are sample texts written for this demo project. If you fork or reuse the project, adapt them to your own setup (hosting, services, data you process) and check them before publishing.
-
-## Project Structure
-
+ 
+## Project structure
+ 
 ```text
 src/
-├── components/   Reusable building blocks (Header, Footer, BookCard, Auth, Modal …)
-├── pages/        Pages (Home, CategoryPage, BookDetails, Cart, Checkout, Orders, Profile …)
-├── context/      AuthProvider, CartProvider and their hooks
-├── hooks/        Shared hooks (useCart, useBookReviews, useValues, useScrollTarget, useAsync)
-├── services/     Logic and data access (book, order, review, user, checkout services)
-├── utils/        Helpers (paginate, price, book-cover, list-view …)
-├── interface/    TypeScript types (User, Book, Order, CartItem …)
-├── data/         Dummy data
-├── App.tsx       Routes
-└── main.tsx      Entry point
-scripts/          Seed script for Supabase
+├── components/      UI building blocks (header, cart, checkout, admin, auth, search, ...)
+├── constants/       Fixed lists, e.g. the book categories
+├── context/         React contexts (auth, cart) and their hooks
+├── hooks/           Reusable logic (paged lists, forms, dialogs, checkout, availability check)
+├── interface/       TypeScript types (book, user, order, cart item, checkout)
+├── lib/             Supabase client
+├── pages/           One folder per route (home, book detail, cart, checkout, orders, profile, admin)
+├── services/        All database access and business logic
+└── utils/           Pure helper functions (prices, filters, covers, images, forms)
+scripts/             Local setup scripts (seed books, seed admin)
+sql/                 Policy sync script and migrations for existing databases
+schema.sql           Complete database schema for a new Supabase project
 ```
-
-Logic lives in `services/`, `hooks/` and `utils/`, while components only handle rendering. When the data source changes, only the services need to be adapted.
+ 
+## Architecture
+ 
+The code is split into layers. A layer only talks to the one below it:
+ 
+```text
+pages → components → hooks → services → Supabase
+                              utils (pure helpers, used by all layers)
+```
+ 
+- **Pages and components** only render and wire up user interaction.
+- **Hooks** hold state and side effects (for example `usePagedList`, `useBookForm`, `useCheckoutGuard`).
+- **Services** are the only place that talks to Supabase (`book-service`, `order-service`,
+  `admin-service`, ...). A component never builds a query itself.
+- **Utils** are small pure functions without side effects.
+The admin area reuses the same building blocks for every tab: `usePagedList` loads one page at a
+time with server-side search and a "Mehr laden" button, `AdminList` renders the rows, and
+`AdminMessageDialog` replaces the native `alert` and `confirm` dialogs.
+ 
+## Database
+ 
+### Tables
+ 
+| Table | Purpose |
+| --- | --- |
+| `books` | Catalogue incl. cover (base64 data URL) and the `hidden` flag |
+| `profiles` | One row per user: name, billing address, `role`, `banned_at` |
+| `delivery_addresses` | Saved delivery addresses of a user |
+| `reviews` | Rating and comment, unique per book and user |
+| `orders` | Order header, status, and the billing and shipping address at purchase time |
+| `order_items` | Ordered books with title, author and price copied at purchase time |
+ 
+### Row Level Security
+ 
+Every table has RLS enabled. In short:
+ 
+- **Books and reviews** are readable by everyone. Books can only be changed by admins; reviews only by their author (admins may delete).
+- **Profiles and delivery addresses**: users see and edit only their own, admins see all.
+- **Orders and items**: users create and read their own orders (always created as `processing`); only admins change the status. Users may only cancel their own order while it is still processing.
+- **`profiles.role` and `profiles.banned_at`** are not part of the column grants for `anon` and `authenticated`, so they cannot be written through the API.
+  
+### Database functions
+ 
+| Function | Purpose |
+| --- | --- |
+| `is_admin()` | Helper used by the policies (`SECURITY DEFINER` avoids a policy loop) |
+| `handle_new_user()` | Trigger: creates the profile when a user registers |
+| `delete_own_account()` | Lets a user delete the own account; refused while orders are open |
+| `admin_set_user_banned(target, banned)` | Admin only: blocks or unblocks a user |
+| `admin_delete_user(target)` | Admin only: deletes a user; refused while orders are open |
+| `sync_books_id_seq()` | Service role only: fixes the id counter after seeding books with fixed ids |
+| `purge_expired_orders(years)` | Service role only: deletes orders after the retention period |
+ 
+Functions that need elevated rights run as `SECURITY DEFINER`, check the caller's role inside and
+are only granted to the roles that may call them.
+ 
+## Business rules
+ 
+### Orders and statuses
+ 
+An order moves through these statuses:
+ 
+| Status | Meaning | Set by |
+| --- | --- | --- |
+| `processing` | In Bearbeitung (initial status) | system |
+| `shipped` | Versendet | admin |
+| `delivered` | Zugestellt / angekommen | admin |
+| `cancelled` | Storniert | admin, or the customer while `processing` |
+ 
+At checkout the entered billing and shipping address are copied into the order
+(`orders.billing_address`, `orders.shipping_address`), together with title, author and price of every
+item. An old order therefore stays correct, even if the user changes their profile, the book
+changes, or the account is deleted.
+ 
+### Hiding instead of deleting books
+ 
+Books are never deleted from the admin area, they are **hidden** (`books.hidden`):
+ 
+- Hidden books do not appear in the shop (overview, search, categories, detail page) and cannot be ordered.
+- They stay readable in the database, so old orders still show title and cover.
+- An admin can show a hidden book again at any time.
+- 
+### Cart and availability check
+ 
+The cart lives in the browser and works without an account. Before checkout starts and again
+when the order is submitted, the shop checks that every book is still available. Unavailable books are
+removed from the cart and the user is sent back to the cart page with a notice that names the
+removed books. No order is created in that case.
+ 
+### Cover images
+ 
+Covers are uploaded in the admin dialog, scaled down in the browser to a maximum width of 600 px and
+stored as a base64 data URL in `books.cover`. PNG files stay PNG (transparency is kept); other
+formats are converted to JPEG. Admin lists do not load covers; the cover is loaded when a book is
+opened for editing.
+ 
+### Blocking users
+ 
+Admins can block a user. The block uses the ban feature of Supabase Auth (`banned_until`), so a
+blocked user cannot log in. Open sessions are ended and cannot be refreshed; an access token that is
+already issued stays valid until it expires (one hour by default). Orders and reviews stay untouched,
+and the block can be lifted at any time. Admins cannot block themselves or other admins.
+ 
+## Admin area
+ 
+The admin area is available at `/admin` and only for users with the role `admin` (`AdminRoute`
+redirects everybody else). It has four tabs, each with a search field that searches the data
+in the database and a limited, paged list (newest first):
+ 
+| Tab | What admins can do |
+| --- | --- |
+| Bestellungen | Search by order number or customer, see the shipping address, change the status (also cancel) |
+| Bücher | Search by title, author or category; create and edit books in a dialog; cover upload; hide or show a book |
+| Bewertungen | Search by book, user or comment text; delete reviews |
+| User | Search by name; block and unblock users; delete users |
+ 
+The UI check is only a convenience. Every admin action is also checked by the database.
+ 
+## Data protection and retention
+ 
+Two obligations have to fit together: users can have their data deleted, but shops must keep
+accounting records for years. Bookly handles this in the following way (an orientation for this project, **not
+legal advice**; the retention periods differ between sources, so check them with a tax advisor for
+a real shop):
+ 
+| Data | Where | On account deletion | Retention |
+| --- | --- | --- | --- |
+| Login, e-mail | Supabase Auth | deleted | immediately |
+| Profile, delivery addresses | `profiles`, `delivery_addresses` | deleted | immediately |
+| Reviews | `reviews` | deleted | immediately |
+| Order incl. items and address snapshot | `orders`, `order_items` | **kept**, detached from the account (`user_id` becomes `null`) | 8 years after the end of the calendar year of the order, then `purge_expired_orders()` |
+| Blocked accounts | `auth.users`, `profiles` | kept until the user asks for deletion | until then |
+ 
+Further rules:
+ 
+- Only what an invoice needs (name, address, items, prices, date) stays in an order. The data is only visible to admins.
+- An account cannot be deleted while it has open orders (`processing` or `shipped`).
+- The retention period is the parameter of `purge_expired_orders(retention_years)` (default 8) and
+  can be changed in one place. The function can only be run with the service role, for example from the
+  SQL editor or a scheduled job.
+  
+## Code conventions
+ 
+- **Clean code**: small functions with one purpose (guideline: at most 14 lines per function), logic in hooks and services, no database access in components.
+- **Documentation**: every function, hook and component has a short JSDoc comment; interfaces describe their fields.
+- **Language**: code and comments are in English, the user interface is in German.
+- **Naming**: one component per file, file names in `kebab-case`, hooks start with `use`.
+- **Types**: no `any`; database rows are mapped to domain types in the services.
+- **Security**: the service role key is only used in local scripts; everything else works with the anon key and RLS.
 
 ## Design
 
@@ -193,18 +375,14 @@ Logic lives in `services/`, `hooks/` and `utils/`, while components only handle 
 | Light blue | `#CDEEFF` | Surfaces            |
 | Beige      | `#FFE9C7` | Accents             |
 | Off-white  | `#F7FAFF` | Background          |
-
-## Roadmap
-
-- Book overview, category page, filters, pagination
-- Login, registration, profile page
-- Cart, checkout, orders with status
-- Ratings and comments
-- Supabase tables and seed script
-- Fully migrate the frontend to Supabase
-- Real authentication instead of dummy users
-- More filters (most reviews, release date)
-- Search and sorting on the reviews and orders pages
+ 
+## Known limitations and roadmap
+ 
+- **Payment**: there is no real payment integration; "Kostenpflichtig bestellen" only creates the order.
+- **Order creation is not atomic**: the order and its items are saved in two steps, and prices and the total come from the browser. A database function that creates the order in one transaction and reads the prices from `books` would close both gaps.
+- **Covers as base64** keep the setup simple but make rows large. Supabase Storage would be the next step for many books.
+- **No automated tests** yet.
+- **Retention cleanup** (`purge_expired_orders`) has to be started manually; `pg_cron` could run it once a year.
 
 ## Demo data
 
