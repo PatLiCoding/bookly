@@ -10,6 +10,15 @@
   text-align: center;
 }
 
+.modal-error {
+  color: #d9534f;
+  background: #fdf2f2;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 10px 0;
+  font-size: 14px;
+}
+
 .modal-actions {
   display: flex;
   justify-content: center;

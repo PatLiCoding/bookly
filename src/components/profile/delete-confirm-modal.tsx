@@ -47,11 +47,7 @@ export class DeleteConfirmModal extends Component<DeleteConfirmModalProps> {
         <div className="modal-box" onClick={(e) => e.stopPropagation()}>
           <h3>{title}</h3>
           <p>{message}</p>
-          {error && (
-            <div style={{ color: "#d9534f", background: "#fdf2f2", padding: "10px", borderRadius: "4px", margin: "10px 0", fontSize: "14px" }}>
-              {error}
-            </div>
-          )}
+          {error && (<div className="modal-error">{error}</div>)}
           {this.renderActions()}
         </div>
       </div>
