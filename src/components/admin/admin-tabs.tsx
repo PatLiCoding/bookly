@@ -12,7 +12,7 @@ interface Props {
   onChange: (tab: AdminTab) => void;
 }
 
-/** Tab bar of the admin page. */
+/** Navigation tab bar component for switching views on the admin page. */
 export default function AdminTabs({ active, onChange }: Props) {
   return (
     <div className="admin-tabs">

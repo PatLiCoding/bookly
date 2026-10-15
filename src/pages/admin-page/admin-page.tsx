@@ -18,7 +18,7 @@ const PLACEHOLDERS: Record<AdminTab, string> = {
   users: "Suche nach Name",
 };
 
-/** Selected tab and search text; the search is cleared when the tab changes. */
+/** Manages active admin tab state and search query input, clearing search input on tab switches. */
 function useAdminView() {
   const [tab, setTab] = useState<AdminTab>("orders");
   const [search, setSearch] = useState("");
@@ -39,13 +39,13 @@ const TAB_VIEWS: Record<AdminTab, ComponentType<{ term: string }>> = {
   users: UsersTab,
 };
 
-/** Renders the list that belongs to the selected tab. */
+/** Dynamically renders the list component corresponding to the active tab selection. */
 function ActiveTab({ tab, term }: { tab: AdminTab; term: string }) {
   const View = TAB_VIEWS[tab];
   return <View term={term} />;
 }
 
-/** Admin page: tabs for orders, reviews and users with dynamic search. */
+/** Main admin dashboard page component featuring multi-tab views and dynamic search integration. */
 export default function AdminPage() {
   const { tab, search, setSearch, term, changeTab } = useAdminView();
 

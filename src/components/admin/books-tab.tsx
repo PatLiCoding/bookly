@@ -4,10 +4,10 @@ import {fetchBook, fetchBooks, type AdminBook, type BookListItem,} from "../../s
 import AdminList from "./admin-list";
 import BookDialog from "./book-dialog";
 
-/** Dialog state: closed (null), new book ({ book: null }) or edit ({ book }). */
+/** Represents dialog state: closed (null), creation ({ book: null }), or editing ({ book }). */
 type DialogState = { book: AdminBook | null } | null;
 
-/** Replaces an edited book in the list or puts a new one on top. */
+/** Replaces an edited book within the array or prepends a newly created book. */
 function upsertBook(books: BookListItem[], saved: BookListItem): BookListItem[] {
   const exists = books.some((b) => b.id === saved.id);
   return exists ? books.map((b) => (b.id === saved.id ? saved : b)) : [saved, ...books];
@@ -18,7 +18,7 @@ interface RowProps {
   onEdit: (book: BookListItem) => void;
 }
 
-/** One book: title, author, category and price; click opens the edit dialog. */
+/** Renders a single book entry showing title, author, category, and price; clicking opens the edit dialog. */
 function BookRow({ book, onEdit }: RowProps) {
   return (
     <button type="button" className="admin-row-btn" title="Bearbeiten" onClick={() => onEdit(book)}>
@@ -34,7 +34,7 @@ function BookRow({ book, onEdit }: RowProps) {
   );
 }
 
-/** Books tab: paged, searchable list; click to edit, button to add. */
+/** Renders the Books tab featuring a paginated, searchable list with options to add or edit books. */
 export default function BooksTab({ term }: { term: string }) {
   const list = usePagedList(fetchBooks, term);
   const [dialog, setDialog] = useState<DialogState>(null);

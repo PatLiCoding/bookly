@@ -50,12 +50,12 @@ export class ListToolbar extends Component<ListToolbarProps> {
         <img
           className="lens-area-border"
           src="./assets/icons/search-borderline.png"
-          alt=""
+          alt="Borderline"
         />
         <img
           className="lens-img"
           src="./assets/icons/search-default.png"
-          alt=""
+          alt="Lens"
         />
       </span>
     );

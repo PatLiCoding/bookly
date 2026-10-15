@@ -1,6 +1,11 @@
 import { useState, type ReactNode } from "react";
 import usePagedList from "../../hooks/use-paged-list";
-import { fetchOrders, updateOrderStatus, type AdminOrder, type OrderStatus } from "../../services/admin-service";
+import {
+  fetchOrders,
+  updateOrderStatus,
+  type AdminOrder,
+  type OrderStatus,
+} from "../../services/admin-service";
 import type { AddressSnapshot } from "../../interface/order";
 import AdminList from "./admin-list";
 import OrderDialog from "./order-dialog";
@@ -19,13 +24,16 @@ interface RowProps {
   onClick: () => void;
 }
 
-/** Formats an address object into a single line string. */
+/** Formats an address snapshot object into a single human-readable line string. */
 function addressLine(a: AddressSnapshot | null): string {
   if (!a) return "Keine Adresse gespeichert";
   return `${a.name}, ${a.street}, ${a.zip} ${a.city}, ${a.country}`;
 }
 
-/** Renders a single order row with a clickable detailed overview button and a custom status dropdown. */
+/**
+ * Renders a single order row featuring a clickable overview button and an integrated
+ * status selection dropdown.
+ */
 function OrderRow({ order, onStatusChange, onClick }: RowProps): ReactNode {
   const date = new Date(order.order_date).toLocaleDateString("de-DE");
   return (
@@ -37,12 +45,17 @@ function OrderRow({ order, onStatusChange, onClick }: RowProps): ReactNode {
           <small>Lieferung an: {addressLine(order.shipping_address)}</small>
         </div>
       </button>
-      <AdminSelect value={order.status} options={STATUS_OPTIONS} onChange={(status: OrderStatus) => onStatusChange(order.id, status)} />
+      <AdminSelect value={order.status} options={STATUS_OPTIONS}
+        onChange={(status: OrderStatus) => onStatusChange(order.id, status)}
+      />
     </>
   );
 }
 
-/** Orders tab component rendering a paginated order list with search, status management, and detail dialog. */
+/**
+ * Orders tab component rendering a paginated order list with search functionality,
+ * status updates, and detail dialogs.
+ */
 export default function OrdersTab({ term }: { term: string }): ReactNode {
   const list = usePagedList(fetchOrders, term);
   const [selectedOrder, setSelectedOrder] = useState<AdminOrder | null>(null);
@@ -50,7 +63,9 @@ export default function OrdersTab({ term }: { term: string }): ReactNode {
   async function changeStatus(id: number, status: OrderStatus): Promise<void> {
     try {
       await updateOrderStatus(id, status);
-      list.setItems((prev: AdminOrder[]) => prev.map((o: AdminOrder) => (o.id === id ? { ...o, status } : o)));
+      list.setItems((prev: AdminOrder[]) =>
+        prev.map((o: AdminOrder) => (o.id === id ? { ...o, status } : o)),
+      );
     } catch {
       window.alert("Status konnte nicht geändert werden.");
     }
@@ -58,8 +73,22 @@ export default function OrdersTab({ term }: { term: string }): ReactNode {
 
   return (
     <>
-      <AdminList list={list} renderItem={(o: AdminOrder) => <OrderRow order={o} onStatusChange={changeStatus} onClick={() => setSelectedOrder(o)} />} />
-      {selectedOrder && <OrderDialog order={selectedOrder} onClose={() => setSelectedOrder(null)} />}
+      <AdminList
+        list={list}
+        renderItem={(o: AdminOrder) => (
+          <OrderRow
+            order={o}
+            onStatusChange={changeStatus}
+            onClick={() => setSelectedOrder(o)}
+          />
+        )}
+      />
+      {selectedOrder && (
+        <OrderDialog
+          order={selectedOrder}
+          onClose={() => setSelectedOrder(null)}
+        />
+      )}
     </>
   );
 }

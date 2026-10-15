@@ -5,14 +5,14 @@ import AdminList from "./admin-list";
 import AdminMessageDialog, { type DialogConfig } from "./admin-dialog-modal";
 
 /**
- * Returns the full name of a user or a fallback string.
+ * Returns the full name constructed from user first and last names, or a fallback string.
  */
 function fullName(u: AdminUser): string {
   return `${u.firstname ?? ""} ${u.lastname ?? ""}`.trim() || "Ohne Namen";
 }
 
 /**
- * Formats user address fields into a single readable string.
+ * Formats user address parameters into a single readable location string.
  */
 function fullAddress(u: AdminUser): string {
   const city = [u.zip, u.city].filter(Boolean).join(" ");
@@ -20,7 +20,7 @@ function fullAddress(u: AdminUser): string {
 }
 
 /**
- * Generates the ban confirmation message for a given user.
+ * Generates the user ban confirmation warning message.
  */
 function banMsg(u: AdminUser): string {
   return `${fullName(u)} wirklich sperren?\n\nDer User kann sich nicht mehr einloggen.`;
@@ -33,19 +33,24 @@ interface RowProps {
 }
 
 /**
- * Renders a single user row with status badges and action buttons.
+ * Renders an individual user row displaying identity badges, address info, and management action buttons.
  */
 function UserRow({ user, onToggleBan, onDeleteUser }: RowProps) {
   const banned = Boolean(user.banned_at);
   return (
     <>
       <div className="admin-row-main">
-        <strong>{fullName(user)} {user.role === "admin" && <span className="admin-badge">Admin</span>} {banned && <span className="admin-badge admin-badge--banned">Gesperrt</span>}</strong>
+        <strong>{fullName(user)} {user.role === "admin" &&
+          <span className="admin-badge">Admin</span>}
+          {banned && <span className="admin-badge admin-badge--banned">Gesperrt</span>}
+        </strong>
         <span>{fullAddress(user) || "Keine Adresse"}</span>
       </div>
       {user.role !== "admin" && (
         <div style={{ display: "flex", gap: "8px" }}>
-          <button className={banned ? "admin-cancel-btn" : "admin-delete-btn"} onClick={() => onToggleBan(user)}>{banned ? "Entsperren" : "Sperren"}</button>
+          <button className={banned ? "admin-cancel-btn" : "admin-delete-btn"}
+            onClick={() => onToggleBan(user)}>{banned ? "Entsperren" : "Sperren"}
+          </button>
           <button className="admin-delete-btn" onClick={() => onDeleteUser(user)}>Löschen</button>
         </div>
       )}
@@ -54,13 +59,13 @@ function UserRow({ user, onToggleBan, onDeleteUser }: RowProps) {
 }
 
 /**
- * Admin tab for managing user accounts, banning, and deleting profiles via custom dialogs.
+ * Admin tab component for managing user accounts, handling bans, and deleting profile entries.
  */
 export default function UsersTab({ term }: { term: string }) {
   const list = usePagedList(fetchUsers, term);
   const [dialog, setDialog] = useState<DialogConfig | null>(null);
 
-  /** Executes the ban/unban API call and updates local state. */
+  /** Executes the ban/unban status update request and updates local list state. */
   const executeBan = async (user: AdminUser, ban: boolean) => {
     try {
       await setUserBanned(user.id, ban);
@@ -71,20 +76,22 @@ export default function UsersTab({ term }: { term: string }) {
     }
   };
 
-  /** Prompts confirmation dialog before banning a user. */
+  /** Prompts confirmation dialog before toggling user ban status. */
   const toggleBan = (user: AdminUser) => {
     const ban = !user.banned_at;
     if (!ban) return executeBan(user, false);
     setDialog({
-      title: "User sperren", message: banMsg(user), confirmLabel: "Sperren", isDestructive: true,
+      title: "User sperren", message: banMsg(user),
+      confirmLabel: "Sperren", isDestructive: true,
       onConfirm: () => executeBan(user, true),
     });
   };
 
-  /** Prompts confirmation dialog before deleting a user account. */
+  /** Prompts confirmation dialog before completely deleting a user account. */
   const handleDeleteUser = (user: AdminUser) => {
     setDialog({
-      title: "User löschen", message: `${fullName(user)} wirklich endgültig löschen?`, confirmLabel: "Löschen", isDestructive: true,
+      title: "User löschen", message: `${fullName(user)} wirklich endgültig löschen?`,
+      confirmLabel: "Löschen", isDestructive: true,
       onConfirm: async () => {
         try {
           await deleteUserAccount(user.id);
@@ -99,7 +106,9 @@ export default function UsersTab({ term }: { term: string }) {
 
   return (
     <>
-      <AdminList list={list} renderItem={(u) => <UserRow user={u} onToggleBan={toggleBan} onDeleteUser={handleDeleteUser} />} />
+      <AdminList list={list} renderItem={(u) =>
+        <UserRow user={u} onToggleBan={toggleBan} onDeleteUser={handleDeleteUser} />}
+      />
       {dialog && <AdminMessageDialog {...dialog} onClose={() => setDialog(null)} />}
     </>
   );

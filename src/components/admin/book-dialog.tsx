@@ -14,7 +14,7 @@ interface FieldConfig {
   required?: boolean;
   min?: string;
   step?: string;
-  /** Renders a dropdown instead of a text input. */
+  /** Renders a dropdown select control instead of a text input. */
   options?: readonly string[];
 }
 
@@ -34,7 +34,7 @@ interface ControlProps {
 
 /**
  * Renders a custom select dropdown control for categories. 
- * A current value that is not in the list stays selectable.
+ * Retains any active value that is not present in the default category list.
  */
 function SelectControl({ field, value, onChange }: ControlProps) {
   const base = field.options ?? [];
@@ -69,10 +69,9 @@ interface FieldsProps {
 }
 
 /**
- * Renders all inputs of the book form: generated fields, cover, description, visibility.
+ * Renders all form controls including generated input fields, cover uploader, description textarea, and visibility toggle.
  */
 function BookFields({ values, change, setHidden }: FieldsProps) {
-  // Helper to render a specific field config
   const renderField = (field: FieldConfig) => {
     const Control = field.options ? SelectControl : InputControl;
     return (
@@ -94,7 +93,6 @@ function BookFields({ values, change, setHidden }: FieldsProps) {
       {renderField(titleField)}
       {renderField(authorField)}
 
-      {/* Grid container for Category and Price */}
       <div className="admin-form-grid">
         {renderField(categoryField)}
         {renderField(priceField)}
@@ -122,7 +120,7 @@ function BookFields({ values, change, setHidden }: FieldsProps) {
 }
 
 /**
- * Cancel and save buttons.
+ * Renders form action buttons for canceling or submitting form changes.
  */
 function DialogActions({ saving, onCancel }: { saving: boolean; onCancel: () => void }) {
   return (
@@ -138,21 +136,21 @@ function DialogActions({ saving, onCancel }: { saving: boolean; onCancel: () => 
 }
 
 /**
- * Closes the dialog when the backdrop (not the content) is clicked.
+ * Closes the dialog when clicking directly on the backdrop container.
  */
 function closeOnBackdrop(e: MouseEvent<HTMLDialogElement>) {
   if (e.target === e.currentTarget) e.currentTarget.close();
 }
 
 interface Props {
-  /** Book to edit, or null to create a new one. */
+  /** Target book object to edit, or null to create a new book entry. */
   book: AdminBook | null;
   onClose: () => void;
   onSaved: (saved: BookListItem) => void;
 }
 
 /**
- * Dialog to create a new book or edit an existing one.
+ * Modal dialog for creating a new book or editing an existing one.
  */
 export default function BookDialog({ book, onClose, onSaved }: Props) {
   const ref = useModalDialog();

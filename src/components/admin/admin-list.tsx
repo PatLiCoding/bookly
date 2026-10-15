@@ -6,7 +6,7 @@ interface Props<T> {
   renderItem: (item: T) => ReactNode;
 }
 
-/** Loading, error and empty message below the list. */
+/** Loading, error, and empty status messages displayed below the list. */
 function ListStatus<T>({ list }: { list: PagedList<T> }) {
   if (list.error) return <p className="admin-message error">{list.error}</p>;
   if (list.loading) return <p className="admin-message">Lädt …</p>;
@@ -14,7 +14,7 @@ function ListStatus<T>({ list }: { list: PagedList<T> }) {
   return null;
 }
 
-/** Shared list view for all admin tabs, including "Mehr laden". */
+/** Shared list view component for all admin tabs, featuring "Load more" pagination. */
 export default function AdminList<T extends { id: number | string }>({
   list,
   renderItem,

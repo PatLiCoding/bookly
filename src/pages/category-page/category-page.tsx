@@ -94,13 +94,7 @@ function CategoryBooks({ list }: { list: BookList }) {
 /**
  * Layout container positioning the book grid alongside the optional collapsible filter sidebar.
  */
-function CategoryContent({
-  list,
-  showFilters,
-}: {
-  list: BookList;
-  showFilters: boolean;
-}) {
+function CategoryContent({list, showFilters,}: {list: BookList; showFilters: boolean;}) {
   return (
     <div className="category-content">
       <CategoryBooks list={list} />

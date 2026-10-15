@@ -10,7 +10,7 @@ interface RowProps {
 }
 
 /**
- * Renders a single review row containing book details, rating, and delete button.
+ * Renders a single review row containing book details, rating stars, user info, review text, and a delete button.
  */
 function ReviewRow({ review, onDelete }: RowProps) {
   const date = new Date(review.created_at).toLocaleDateString("de-DE");
@@ -27,16 +27,19 @@ function ReviewRow({ review, onDelete }: RowProps) {
 }
 
 /**
- * Admin tab for viewing and deleting user reviews using custom modal dialogs.
+ * Admin tab component for reviewing and deleting user feedback entries via custom modal dialogs.
  */
 export default function ReviewsTab({ term }: { term: string }) {
   const list = usePagedList(fetchReviews, term);
   const [dialog, setDialog] = useState<DialogConfig | null>(null);
 
-  /** Prompts confirmation dialog and deletes the selected review. */
+  /** Triggers the confirmation dialog and deletes the selected review item upon confirmation. */
   const confirmDelete = (id: number) => {
     setDialog({
-      title: "Bewertung löschen", message: "Bewertung wirklich löschen?", confirmLabel: "Löschen", isDestructive: true,
+      title: "Bewertung löschen",
+      message: "Bewertung wirklich löschen?",
+      confirmLabel: "Löschen",
+      isDestructive: true,
       onConfirm: async () => {
         try {
           await deleteReview(id);
@@ -50,7 +53,9 @@ export default function ReviewsTab({ term }: { term: string }) {
 
   return (
     <>
-      <AdminList list={list} renderItem={(r) => <ReviewRow review={r} onDelete={confirmDelete} />} />
+      <AdminList list={list} renderItem={(r) =>
+        <ReviewRow review={r} onDelete={confirmDelete} />}
+      />
       {dialog && <AdminMessageDialog {...dialog} onClose={() => setDialog(null)} />}
     </>
   );

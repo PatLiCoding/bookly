@@ -22,7 +22,7 @@ const MESSAGES: Record<string, string> = {
 };
 
 /**
- * Translates a Supabase auth error code into a localized German user-facing message.
+ * Translates a Supabase authentication error code into a localized user-facing German error message.
  *
  * @param error - The Supabase auth error object.
  * @returns Human-readable German error string.
@@ -39,7 +39,7 @@ function authMessage(error: { code?: string }): string {
  *
  * @param email - User's email address.
  * @param password - Account password.
- * @throws `Error` with localized message if authentication fails.
+ * @throws `Error` with a localized message if authentication fails.
  */
 export async function signIn(email: string, password: string): Promise<void> {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -47,10 +47,10 @@ export async function signIn(email: string, password: string): Promise<void> {
 }
 
 /**
- * Registers a new user account; the database trigger creates the corresponding user profile using metadata.
+ * Registers a new user account, triggering profile creation via database hooks.
  *
  * @param data - User registration payload containing credentials and name parameters.
- * @throws `Error` with localized message if registration fails.
+ * @throws `Error` with a localized message if registration fails.
  */
 export async function signUp(data: SignUpData): Promise<void> {
   const { error } = await supabase.auth.signUp({
@@ -68,7 +68,7 @@ export async function signOut(): Promise<void> {
   await supabase.auth.signOut();
 }
 
-/** Translates the database error for a blocked account deletion. */
+/** Translates database errors related to blocked account deletions. */
 function deleteMessage(message: string): string {
   return message.includes("open_orders")
     ? "Du hast noch offene Bestellungen. Das Konto kann gelöscht werden, sobald sie zugestellt oder storniert sind."
@@ -76,7 +76,7 @@ function deleteMessage(message: string): string {
 }
 
 /**
- * Deletes the authenticated user's own account via RPC database function call,
+ * Deletes the authenticated user's own account via RPC database function,
  * then terminates local session storage.
  *
  * @throws `Error` if the database deletion request fails.
@@ -88,8 +88,8 @@ export async function deleteAccount(): Promise<void> {
 }
 
 /**
- * Deletes the user account via RPC and signs out locally if successful.
- * Throws a localized error if blocked (e.g. by open orders).
+ * Deletes the user account via RPC and signs out locally upon success.
+ * Throws a localized error if deletion is blocked (e.g., due to active orders).
  */
 export async function deleteOwnAccountAndSignOut(): Promise<void> {
   const { error } = await supabase.rpc("delete_own_account");

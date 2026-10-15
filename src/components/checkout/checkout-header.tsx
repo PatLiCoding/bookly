@@ -10,7 +10,7 @@ function CheckoutHeader() {
         <h2>Bestellung abschließen</h2>
         <p>Bitte überprüfe deine Daten vor dem Kauf.</p>
       </div>
-      <Link to="/cart">← Warenkorb</Link>
+      <Link to="/cart">&larr; Warenkorb</Link>
     </div>
   );
 }

@@ -8,7 +8,7 @@ function ConfirmationText() {
   return (
     <p>
       Vielen Dank für deine Bestellung. <br />
-      Deine Lieferung wird voraussichtlich am{" "}
+      Deine Lieferung wird voraussichtlich am
       <strong>{getDeliveryDate()}</strong> eintreffen.
     </p>
   );

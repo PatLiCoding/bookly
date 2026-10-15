@@ -8,19 +8,19 @@ interface Props {
   onClose: () => void;
 }
 
-/** Converts an optional price value to a valid number. */
+/** Safely converts an optional or stringified price value to a valid number. */
 function toNum(val: number | string | undefined | null): number {
   if (val === undefined || val === null) return 0;
   const parsed = typeof val === "number" ? val : parseFloat(val);
   return isNaN(parsed) ? 0 : parsed;
 }
 
-/** Closes the modal dialog when clicking directly on the backdrop. */
+/** Closes the modal dialog when clicking directly on the backdrop container. */
 function closeOnBackdrop(e: MouseEvent<HTMLDialogElement>): void {
   if (e.target === e.currentTarget) e.currentTarget.close();
 }
 
-/** Renders basic metadata of an order including ID, date, customer, and status. */
+/** Renders basic metadata of an order including ID, creation date, customer name, and status. */
 function OrderMeta({ order }: { order: AdminOrder }): ReactNode {
   const date = new Date(order.order_date).toLocaleDateString("de-DE", {
     day: "2-digit", month: "2-digit", year: "numeric", hour: "2-digit", minute: "2-digit",
@@ -51,7 +51,7 @@ function OrderAddress({ address }: { address: AdminOrder["shipping_address"] }):
   );
 }
 
-/** Renders a single row for a purchased book item. */
+/** Renders a single table row displaying a purchased book item. */
 function OrderItemRow({ item }: { item: AdminOrderItem }): ReactNode {
   const lineTotal = (toNum(item.price) * item.quantity).toFixed(2);
   return (
@@ -66,7 +66,7 @@ function OrderItemRow({ item }: { item: AdminOrderItem }): ReactNode {
   );
 }
 
-/** Renders a tabular list of purchased books. */
+/** Renders a tabular list of purchased books for an order. */
 function OrderItemsTable({ items }: { items: AdminOrderItem[] }): ReactNode {
   return (
     <div className="admin-order-details-section">
@@ -89,15 +89,21 @@ function OrderItemsTable({ items }: { items: AdminOrderItem[] }): ReactNode {
   );
 }
 
-/** Calculates and displays subtotal, shipping costs, and grand total. */
+/** Calculates and displays the subtotal, shipping costs, and grand total amount. */
 function OrderSummary({ items, totalPrice }: { items: AdminOrderItem[]; totalPrice: number | string }): ReactNode {
   const subtotal = items.reduce((sum: number, item: AdminOrderItem) => sum + toNum(item.price) * (item.quantity ?? 1), 0);
   const shipping = Math.max(0, toNum(totalPrice) - subtotal);
   return (
     <div className="admin-order-details-section admin-order-summary">
-      <div className="admin-summary-line"><span>Zwischensumme Bücher:</span><span>{subtotal.toFixed(2)} €</span></div>
-      <div className="admin-summary-line"><span>Versandkosten:</span><span>{shipping > 0 ? `${shipping.toFixed(2)} €` : "Kostenlos"}</span></div>
-      <div className="admin-summary-line admin-summary-total"><span>Gesamtsumme:</span><span>{toNum(totalPrice).toFixed(2)} €</span></div>
+      <div className="admin-summary-line">
+        <span>Zwischensumme Bücher:</span><span>{subtotal.toFixed(2)} €</span>
+      </div>
+      <div className="admin-summary-line">
+        <span>Versandkosten:</span><span>{shipping > 0 ? `${shipping.toFixed(2)} €` : "Kostenlos"}</span>
+      </div>
+      <div className="admin-summary-line admin-summary-total">
+        <span>Gesamtsumme:</span><span>{toNum(totalPrice).toFixed(2)} €</span>
+      </div>
     </div>
   );
 }

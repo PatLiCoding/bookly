@@ -44,7 +44,7 @@ export interface AddressSnapshot {
   country: string;
 }
 
-/** Billing and shipping address of an order. */
+/** Billing and shipping addresses associated with an order. */
 export interface OrderAddresses {
   billing: AddressSnapshot;
   shipping: AddressSnapshot;

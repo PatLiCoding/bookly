@@ -1,7 +1,7 @@
 import { useRef, useState, type ChangeEvent } from "react";
 import { coverSrc, fileToCoverDataUrl } from "../../utils/image";
 
-/** File input state: converts the chosen image and reports errors. */
+/** Custom hook managing cover file selection, base64 conversion, and error state. */
 function useCoverUpload(onChange: (cover: string) => void) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
@@ -22,12 +22,12 @@ function useCoverUpload(onChange: (cover: string) => void) {
 }
 
 interface Props {
-  /** Current cover (base64 data URL) or an empty string. */
+  /** Current cover image encoded as a base64 Data URL, or an empty string. */
   value: string;
   onChange: (cover: string) => void;
 }
 
-/** Cover upload: choose an image, see a preview, replace or remove it. */
+/** Cover image uploader providing file selection, live preview, replacement, and removal actions. */
 export default function CoverField({ value, onChange }: Props) {
   const { inputRef, error, handleFile } = useCoverUpload(onChange);
 

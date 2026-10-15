@@ -11,7 +11,7 @@ interface Props<T extends string = string> {
   onChange: (value: T) => void;
 }
 
-/** Closes dropdown when clicking outside of it. */
+/** Closes the dropdown menu when clicking outside of the element. */
 function useOutsideClick(ref: React.RefObject<HTMLDivElement | null>, onClose: () => void): void {
   useEffect(() => {
     function handleClick(e: MouseEvent | Event): void {
@@ -22,7 +22,7 @@ function useOutsideClick(ref: React.RefObject<HTMLDivElement | null>, onClose: (
   }, [ref, onClose]);
 }
 
-/** Renders the currently selected value acting as the toggle button. */
+/** Renders the currently selected option acting as the dropdown toggle button. */
 function DropdownToggle({ label, onClick }: { label: string; onClick: () => void }): ReactNode {
   return (
     <button type="button" className="admin-select-toggle" onClick={onClick}>
@@ -41,7 +41,7 @@ function DropdownItem({ label, selected, onSelect }: { label: string; selected: 
   );
 }
 
-/** Generic custom dropdown component giving full CSS control over hover states and pointer cursors. */
+/** Generic custom dropdown component providing full CSS control over hover states and cursors. */
 export default function AdminSelect<T extends string = string>({ value, options, onChange }: Props<T>): ReactNode {
   const [open, setOpen] = useState<boolean>(false);
   const ref = useRef<HTMLDivElement | null>(null);

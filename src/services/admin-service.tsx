@@ -5,7 +5,7 @@ export const PAGE_SIZE = 10;
 
 export type OrderStatus = "processing" | "shipped" | "delivered" | "cancelled";
 
-/** Editable book fields (everything except the id). */
+/** Editable book properties object (all fields except unique identifier id). */
 export type BookInput = Omit<AdminBook, "id">;
 
 export interface AdminOrder {
@@ -61,7 +61,7 @@ export interface AdminBook {
   hidden: boolean;
 }
 
-/** Fields shown in the admin list (no cover: base64 covers are large). */
+/** Subset of book fields shown in admin list views (excluding heavy base64 cover strings). */
 export type BookListItem = Pick<
   AdminBook,
   "id" | "title" | "author" | "category" | "price" | "hidden"
@@ -70,17 +70,17 @@ export type BookListItem = Pick<
 const BOOK_COLUMNS = "id, title, author, category, price, hidden, cover, release_date, description";
 const LIST_COLUMNS = "id, title, author, category, price, hidden";
 
-/** Removes characters that would break a PostgREST filter string. */
+/** Sanitizes search terms by stripping characters that could disrupt PostgREST query filters. */
 function cleanTerm(term: string): string {
   return term.replace(/[,()%*\\]/g, " ").trim();
 }
 
-/** Row range [from, to] of the page starting at the given offset. */
+/** Computes the database query row index range [from, to] for pagination offsets. */
 function pageRange(offset: number): [number, number] {
   return [offset, offset + PAGE_SIZE - 1];
 }
 
-/** Ids of profiles whose first or last name contains the term. */
+/** Retrieves matching user profile IDs whose first or last names match the search term. */
 async function userIdsByName(term: string): Promise<string[]> {
   const { data, error } = await supabase
     .from("profiles")
@@ -91,7 +91,7 @@ async function userIdsByName(term: string): Promise<string[]> {
   return (data ?? []).map((p) => p.id);
 }
 
-/** Maps user ids to full names. */
+/** Maps a list of user profile IDs to their corresponding full name strings. */
 async function namesByIds(ids: string[]): Promise<Record<string, string>> {
   const { data, error } = await supabase
     .from("profiles")
@@ -103,7 +103,7 @@ async function namesByIds(ids: string[]): Promise<Record<string, string>> {
   );
 }
 
-/** Filter for the order search: order number or customer name. */
+/** Constructs filter criteria for order searches matching order IDs or associated customer names. */
 async function orderFilter(term: string): Promise<string> {
   const ids = await userIdsByName(term);
   const parts = ids.length ? [`user_id.in.(${ids.join(",")})`] : [];
@@ -113,7 +113,7 @@ async function orderFilter(term: string): Promise<string> {
 
 type OrderRow = Omit<AdminOrder, "customer">;
 
-/** Loads one page of raw order rows, newest first. */
+/** Fetches a single pagination page of raw order entries, sorted by creation date descending. */
 async function fetchOrderRows(offset: number, filter: string | null): Promise<OrderRow[]> {
   let query = supabase.from("orders").select(
     "id, user_id, total_price, order_date, status, billing_address, shipping_address");
@@ -135,13 +135,13 @@ export async function fetchOrderItems(orderId: number): Promise<AdminOrderItem[]
   return (data ?? []) as AdminOrderItem[];
 }
 
-/** Name of the customer, or the stored billing name if the account was deleted. */
+/** Resolves the customer display name, falling back to invoice details if the account was deleted. */
 function customerName(order: OrderRow, names: Record<string, string>): string {
   if (order.user_id) return names[order.user_id] || "—";
   return `${order.billing_address?.name ?? "Unbekannt"} (Konto gelöscht)`;
 }
 
-/** Adds the customer name to each order row. */
+/** Enriches raw order rows with resolved customer names. */
 async function withCustomers(rows: OrderRow[]): Promise<AdminOrder[]> {
   if (rows.length === 0) return [];
   const ids = rows.map((o) => o.user_id).filter((id): id is string => id !== null);
@@ -149,7 +149,7 @@ async function withCustomers(rows: OrderRow[]): Promise<AdminOrder[]> {
   return rows.map((o) => ({ ...o, customer: customerName(o, names) }));
 }
 
-/** One page of orders, optionally filtered by order number or customer. */
+/** Fetches a paginated list of orders, optionally filtered by search parameters. */
 export async function fetchOrders(offset: number, search: string): Promise<AdminOrder[]> {
   const term = cleanTerm(search);
   const filter = term ? await orderFilter(term) : null;
@@ -157,7 +157,7 @@ export async function fetchOrders(offset: number, search: string): Promise<Admin
   return withCustomers(await fetchOrderRows(offset, filter));
 }
 
-/** Changes the order status; sets delivered_date when delivered. */
+/** Updates an order's status and automatically sets the fulfillment delivery date when marked as delivered. */
 export async function updateOrderStatus(id: number, status: OrderStatus): Promise<void> {
   const delivered_date = status === "delivered" ? new Date().toISOString() : null;
   const { error } = await supabase
@@ -167,7 +167,7 @@ export async function updateOrderStatus(id: number, status: OrderStatus): Promis
   if (error) throw error;
 }
 
-/** Filter for the review search: user name, comment text or book title. */
+/** Constructs review search filters targeting user names, review texts, or associated book titles. */
 async function reviewFilter(term: string): Promise<string> {
   const { data, error } = await supabase
     .from("books")
@@ -180,7 +180,7 @@ async function reviewFilter(term: string): Promise<string> {
   return parts.join(",");
 }
 
-/** One page of reviews with book title, newest first. */
+/** Fetches a paginated list of reviews including related book titles, ordered by creation date descending. */
 export async function fetchReviews(offset: number, search: string): Promise<AdminReview[]> {
   const term = cleanTerm(search);
   let query = supabase
@@ -194,13 +194,13 @@ export async function fetchReviews(offset: number, search: string): Promise<Admi
   return (data ?? []) as unknown as AdminReview[];
 }
 
-/** Deletes a review (allowed for admins by the RLS policy). */
+/** Deletes a review record (permitted for administrators via Row Level Security policies). */
 export async function deleteReview(id: number): Promise<void> {
   const { error } = await supabase.from("reviews").delete().eq("id", id);
   if (error) throw error;
 }
 
-/** One page of user profiles, optionally filtered by name. */
+/** Fetches a paginated list of user profiles, optionally filtered by name search terms. */
 export async function fetchUsers(offset: number, search: string): Promise<AdminUser[]> {
   const term = cleanTerm(search);
   let query = supabase
@@ -215,13 +215,13 @@ export async function fetchUsers(offset: number, search: string): Promise<AdminU
   return (data ?? []) as AdminUser[];
 }
 
-/** Blocks or unblocks a user (the database function checks the admin role). */
+/** Blocks or unblocks a target user account via database RPC function calls. */
 export async function setUserBanned(id: string, banned: boolean): Promise<void> {
   const { error } = await supabase.rpc("admin_set_user_banned", { target: id, banned });
   if (error) throw error;
 }
 
-/** One page of books (newest first), searchable by title, author or category. */
+/** Fetches a paginated list of books, searchable by title, author, or category. */
 export async function fetchBooks(offset: number, search: string): Promise<BookListItem[]> {
   const term = cleanTerm(search);
   let query = supabase.from("books").select(LIST_COLUMNS);
@@ -237,7 +237,7 @@ export async function fetchBooks(offset: number, search: string): Promise<BookLi
   return (data ?? []) as BookListItem[];
 }
 
-/** Loads one complete book including cover (for the edit dialog). */
+/** Loads a complete book record including cover image data for editing dialogs. */
 export async function fetchBook(id: number): Promise<AdminBook> {
   const { data, error } = await supabase
     .from("books")
@@ -248,7 +248,7 @@ export async function fetchBook(id: number): Promise<AdminBook> {
   return data as AdminBook;
 }
 
-/** Creates a book and returns its list fields. */
+/** Creates a new book record and returns its list-view attributes. */
 export async function createBook(input: BookInput): Promise<BookListItem> {
   const { data, error } = await supabase
     .from("books")
@@ -259,7 +259,7 @@ export async function createBook(input: BookInput): Promise<BookListItem> {
   return data as BookListItem;
 }
 
-/** Updates a book and returns its list fields. */
+/** Updates an existing book record and returns its updated list-view attributes. */
 export async function updateBook(id: number, input: BookInput): Promise<BookListItem> {
   const { data, error } = await supabase
     .from("books")
@@ -271,7 +271,7 @@ export async function updateBook(id: number, input: BookInput): Promise<BookList
   return data as BookListItem;
 }
 
-/** Deletes a user account via database RPC function (checks admin role and open orders). */
+/** Deletes a user account via database RPC function, validating admin permissions and open orders. */
 export async function deleteUserAccount(id: string): Promise<void> {
   const { error } = await supabase.rpc("admin_delete_user", { target: id });
   if (error) {

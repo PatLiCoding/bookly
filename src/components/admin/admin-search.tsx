@@ -4,6 +4,9 @@ interface Props {
   onChange: (value: string) => void;
 }
 
+/**
+ * Search input component with an integrated reset button.
+ */
 export default function AdminSearch({ value, placeholder, onChange }: Props) {
   return (
     <div className="admin-search-wrapper">
