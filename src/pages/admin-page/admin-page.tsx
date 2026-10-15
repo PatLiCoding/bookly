@@ -49,7 +49,7 @@ export default function AdminPage() {
 
   return (
     <main className="admin-page">
-      <h1>Admin</h1>
+      <h1 className="admin-headline">Admin</h1>
       <AdminTabs active={tab} onChange={changeTab} />
       <AdminSearch value={search} placeholder={PLACEHOLDERS[tab]} onChange={setSearch} />
       <ActiveTab tab={tab} term={term} />

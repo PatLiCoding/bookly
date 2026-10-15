@@ -19,6 +19,15 @@ export interface AdminOrder {
   customer: string;
 }
 
+export interface AdminOrderItem {
+  id: number;
+  book_id: number;
+  title: string;
+  author: string;
+  price: number;
+  quantity: number;
+}
+
 export interface AdminReview {
   id: number;
   user_name: string;
@@ -114,6 +123,16 @@ async function fetchOrderRows(offset: number, filter: string | null): Promise<Or
     .range(...pageRange(offset));
   if (error) throw error;
   return (data ?? []) as OrderRow[];
+}
+
+/** Fetches all line items associated with a specific order ID. */
+export async function fetchOrderItems(orderId: number): Promise<AdminOrderItem[]> {
+  const { data, error } = await supabase
+    .from("order_items")
+    .select("id, book_id, title, author, price, quantity")
+    .eq("order_id", orderId);
+  if (error) throw error;
+  return (data ?? []) as AdminOrderItem[];
 }
 
 /** Name of the customer, or the stored billing name if the account was deleted. */
