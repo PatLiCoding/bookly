@@ -1,13 +1,269 @@
-.stars {
-  color: #f7faff;
-  font-size: 0.95rem;
-  letter-spacing: 1px;
-  text-shadow: 0 0 2px rgba(34, 48, 68, 1);
+/*
+ * Recurring patterns, grouped by existing class names.
+ */
+
+/* ---------- Page container (max. 1440px) ---------- */
+.cart-page,
+.category-page,
+.checkout-page,
+.home,
+.header-content-max-width,
+.navbar-content-max-width {
+  width: 100%;
+  max-width: 1440px;
 }
 
-.star.filled {
-  color: #ffe9c7;
-  text-shadow: 0 0 2px rgba(34, 48, 68, 1);
+/* ---------- Narrow pages (profile, reviews) ---------- */
+.profile-page,
+.review-page {
+  width: 100%;
+  max-width: 960px;
+  margin-top: 4px;
+  padding: 32px 20px 64px;
+  color: var(--c-text);
+  background-color: var(--c-bg);
+  cursor: default;
+}
+
+/* ---------- Header ---------- */
+.cart-page-header,
+.category-header,
+.checkout-header,
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+/* ---------- Header and Navigation Bar ---------- */
+.header,
+.navbar {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  min-height: 80px;
+  box-shadow: var(--shadow-bar);
+  cursor: default;
+}
+
+.header-content-max-width,
+.navbar-content-max-width {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+/* ---------- Card (white, border, subtle shadow) ---------- */
+.cart-item,
+.cart-summary,
+.cart-empty,
+.checkout-card,
+.checkout-same-address-wrapper,
+.checkout-confirmation,
+.checkout-empty {
+  background: #fff;
+  border: 1px solid var(--c-line);
+  border-radius: var(--radius-card);
+  box-shadow: var(--shadow-card);
+}
+
+/* ---------- Detail box (book details) ---------- */
+.main-info,
+.purchase-box,
+.description-section,
+.comments-section,
+.comment-card {
+  background-color: #fff;
+  border: 1px solid var(--c-light);
+  border-radius: 8px;
+}
+
+/* ---------- Panel (profile, reviews, order details) ---------- */
+.profile-info-card,
+.profile-info-card-container,
+.profile-tab-content,
+.review-content,
+.order-detail-card {
+  background: #fff;
+  border: 2px solid var(--c-border);
+  border-radius: 16px;
+}
+
+.profile-tab-content,
+.review-content {
+  padding: 20px;
+  min-height: 350px;
+  max-height: 640px;
+  overflow-y: auto;
+}
+
+/* ---------- Primary button (beige) ---------- */
+.cart-summary-checkout-btn,
+.checkout-submit button {
+  padding: 0.85rem 1rem;
+  color: var(--c-text);
+  background: var(--c-accent);
+  border: 1px solid var(--c-accent);
+  border-radius: 0.75rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.cart-summary-checkout-btn:hover:not(:disabled),
+.checkout-submit button:hover:not(:disabled) {
+  background: var(--c-accent-hover);
+}
+
+/* ---------- Dark button (navy) ---------- */
+.order-detail-btn,
+.order-back-btn,
+.profile-save-btn,
+.review-add-btn {
+  color: var(--c-bg);
+  background: var(--c-text);
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--c-text);
+    background: var(--c-border);
+  }
+}
+
+/* ---------- Pill button (filter, pagination) ---------- */
+.filter-option,
+.page-btn {
+  color: var(--c-text);
+  background: var(--c-bg);
+  border: 1px solid var(--c-outline);
+  border-radius: 50px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.filter-option:hover,
+.page-btn:hover:not(:disabled) {
+  background-color: var(--c-light);
+}
+
+.filter-option.active,
+.page-btn.active {
+  font-weight: 500;
+  background-color: var(--c-accent);
+  border-color: var(--c-text);
+}
+
+/* ---------- Button without default appearance ---------- */
+.admin-tab,
+.admin-row-btn,
+.admin-row-click,
+.filter-btn,
+.cart-item-remove,
+.profile-tab,
+.tab,
+.close-btn,
+.comments-link,
+.account-menu-item,
+.filter-reset,
+.star-input-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+/* ---------- Input field (admin, profile) ---------- */
+.admin-search,
+.admin-select-toggle,
+.admin-field input,
+.admin-field select,
+.admin-field textarea,
+.profile-input,
+.review-textarea {
+  box-sizing: border-box;
+  width: 100%;
+  color: var(--c-text);
+  background: var(--c-bg);
+  border: 1px solid var(--c-border);
+}
+
+/* ---------- Status badge ---------- */
+.order-detail-badge,
+.order-status-badge {
+  font-weight: 700;
+  color: var(--c-text);
+  background-color: var(--c-accent);
+  border: 1px solid var(--c-text);
+}
+
+/* ---------- Modal: Overlay & Box ---------- */
+.modal-overlay,
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.modal-box,
+.modal-card {
+  background: var(--c-bg);
+  border-radius: 12px;
+}
+
+/* ---------- Narrow scrollbar ---------- */
+.admin-dialog-form,
+.admin-list-box,
+.admin-field textarea,
+.profile-tab-content,
+.review-content,
+.comments-section,
+.book-preview {
+  &::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: var(--c-light);
+    border-radius: 10px;
+  }
+}
+
+/* ---------- Stars, empty state, "Load more" ---------- */
+.stars,
+.star-input-btn {
+  color: var(--c-bg);
+  text-shadow: 0 0 2px var(--c-text);
+}
+
+.stars {
+  font-size: 0.95rem;
+  letter-spacing: 1px;
+}
+
+.star.filled,
+.star-input-btn-active {
+  color: var(--c-accent);
+  text-shadow: 0 0 2px var(--c-text);
+}
+
+/* ---------- Text box (comment / review text) ---------- */
+.comment-text,
+.review-text {
+  margin: 0;
+  padding: 12px;
+  line-height: 1.5;
+  background-color: #fff;
+  border: 1px solid #eaeaea;
+  border-radius: 6px;
 }
 
 .empty-content {
@@ -20,15 +276,15 @@
 .load-more-btn {
   display: block;
   margin: 16px auto 0;
-  background: #a7d8ff;
-  color: #223044;
+  padding: 8px 20px;
+  color: var(--c-text);
+  background: var(--c-border);
   border: none;
   border-radius: 8px;
-  padding: 8px 20px;
   cursor: pointer;
-}
 
-.load-more-btn:hover {
-  background: #223044;
-  color: #f7faff;
+  &:hover {
+    color: var(--c-bg);
+    background: var(--c-text);
+  }
 }

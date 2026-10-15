@@ -1,18 +1,12 @@
+/* Overlay position and box appearance: styles/shared.css */
 .modal-overlay {
-  position: fixed;
-  inset: 0;
-  background: rgba(34, 48, 68, 0.6);
-  display: flex;
-  align-items: center;
-  justify-content: center;
   z-index: 100;
+  background: rgba(34, 48, 68, 0.6);
 }
 
 .modal-box {
-  background: #f7faff;
-  border-radius: 12px;
-  padding: 24px;
   width: min(400px, 92vw);
+  padding: 24px;
   text-align: center;
 }
 
@@ -23,26 +17,26 @@
   margin-top: 16px;
 }
 
-.modal-btn-cancel {
-  background: #cdeeff;
-  color: #223044;
+.modal-btn-cancel,
+.modal-btn-confirm {
+  padding: 8px 16px;
   border: none;
   border-radius: 8px;
-  padding: 8px 16px;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--c-text);
+    background-color: var(--c-accent);
+    box-shadow: 0 4px 4px -4px #22304450;
+  }
+}
+
+.modal-btn-cancel {
+  color: var(--c-text);
+  background: var(--c-light);
 }
 
 .modal-btn-confirm {
-  background: #223044;
-  color: #ffe9c7;
-  border: none;
-  border-radius: 8px;
-  padding: 8px 16px;
-  cursor: pointer;
-}
-
-.modal-btn-cancel:hover, .modal-btn-confirm:hover {
-  cursor: pointer;
-  box-shadow: 0 4px 4px -4px #22304450;
-  background-color: #ffe9c7;
-  color: #223044;
+  color: var(--c-accent);
+  background: var(--c-text);
 }

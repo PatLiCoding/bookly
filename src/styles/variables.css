@@ -1,0 +1,33 @@
+/* Shared design variables. Import globally once (e.g., in main.tsx). */
+:root {
+  /* Project colors */
+  --c-text: #223044; /* Primary color / Text */
+  --c-border: #a7d8ff; /* Blue */
+  --c-light: #cdeeff; /* Light blue */
+  --c-bg: #f7faff; /* Background */
+  --c-accent: #ffe9c7; /* Beige */
+  --c-accent-hover: #ffd8a1;
+
+  /* Neutral tones (Cart / Checkout) */
+  --c-line: #e2e8f0; /* Borders, dividing lines */
+  --c-line-soft: #f1f5f9; /* fine dividing lines */
+  --c-input-border: #cbd5e1;
+  --c-surface: #f8fafc;
+  --c-muted: #64748b; /* Supplementary text */
+  --c-body: #475569; /* Running text */
+  --c-outline: #22304430; /* subtle navy line */
+  --c-text-soft: #223044aa; /* toned-down text */
+
+  /* Status */
+  --c-danger: #d64545;
+  --c-danger-bg: #fdecec;
+  --c-red: #ef4444;
+  --c-red-dark: #b91c1c;
+  --c-red-border: #fecaca;
+  --c-red-bg: #fef2f2;
+
+  /* Radii & Shadows */
+  --radius-card: 1rem;
+  --shadow-card: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --shadow-bar: 0 4px 4px -4px #22304450;
+}

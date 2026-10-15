@@ -1,43 +1,30 @@
-
+/* Schmale Scrollbar (.book-preview): styles/shared.css */
 .book-preview {
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  border-top: 1px solid #22304430;
+  border-top: 1px solid var(--c-outline);
 }
 
 .book-preview-inner {
   display: flex;
   align-items: stretch;
-  gap: 20px;
-  min-width: 100%;
-  box-sizing: border-box;
-  padding: 20px;
   justify-content: flex-start;
-}
-
-.book-preview::-webkit-scrollbar {
-  height: 6px;
-}
-
-.book-preview::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.book-preview::-webkit-scrollbar-thumb {
-  background: #cdeeff;
-  border-radius: 10px;
+  gap: 20px;
+  box-sizing: border-box;
+  min-width: 100%;
+  padding: 20px;
 }
 
 .book-preview--grid {
   overflow-x: visible;
   overflow-y: visible;
-}
 
-.book-preview--grid .book-preview-inner {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(208px, 1fr));
-  justify-items: center;
-  justify-content: stretch;
-  gap: 24px;
+  & .book-preview-inner {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(208px, 1fr));
+    justify-items: center;
+    justify-content: stretch;
+    gap: 24px;
+  }
 }

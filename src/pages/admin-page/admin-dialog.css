@@ -1,0 +1,187 @@
+/* 
+* Dialog (edit/details), form fields, and order details. 
+* Loaded together with admin-page.css. 
+*/
+
+/* ---------- Dialog ---------- */
+.admin-dialog {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  box-sizing: border-box;
+  width: min(680px, calc(100vw - 32px));
+  max-height: calc(100vh - 32px);
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  color: var(--c-text);
+  background: #fff;
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
+  box-shadow: 0 10px 25px rgba(34, 48, 68, 0.15);
+
+  &::backdrop {
+    background: rgba(34, 48, 68, 0.5);
+  }
+
+  .admin-select-wrapper {
+    width: 100%;
+  }
+}
+
+.admin-dialog-form {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  box-sizing: border-box;
+  max-height: calc(100vh - 32px);
+  padding: 24px;
+  overflow-x: visible;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+
+  & h2 {
+    margin: 0 0 4px;
+  }
+}
+
+.admin-form-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.admin-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  & input,
+  & select,
+  & textarea {
+    padding: 8px 10px;
+    font: inherit;
+    font-size: 16px;
+    border-radius: 8px;
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+
+  & textarea {
+    resize: vertical;
+  }
+}
+
+.admin-dialog-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  margin-top: 4px;
+  padding-top: 12px;
+  border-top: 1px solid var(--c-light);
+}
+
+.admin-cover-preview {
+  align-self: flex-start;
+  max-width: 160px;
+  max-height: 220px;
+  object-fit: contain;
+  background: var(--c-bg);
+  border: 1px solid var(--c-light);
+  border-radius: 8px;
+}
+
+.admin-cover-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.admin-check {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+
+  & input {
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+}
+
+/* ---------- Orders ---------- */
+.admin-address-block {
+  font-style: normal;
+  line-height: 1.5;
+}
+
+.admin-order-table {
+  width: 100%;
+  text-align: left;
+  border-collapse: collapse;
+
+  & th {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--c-light);
+  }
+}
+
+.admin-order-item-row {
+  border-bottom: 1px solid #f0f7ff;
+
+  & td {
+    padding: 8px 0;
+  }
+}
+
+.admin-order-item-author {
+  color: #556;
+}
+
+.admin-order-item-qty {
+  padding: 8px;
+  text-align: center;
+}
+
+.admin-order-item-price {
+  text-align: right;
+}
+
+.admin-order-summary {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--c-light);
+}
+
+.admin-summary-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+
+.admin-summary-total {
+  margin-top: 6px;
+  font-size: 1.1em;
+  font-weight: bold;
+}
+
+/* ---------- Responsive ---------- */
+@media (max-width: 600px) {
+  .admin-dialog {
+    width: calc(100vw - 24px);
+    max-height: calc(100vh - 24px);
+  }
+
+  .admin-dialog-form {
+    max-height: calc(100vh - 24px);
+    padding: 16px;
+  }
+
+  .admin-form-grid {
+    grid-template-columns: 1fr;
+  }
+}

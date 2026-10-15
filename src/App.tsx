@@ -1,5 +1,4 @@
 import "./App.css";
-import "./styles/shared.css";
 import { Routes, Route, useNavigate, useParams } from "react-router-dom";
 import Header from "./components/header/header";
 import Navbar from "./components/navbar/navbar";

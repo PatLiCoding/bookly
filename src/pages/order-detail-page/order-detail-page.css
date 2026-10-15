@@ -1,11 +1,11 @@
 .orders-page {
-  max-width: 960px;
   width: 100%;
+  max-width: 960px;
   margin-top: 2px;
   padding: 32px 20px 64px;
   box-sizing: border-box;
-  background-color: #f7faff;
-  color: #223044;
+  color: var(--c-text);
+  background-color: var(--c-bg);
   cursor: default;
 }
 
@@ -15,30 +15,26 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
-  background-color: #223044;
-  color: #f7faff;
-  border: none;
-  border-radius: 8px;
+  margin-bottom: 20px;
   padding: 8px 18px;
   font-size: 0.9rem;
   font-weight: 600;
-  cursor: pointer;
   transition: background-color 0.15s ease, color 0.15s ease;
-  margin-bottom: 20px;
 }
 
-.order-back-btn:hover,
-.orders-page .order-detail-btn:hover {
-  background-color: #a7d8ff;
-  color: #223044;
-}
-
+/* ---------- Map & Mind ---------- */
 .order-detail-card {
-  background: #ffffff;
-  border: 2px solid #a7d8ff;
-  border-radius: 16px;
   padding: 24px 32px;
   box-shadow: 0 4px 12px rgba(34, 48, 68, 0.03);
+
+  & .orders-section h2 {
+    margin-top: 0;
+    margin-bottom: 16px;
+    padding-bottom: 8px;
+    font-size: 1.15rem;
+    color: var(--c-text);
+    border-bottom: 1px solid var(--c-light);
+  }
 }
 
 .order-detail-header {
@@ -47,44 +43,32 @@
   align-items: flex-start;
   flex-wrap: wrap;
   gap: 16px;
-  border-bottom: 2px solid #cdeeff;
-  padding-bottom: 16px;
   margin-bottom: 24px;
-}
+  padding-bottom: 16px;
+  border-bottom: 2px solid var(--c-light);
 
-.order-detail-header h1 {
-  font-family: "Playfair Display", serif;
-  font-size: 1.75rem;
-  color: #223044;
-  margin: 0 0 6px 0;
+  & h1 {
+    margin: 0 0 6px;
+    font-family: "Playfair Display", serif;
+    font-size: 1.75rem;
+    color: var(--c-text);
+  }
 }
 
 .order-detail-meta {
-  font-size: 0.9rem;
-  color: #223044;
-  opacity: 0.85;
   margin: 2px 0;
+  font-size: 0.9rem;
+  color: var(--c-text);
+  opacity: 0.85;
 }
 
 .order-detail-badge {
-  background-color: #ffe9c7;
-  color: #223044;
-  border: 1px solid #223044;
   padding: 6px 14px;
-  border-radius: 20px;
-  font-weight: 700;
   font-size: 0.85rem;
+  border-radius: 20px;
 }
 
-.order-detail-card .orders-section h2 {
-  font-size: 1.15rem;
-  color: #223044;
-  margin-top: 0;
-  margin-bottom: 16px;
-  border-bottom: 1px solid #cdeeff;
-  padding-bottom: 8px;
-}
-
+/* ---------- Article ---------- */
 .order-items {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
@@ -92,44 +76,44 @@
 }
 
 .order-item {
-  border: 1px solid #a7d8ff;
-  border-radius: 12px;
-  background-color: #ffffff;
-  padding: 16px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  padding: 16px;
   text-align: center;
+  background-color: #fff;
+  border: 1px solid var(--c-border);
+  border-radius: 12px;
   transition: transform 0.15s ease, box-shadow 0.15s ease;
-}
 
-.order-item:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 10px rgba(34, 48, 68, 0.08);
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 10px rgba(34, 48, 68, 0.08);
+  }
 }
 
 .order-item-link {
-  text-decoration: none;
   color: inherit;
+  text-decoration: none;
   cursor: pointer;
   transition: background-color 0.15s ease;
-}
 
-.order-item-link:hover,
-.order-item-link:focus-visible {
-  background-color: rgba(0, 0, 0, 0.04);
+  &:hover,
+  &:focus-visible {
+    background-color: rgba(0, 0, 0, 0.04);
+  }
 }
 
 .order-item-cover {
   width: 100%;
   height: 150px;
-  object-fit: contain;
-  border-radius: 6px;
   margin-bottom: 12px;
-  background-color: #f7faff;
   padding: 4px;
-  border: 1px solid #cdeeff;
+  object-fit: contain;
+  background-color: var(--c-bg);
+  border: 1px solid var(--c-light);
+  border-radius: 6px;
 }
 
 .order-item-details {
@@ -140,36 +124,37 @@
 }
 
 .order-item-title {
-  font-weight: 700;
-  color: #223044;
   font-size: 0.95rem;
+  font-weight: 700;
   line-height: 1.3;
+  color: var(--c-text);
 }
 
 .order-item-author {
   font-size: 0.825rem;
-  color: #223044;
-  opacity: 0.75;
   font-style: italic;
+  color: var(--c-text);
+  opacity: 0.75;
 }
 
 .order-item-price {
-  margin-top: 6px;
-  font-weight: 700;
-  font-size: 0.95rem;
-  color: #223044;
-  background-color: #ffe9c7;
-  border-radius: 6px;
-  padding: 2px 8px;
   display: inline-block;
   align-self: center;
+  margin-top: 6px;
+  padding: 2px 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--c-text);
+  background-color: var(--c-accent);
+  border-radius: 6px;
 }
 
+/* ---------- Summary ---------- */
 .order-detail-summary {
   margin-top: 24px;
   padding-top: 16px;
-  border-top: 2px solid #cdeeff;
-  color: #223044;
+  color: var(--c-text);
+  border-top: 2px solid var(--c-light);
 }
 
 .order-summary-row {
@@ -179,32 +164,33 @@
   max-width: 320px;
   margin: 6px 0 6px auto;
   font-size: 0.95rem;
-}
 
-.order-summary-row strong {
-  font-weight: 600;
+  & strong {
+    font-weight: 600;
+  }
 }
 
 .order-detail-total {
   margin-top: 12px;
   font-size: 1.15rem;
+
+  & strong {
+    font-size: 1.3rem;
+    font-weight: 700;
+  }
 }
 
-.order-detail-total strong {
-  font-size: 1.3rem;
-  font-weight: 700;
-}
-
+/* ---------- Responsive ---------- */
 @media (max-width: 640px) {
   .order-detail-card {
     padding: 16px;
   }
-  
+
   .order-detail-header {
     flex-direction: column;
     align-items: flex-start;
   }
-  
+
   .order-items {
     grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
   }

@@ -1,13 +1,14 @@
+/* Box styling (white, border, radius) for .main-info, .purchase-box,
+   .description-section, .comments-section, and .comment-card: styles/shared.css */
 .book-details-container {
-  max-width: 1200px;
   width: 100%;
-  padding: 24px;
-  background-color: #F7FAFF;
-  color: #223044;
-  border-radius: 12px;
-  cursor: default;
+  max-width: 1200px;
   margin-top: 4px;
   padding: 24px;
+  color: var(--c-text);
+  background-color: var(--c-bg);
+  border-radius: 12px;
+  cursor: default;
 }
 
 .book-header {
@@ -15,8 +16,8 @@
   grid-template-columns: 400px 400px;
   justify-content: center;
   gap: 48px;
-  margin-bottom: 24px;
   margin-top: 24px;
+  margin-bottom: 24px;
 }
 
 .cover-container {
@@ -27,10 +28,10 @@
   width: 100%;
   height: auto;
   max-height: 350px;
+  padding: 32px;
+  object-fit: contain;
   border-radius: 8px;
   box-shadow: 0 4px 12px rgba(34, 48, 68, 0.15);
-  object-fit: contain;
-  padding: 32px;
 }
 
 .book-info-col {
@@ -40,104 +41,96 @@
 }
 
 .main-info {
-  background-color: #ffffff;
   padding: 20px;
-  border-radius: 8px;
-  border: 1px solid #CDEEFF;
 }
 
 .book-title {
+  margin: 0 0 8px;
   font-size: 1.8rem;
-  margin: 0 0 8px 0;
-  color: #223044;
+  color: var(--c-text);
 }
 
 .book-author {
+  margin: 0 0 12px;
   font-size: 1.1rem;
   color: #556070;
-  margin: 0 0 12px 0;
 }
 
-.release-date, .book-category {
+.release-date,
+.book-category {
+  margin-bottom: 12px;
   font-size: 0.9rem;
   color: #666;
-  margin-bottom: 12px;
 }
 
 .rating-summary-row {
   display: flex;
   align-items: center;
+  flex-wrap: wrap;
   gap: 12px;
   margin-top: 8px;
-  flex-wrap: wrap;
 }
 
 .comments-link {
-  background: none;
-  border: none;
-  color: #223044;
-  text-decoration: underline;
-  cursor: pointer;
-  font-size: 0.95rem;
   padding: 0;
+  font-size: 0.95rem;
   font-weight: 500;
+  color: var(--c-text);
+  text-decoration: underline;
   transition: color 0.2s;
+
+  &:hover {
+    color: var(--c-border);
+  }
 }
 
-.comments-link:hover {
-  color: #A7D8FF;
-  text-shadow: 1px #223044;
-}
-
+/* ---------- Purchase Box ---------- */
 .purchase-box {
-  background-color: #ffffff;
-  padding: 16px 20px;
-  border-radius: 8px;
-  border: 1px solid #CDEEFF;
-  margin-top: 16px;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: space-between;
-  flex-direction: column;
   gap: 16px;
+  margin-top: 16px;
+  padding: 16px 20px;
 }
 
 .price-tag {
   font-size: 1.5rem;
   font-weight: bold;
-  color: #223044;
+  color: var(--c-text);
 }
 
 .order-btn {
-  background-color: #FFE9C7;
-  color: #223044;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 6px;
-  font-weight: bold;
-  font-size: 1rem;
-  cursor: pointer;
   display: flex;
   align-items: center;
   gap: 8px;
+  padding: 10px 20px;
+  font-size: 1rem;
+  font-weight: bold;
+  color: var(--c-text);
+  background-color: var(--c-accent);
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
   transition: transform 0.1s ease, background-color 0.2s;
-}
 
-.order-btn:hover {
-  background-color: #A7D8FF;
-  transform: translateY(-1px);
-}
+  &:hover {
+    background-color: var(--c-border);
+    transform: translateY(-1px);
+  }
 
-.order-btn img {
-  width: 18px;
-  height: 18px;
+  & img {
+    width: 18px;
+    height: 18px;
+  }
 }
 
 .cart-quantity-wrapper {
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-direction: column;
   flex-wrap: wrap;
   gap: 8px;
   width: 100%;
@@ -146,105 +139,77 @@
 .cart-quantity-label {
   font-size: 0.95rem;
   font-weight: 600;
-  color: #223044;
+  color: var(--c-text);
 }
 
+/* ---------- Description & Review ---------- */
 .divider {
-  border: 0;
   height: 2px;
-  background-color: #CDEEFF;
   margin: 48px 0;
+  background-color: var(--c-light);
+  border: 0;
 }
 
 .description-section {
-  background-color: #ffffff;
   padding: 24px;
-  border-radius: 8px;
-  border: 1px solid #CDEEFF;
   line-height: 1.6;
-}
 
-.description-section h3 {
-  margin-top: 0;
+  & h3 {
+    margin-top: 0;
+  }
 }
 
 .overall-rating-badge {
   display: inline-flex;
   align-items: center;
-  gap: 12px;
-  background-color: #CDEEFF;
-  padding: 10px 20px;
-  border-radius: 20px;
-  font-weight: bold;
-  margin-bottom: 16px;
   flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 16px;
+  padding: 10px 20px;
+  font-weight: bold;
+  background-color: var(--c-light);
+  border-radius: 20px;
 }
 
+/* ---------- Comments ---------- */
 .comments-section {
-  background-color: #ffffff;
-  padding: 24px;
-  border-radius: 8px;
-  border: 1px solid #CDEEFF;
   max-height: 500px;
-  overflow: hidden;
+  padding: 24px;
+  overflow-x: hidden;
   overflow-y: auto;
-}
 
-.comments-section::-webkit-scrollbar {
-  width: 6px;
-}
-
-.comments-section::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-.comments-section::-webkit-scrollbar-thumb {
-  background: #cdeeff;
-  border-radius: 10px;
-}
-
-.comments-section h3 {
-  margin-top: 0;
-  margin-bottom: 20px;
+  & h3 {
+    margin-top: 0;
+    margin-bottom: 20px;
+  }
 }
 
 .comment-card {
-  background-color: #F7FAFF;
-  border: 1px solid #CDEEFF;
-  border-radius: 8px;
-  padding: 16px;
   margin-bottom: 16px;
+  padding: 16px;
+  background-color: var(--c-bg);
 }
 
 .comment-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  flex-wrap: wrap;
   margin-bottom: 8px;
   padding-bottom: 6px;
   border-bottom: 1px solid #e0e0e0;
-  flex-wrap: wrap;
 }
 
 .user-name {
   font-weight: bold;
 }
 
-.comment-text {
-  margin: 0;
-  line-height: 1.5;
-  background-color: #ffffff;
-  padding: 12px;
-  border-radius: 6px;
-  border: 1px solid #eaeaea;
-}
-
 .comment-date {
-  color: #223044;
-  text-shadow: none;
   line-height: 1.5;
+  color: var(--c-text);
 }
 
+/* ---------- Responsive ---------- */
 @media (max-width: 1000px) {
   .book-header {
     padding: 12px;

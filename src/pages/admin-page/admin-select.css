@@ -1,0 +1,58 @@
+/* Custom-Select (selection of items within a list or dialog). */
+
+/* ---------- Custom-Select ---------- */
+.admin-select-wrapper {
+  position: relative;
+  display: inline-block;
+  min-width: 150px;
+}
+
+.admin-select-toggle {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 10px;
+  font: inherit;
+  font-size: 16px;
+  border-radius: 6px;
+
+  &:hover {
+    cursor: pointer;
+    background: var(--c-accent);
+  }
+}
+
+.admin-select-arrow {
+  margin-left: 8px;
+  font-size: 10px;
+}
+
+.admin-select-dropdown {
+  position: absolute;
+  top: calc(100% - 4px);
+  right: 0;
+  left: 0;
+  z-index: 100;
+  overflow: hidden;
+  background: #fff;
+  border: 1px solid var(--c-border);
+  border-radius: 0 0 6px 6px;
+  box-shadow: 0 4px 12px rgba(34, 48, 68, 0.1);
+}
+
+.admin-select-option {
+  padding: 8px 12px;
+  font-size: 14px;
+  color: var(--c-text);
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+
+  &:hover {
+    background-color: var(--c-accent);
+  }
+
+  &.is-selected {
+    font-weight: bold;
+    background-color: var(--c-border);
+  }
+}

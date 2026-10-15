@@ -1,6 +1,8 @@
 import { useState } from "react";
 import type { ComponentType } from "react";
 import "./admin-page.css";
+import "./admin-dialog.css";
+import "./admin-select.css";
 import AdminSearch from "../../components/admin/admin-search";
 import AdminTabs, { type AdminTab } from "../../components/admin/admin-tabs";
 import OrdersTab from "../../components/admin/orders-tab";

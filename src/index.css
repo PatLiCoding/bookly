@@ -1,3 +1,7 @@
+/* Load common variables and patterns first (adjust the path if necessary). */
+@import "./styles/variables.css";
+@import "./styles/shared.css";
+
 @font-face {
   font-family: "PlayfairDisplay";
   src: url("/assets/fonts/Playfair_Display/PlayfairDisplay-VariableFont_wght.ttf")
@@ -7,7 +11,7 @@
 }
 
 * {
-    box-sizing: border-box;
-    margin: 0;
-    font-family: "PlayfairDisplay", sans-serif;
+  box-sizing: border-box;
+  margin: 0;
+  font-family: "PlayfairDisplay", sans-serif;
 }

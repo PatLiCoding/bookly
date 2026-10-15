@@ -1,54 +1,46 @@
+/* Bar layout (.navbar, .navbar-content-max-width): styles/shared.css*/
 .navbar {
-  min-height: 80px;
-  width: 100%;
-  box-shadow: 0 4px 4px -4px #22304450;
-  background-color: #ffffff;
-  cursor: default;
-  display: flex;
-  justify-content: center;
+  background-color: #fff;
 }
 
 .navbar-content-max-width {
-  max-width: 1440px;
-  width: 100%;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
   gap: 24px;
-  flex-wrap: wrap;
   padding: 24px;
+  font-size: 20px;
   cursor: default;
-  font-size: 20px;
 }
 
-.navbar .navbar-content-max-width a {
-  color: #223044;
-  font-weight: 700;
-  text-decoration: none;
-  font-size: 20px;
-  white-space: nowrap;
+.navbar .navbar-content-max-width {
+  & a {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--c-text);
+    text-decoration: none;
+    white-space: nowrap;
+
+    &.active p {
+      padding: 4px 8px;
+      font-weight: 700;
+      color: #fff;
+      text-shadow: 0 0 1px var(--c-text);
+      background-color: var(--c-text);
+      border-radius: 10px;
+    }
+  }
+
+  & p {
+    margin: 0;
+  }
 }
 
-.navbar .navbar-content-max-width p {
-  margin: 0;
-}
-
-.navbar .navbar-content-max-width a.active p {
-  color: #FFFFFF;
-  font-weight: 700;
-  text-shadow: 0 0 1px #223044;
-  background-color: #223044;
-  border-radius: 10px;
-  padding: 4px 8px;
-}
-
+/* ---------- Responsive ---------- */
 @media (max-width: 1350px) {
   .navbar .navbar-content-max-width {
     flex-wrap: nowrap;
     justify-content: flex-start;
-    overflow-x: auto;
-    padding: 12px 16px;
     gap: 20px;
+    padding: 12px 16px;
+    overflow-x: auto;
     scrollbar-width: thin;
   }
 }
