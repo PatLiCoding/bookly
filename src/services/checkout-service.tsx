@@ -7,6 +7,9 @@ import { buildUserUpdate } from "./user-service";
 import { saveOrderToSupabase } from "./order-service";
 import { findMissingBookIds } from "./book-service";
 
+/** A German zip code consists of exactly five digits. */
+const ZIP_PATTERN = /^\d{5}$/;
+
 /** Configuration schema for billing address input fields. */
 export const BILLING: AddressConfig = {
   title: "Rechnungsadresse",
@@ -32,6 +35,17 @@ export const SHIPPING: AddressConfig = {
     { key: "country", label: "Land" },
   ],
 };
+
+/**
+ * Checks that the zip codes of both addresses have exactly five digits.
+ *
+ * @param b - Billing address form field values.
+ * @param s - Shipping address form field values.
+ * @returns `true` if both zip codes are valid; otherwise `false`.
+ */
+function areZipsValid(b: Values, s: Values): boolean {
+  return ZIP_PATTERN.test(b.zip?.trim() ?? "") && ZIP_PATTERN.test(s.zip?.trim() ?? "");
+}
 
 /**
  * Extracts initial shipping address form field values from a user entity.
@@ -80,7 +94,7 @@ function areFilled(fields: Field[], values: Values): boolean {
 }
 
 /**
- * Validates checkout address entries and terms acceptance status.
+ * Validates checkout address entries, zip codes and terms acceptance status.
  *
  * @param b - Billing address form field values.
  * @param s - Shipping address form field values.
@@ -91,6 +105,7 @@ export function validateCheckout(b: Values, s: Values, agb: boolean): string {
   if (!areFilled(BILLING.fields, b) || !areFilled(SHIPPING.fields, s)) {
     return "Bitte fülle alle Adressfelder aus.";
   }
+  if (!areZipsValid(b, s)) return "Die PLZ muss aus genau 5 Ziffern bestehen.";
   return agb ? "" : "Bitte stimme den AGB zu.";
 }
 

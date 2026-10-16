@@ -24,25 +24,35 @@ interface CardProps {
   onChange: ChangeHandler;
 }
 
-const noop: ChangeHandler = () => {};
+const noop: ChangeHandler = () => { };
 
-/**
- * Labeled text input component.
- *
- * @param props - Component properties including label, value, and change handler.
- */
-function TextField({ label, value = "", onChange }: {
-  label: string;
+/** Props for the TextField component. */
+interface TextFieldProps {
+  field: AddressField;
   value?: string;
   onChange: (value: string) => void;
-}) {
+}
+
+/** Removes all non-digit characters if the field only accepts numbers. */
+function sanitize(value: string, onlyNumbers?: boolean) {
+  return onlyNumbers ? value.replace(/\D/g, "") : value;
+}
+
+/**
+ * Labeled text input that applies the validation rules of its field
+ * (numeric only, max length, numeric keyboard on mobile).
+ */
+function TextField({ field, value = "", onChange }: TextFieldProps) {
+  const { inputMode, maxLength, onlyNumbers } = field;
   return (
     <label className="checkout-field">
-      <span>{label}</span>
+      <span>{field.label}</span>
       <input
         type="text"
+        inputMode={inputMode}
+        maxLength={maxLength}
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => onChange(sanitize(e.target.value, onlyNumbers))}
       />
     </label>
   );
@@ -57,7 +67,7 @@ function FieldRow({ fields, values, onChange }: CardProps & {
   const inputs = fields.map((field) => (
     <TextField
       key={field.key}
-      label={field.label}
+      field={field}
       value={values[field.key]}
       onChange={(value) => onChange(field.key, value)}
     />
