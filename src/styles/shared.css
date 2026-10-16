@@ -237,7 +237,7 @@
   }
 }
 
-/* ---------- Stars, empty state, "Load more" ---------- */
+/* ---------- Stars ---------- */
 .stars,
 .star-input-btn {
   color: var(--c-bg);
@@ -266,6 +266,7 @@
   border-radius: 6px;
 }
 
+/* ---------- Empty state and "Load more" ---------- */
 .empty-content {
   display: flex;
   justify-content: center;

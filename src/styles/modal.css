@@ -11,12 +11,13 @@
 }
 
 .modal-error {
-  color: #d9534f;
-  background: #fdf2f2;
+  margin: 10px 0;
   padding: 10px;
+  font-size: 14px;
+  color: var(--c-danger);
+  background: var(--c-danger-bg);
   border-radius: 4px;
   margin: 10px 0;
-  font-size: 14px;
 }
 
 .modal-actions {
