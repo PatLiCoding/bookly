@@ -43,7 +43,7 @@ dedicated admin area.
 - [Admin area](#admin-area)
 - [Data protection and retention](#data-protection-and-retention)
 - [Code conventions](#code-conventions)
-- [Design](#design)
+- [Design and styling](#design-and-styling)
 - [Known limitations and roadmap](#known-limitations-and-roadmap)
 - [Demo data](#demo-data)
 - [License](#license)
@@ -97,7 +97,7 @@ cannot be changed through the API, so nobody can make themselves an admin.
 - **React** with function components and hooks, **TypeScript**, **Vite**
 - **React Router** for navigation
 - **Supabase**: PostgreSQL, Auth and Row Level Security (RLS)
-- Plain CSS, one stylesheet per page or component group, font Playfair Display
+- Plain CSS with CSS variables and native CSS nesting (no preprocessor), one stylesheet per page or component, font Playfair Display
 - `tsx` to run the setup scripts in `scripts/`
 
 ## Getting started
@@ -203,10 +203,11 @@ src/
 ├── lib/             Supabase client
 ├── pages/           One folder per route (home, book detail, cart, checkout, orders, profile, admin)
 ├── services/        All database access and business logic
+├── styles/          Global CSS: design variables (variables.css) and shared patterns (shared.css)
 └── utils/           Pure helper functions (prices, filters, covers, images, forms)
 scripts/             Local setup scripts (seed books, seed admin)
 sql/                 Policy sync script and migrations for existing databases
-schema.sql           Complete database schema for a new Supabase project
+supabase/            Complete database schema (schema.sql) for a new Supabase project
 ```
  
 ## Architecture
@@ -221,7 +222,7 @@ pages → components → hooks → services → Supabase
 - **Pages and components** only render and wire up user interaction.
 - **Hooks** hold state and side effects (for example `usePagedList`, `useBookForm`, `useCheckoutGuard`).
 - **Services** are the only place that talks to Supabase (`book-service`, `order-service`,
-  `admin-service`, ...). A component never builds a query itself.
+  `admin-service`, ...). A component never builds a query itself
 - **Utils** are small pure functions without side effects.
 The admin area reuses the same building blocks for every tab: `usePagedList` loads one page at a
 time with server-side search and a "Mehr laden" button, `AdminList` renders the rows, and
@@ -289,7 +290,7 @@ Books are never deleted from the admin area, they are **hidden** (`books.hidden`
 - Hidden books do not appear in the shop (overview, search, categories, detail page) and cannot be ordered.
 - They stay readable in the database, so old orders still show title and cover.
 - An admin can show a hidden book again at any time.
-- 
+
 ### Cart and availability check
  
 The cart lives in the browser and works without an account. Before checkout starts and again
@@ -357,16 +358,26 @@ Further rules:
 - **Naming**: one component per file, file names in `kebab-case`, hooks start with `use`.
 - **Types**: no `any`; database rows are mapped to domain types in the services.
 - **Security**: the service role key is only used in local scripts; everything else works with the anon key and RLS.
+- **CSS**: no hard-coded project colors (use the variables), repeated patterns live in `shared.css`, one stylesheet per page or component.
 
-## Design
+## Design and styling
 
-| Color      | Hex       | Usage               |
-| ---------- | --------- | ------------------- |
-| Navy       | `#223044` | Primary color, text |
-| Blue       | `#A7D8FF` | Accents             |
-| Light blue | `#CDEEFF` | Surfaces            |
-| Beige      | `#FFE9C7` | Accents             |
-| Off-white  | `#F7FAFF` | Background          |
+| Color      | Hex       | CSS variable  | Usage               |
+| ---------- | --------- | ------------- | ------------------- |
+| Navy       | `#223044` | `--c-text`    | Primary color, text |
+| Blue       | `#A7D8FF` | `--c-border`  | Accents             |
+| Light blue | `#CDEEFF` | `--c-light`   | Surfaces            |
+| Beige      | `#FFE9C7` | `--c-accent`  | Accents             |
+| Off-white  | `#F7FAFF` | `--c-bg`      | Background          |
+
+### CSS structure
+
+- `styles/variables.css` holds all colors, radii and shadows as CSS variables.
+- `styles/shared.css` holds patterns that several pages use (cards, buttons, panels, scrollbar, modal overlay), grouped by the existing class names.
+- `index.css` imports both files first, so every page and component stylesheet can use the variables and override the shared rules.
+- Every page or component has its own stylesheet with only what is specific to it. Nesting (`&:hover`, `& span`) keeps related rules together.
+
+**Where does a new style go?** A new color or shadow becomes a variable. A pattern used by two or more components goes into `shared.css`. Everything else stays in the stylesheet of its page or component.
  
 ## Known limitations and roadmap
  
